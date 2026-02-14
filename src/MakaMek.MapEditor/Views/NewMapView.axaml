@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:MakaMek.MapEditor.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MakaMek.MapEditor.Views.NewMapView"
+             x:DataType="viewModels:NewMapViewModel">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" Margin="20">
+        <TextBlock Text="New Map Configuration" Grid.ColumnSpan="2" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
+        
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Width:" VerticalAlignment="Center"/>
+        <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding MapWidth}" Minimum="5" Maximum="30" Margin="10,5"/>
+        
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Height:" VerticalAlignment="Center"/>
+        <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding MapHeight}" Minimum="5" Maximum="34" Margin="10,5"/>
+        
+        <CheckBox Grid.Row="3" Grid.ColumnSpan="2" Content="Pre-generate Terrain" IsChecked="{Binding IsPreGenerated}" Margin="0,10"/>
+        
+        <StackPanel Grid.Row="4" Grid.ColumnSpan="2" IsVisible="{Binding IsPreGenerated}" Spacing="10">
+            <TextBlock Text="Forest Coverage %"/>
+            <Slider Value="{Binding ForestCoverage}" Minimum="0" Maximum="100"/>
+            <TextBlock Text="{Binding ForestCoverage}"/>
+            
+            <TextBlock Text="Light Woods %"/>
+            <Slider Value="{Binding LightWoodsPercentage}" Minimum="0" Maximum="100"/>
+            <TextBlock Text="{Binding LightWoodsPercentage}"/>
+        </StackPanel>
+        
+        <Button Grid.Row="5" Grid.ColumnSpan="2" Content="Create Map" Command="{Binding CreateMapCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,20,0,0"/>
+    </Grid>
+</UserControl>

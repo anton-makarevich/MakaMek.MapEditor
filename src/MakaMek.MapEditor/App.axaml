@@ -1,0 +1,16 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:di="using:Microsoft.Extensions.DependencyInjection"
+             x:Class="MakaMek.MapEditor.App"
+             RequestedThemeVariant="Dark">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <di:ServiceCollection x:Key="ServiceCollection"/>
+        </ResourceDictionary>
+    </Application.Resources>
+             
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+</Application>

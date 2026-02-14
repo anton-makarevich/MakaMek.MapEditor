@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MakaMek.MapEditor.Android/MakaMek.MapEditor.Android.csproj" />
+    <Project Path="src/MakaMek.MapEditor.Browser/MakaMek.MapEditor.Browser.csproj" />
+    <Project Path="src/MakaMek.MapEditor.Desktop/MakaMek.MapEditor.Desktop.csproj" />
+    <Project Path="src/MakaMek.MapEditor.iOS/MakaMek.MapEditor.iOS.csproj" />
+    <Project Path="src/MakaMek.MapEditor/MakaMek.MapEditor.csproj" />
+  </Folder>
+</Solution>
