@@ -5,6 +5,7 @@ using Sanet.MakaMek.MapEditor.Controls;
 using Sanet.MakaMek.MapEditor.Models.Map;
 using Sanet.MakaMek.MapEditor.Services;
 using Sanet.MakaMek.MapEditor.ViewModels;
+using Sanet.MakaMek.Services;
 using Sanet.MVVM.Views.Avalonia;
 
 namespace Sanet.MakaMek.MapEditor.Views;
