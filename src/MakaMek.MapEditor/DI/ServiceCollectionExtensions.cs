@@ -11,7 +11,7 @@ public static class ServiceCollectionExtensions
     public static void RegisterServices(this IServiceCollection services)
     {
         services.AddSingleton<Sanet.MakaMek.Map.Factories.IBattleMapFactory, Sanet.MakaMek.Map.Factories.BattleMapFactory>();
-        services.AddSingleton<IImageService>(_=>new AvaloniaAssetImageService("avares://Sanet.MakaMek.MapEditor/Assets"));
+        services.AddSingleton<IImageService>(_ => new AvaloniaAssetImageService("avares://Sanet.MakaMek.MapEditor/Assets"));
         services.AddSingleton<IFileService, FileService>();
     }
 
