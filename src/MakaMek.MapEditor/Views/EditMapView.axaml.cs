@@ -5,6 +5,7 @@ using Sanet.MakaMek.MapEditor.Controls;
 using Sanet.MakaMek.MapEditor.Models.Map;
 using Sanet.MakaMek.MapEditor.Services;
 using Sanet.MakaMek.MapEditor.ViewModels;
+using Sanet.MakaMek.Services;
 using Sanet.MVVM.Views.Avalonia;
 
 namespace Sanet.MakaMek.MapEditor.Views;
@@ -40,7 +41,10 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         MapCanvas.Children.Clear();
         if (ViewModel?.Map == null) return;
 
-        var imageService = (IImageService<Bitmap>)ViewModel.ImageService;
+        if (ViewModel.ImageService is not IImageService<Bitmap> imageService)
+        {
+            throw new Exception("ImageService is not initialized");
+        }
 
         double maxX = 0;
         double maxY = 0;

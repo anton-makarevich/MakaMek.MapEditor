@@ -8,7 +8,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.MapEditor.Models.Map;
-using Sanet.MakaMek.MapEditor.Services;
+using Sanet.MakaMek.Services;
 
 namespace Sanet.MakaMek.MapEditor.Controls;
 
