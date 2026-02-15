@@ -7,7 +7,7 @@ namespace Sanet.MakaMek.MapEditor.Services;
 public class AvaloniaAssetImageService : IImageService<Bitmap>
 {
     private readonly ConcurrentDictionary<string, Bitmap?> _cache = new();
-    private const string AssetsBasePath = "avares://Sanet.MakaMek.Avalonia/Assets";
+    private const string AssetsBasePath = "avares://Sanet.MakaMek.MapEditor/Assets";
 
     public Task<Bitmap?> GetImage(string assetType, string assetName)
     {
