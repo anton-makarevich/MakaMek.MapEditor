@@ -5,6 +5,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyName>Sanet.MakaMek.MapEditor.Browser</AssemblyName>
+    <RootNamespace>Sanet.MakaMek.MapEditor.Browser</RootNamespace>
   </PropertyGroup>
 
 </Project>
