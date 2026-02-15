@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 
-namespace MakaMek.MapEditor.Services;
+namespace Sanet.MakaMek.MapEditor.Services;
 
 public class FileService : IFileService
 {

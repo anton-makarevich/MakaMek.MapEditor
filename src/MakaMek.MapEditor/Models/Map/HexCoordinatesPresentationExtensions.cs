@@ -1,6 +1,6 @@
 using Sanet.MakaMek.Map.Models;
 
-namespace MakaMek.MapEditor.Models.Map;
+namespace Sanet.MakaMek.MapEditor.Models.Map;
 
 public static class HexCoordinatesPresentationExtensions
 {

@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Sanet.MakaMek.MapEditor;
 using Sanet.MVVM.DI.Avalonia.Extensions;
 
 namespace MakaMek.MapEditor.Desktop;

@@ -3,13 +3,13 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
-using MakaMek.MapEditor.DI;
-using MakaMek.MapEditor.ViewModels;
-using MakaMek.MapEditor.Views;
+using Sanet.MakaMek.MapEditor.DI;
+using Sanet.MakaMek.MapEditor.ViewModels;
+using Sanet.MakaMek.MapEditor.Views;
 using Sanet.MVVM.Core.Services;
 using Sanet.MVVM.Navigation.Avalonia.Services;
 
-namespace MakaMek.MapEditor;
+namespace Sanet.MakaMek.MapEditor;
 
 public partial class App : Application
 {

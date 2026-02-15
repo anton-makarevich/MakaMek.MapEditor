@@ -1,13 +1,13 @@
 using System.ComponentModel;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
+using Sanet.MakaMek.MapEditor.Controls;
+using Sanet.MakaMek.MapEditor.Models.Map;
+using Sanet.MakaMek.MapEditor.Services;
+using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MVVM.Views.Avalonia;
-using MakaMek.MapEditor.Controls;
-using MakaMek.MapEditor.Services;
-using MakaMek.MapEditor.ViewModels;
-using MakaMek.MapEditor.Models.Map; 
 
-namespace MakaMek.MapEditor.Views;
+namespace Sanet.MakaMek.MapEditor.Views;
 
 public partial class EditMapView : BaseView<EditMapViewModel>
 {

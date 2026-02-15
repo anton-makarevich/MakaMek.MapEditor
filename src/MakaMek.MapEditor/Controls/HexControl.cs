@@ -7,10 +7,10 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Sanet.MakaMek.Map.Models;
-using MakaMek.MapEditor.Models.Map;
-using MakaMek.MapEditor.Services;
+using Sanet.MakaMek.MapEditor.Models.Map;
+using Sanet.MakaMek.MapEditor.Services;
 
-namespace MakaMek.MapEditor.Controls;
+namespace Sanet.MakaMek.MapEditor.Controls;
 
 public class HexControl : Panel
 {

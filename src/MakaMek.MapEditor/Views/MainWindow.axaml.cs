@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace MakaMek.MapEditor.Views;
+namespace Sanet.MakaMek.MapEditor.Views;
 
 public partial class MainWindow : Window
 {

@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 
-namespace MakaMek.MapEditor.Services;
+namespace Sanet.MakaMek.MapEditor.Services;
 
 public class AvaloniaAssetImageService : IImageService<Bitmap>
 {

@@ -2,12 +2,12 @@ using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
-using MakaMek.MapEditor.Services;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
+using Sanet.MakaMek.MapEditor.Services;
 using Sanet.MVVM.Core.ViewModels;
 
-namespace MakaMek.MapEditor.ViewModels;
+namespace Sanet.MakaMek.MapEditor.ViewModels;
 
 public class EditMapViewModel : BaseViewModel
 {

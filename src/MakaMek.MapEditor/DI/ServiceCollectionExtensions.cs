@@ -1,8 +1,8 @@
-using MakaMek.MapEditor.Services;
 using Microsoft.Extensions.DependencyInjection;
-using MakaMek.MapEditor.ViewModels;
+using Sanet.MakaMek.MapEditor.Services;
+using Sanet.MakaMek.MapEditor.ViewModels;
 
-namespace MakaMek.MapEditor.DI;
+namespace Sanet.MakaMek.MapEditor.DI;
 
 public static class ServiceCollectionExtensions
 {

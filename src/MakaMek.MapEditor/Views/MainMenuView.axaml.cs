@@ -1,7 +1,7 @@
+using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MVVM.Views.Avalonia;
-using MakaMek.MapEditor.ViewModels;
 
-namespace MakaMek.MapEditor.Views;
+namespace Sanet.MakaMek.MapEditor.Views;
 
 public partial class MainMenuView : BaseView<MainMenuViewModel>
 {

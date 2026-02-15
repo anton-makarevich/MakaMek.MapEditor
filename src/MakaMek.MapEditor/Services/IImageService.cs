@@ -1,4 +1,4 @@
-namespace MakaMek.MapEditor.Services;
+namespace Sanet.MakaMek.MapEditor.Services;
 
 public interface IImageService
 {
