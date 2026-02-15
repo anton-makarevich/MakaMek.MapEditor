@@ -37,13 +37,13 @@ public class NewMapViewModel : BaseViewModel
     public int ForestCoverage
     {
         get;
-        init => SetProperty(ref field, value);
+        set => SetProperty(ref field, value);
     } = 20;
 
     public int LightWoodsPercentage
     {
         get;
-        init => SetProperty(ref field, value);
+        set => SetProperty(ref field, value);
     } = 30;
 
     public ICommand CreateMapCommand => field ??= new AsyncCommand(async () =>

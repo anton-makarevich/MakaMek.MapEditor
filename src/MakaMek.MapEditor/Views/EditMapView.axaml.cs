@@ -48,6 +48,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         foreach (var hex in ViewModel.Map.GetHexes())
         {
             var hexControl = new HexControl(hex, imageService);
+            hexControl.PointerPressed += HexControl_PointerPressed;
             MapCanvas.Children.Add(hexControl);
             if (hex.Coordinates.GetH() > maxX) maxX = hex.Coordinates.GetH();
             if (hex.Coordinates.GetV() > maxY) maxY = hex.Coordinates.GetV();

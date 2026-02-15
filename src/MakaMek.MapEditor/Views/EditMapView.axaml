@@ -12,7 +12,7 @@
             <Canvas x:Name="MapCanvas" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         </ScrollViewer>
         
-        <Grid Grid.Column="1" RowDefinitions="Auto,*" Background="#333333">
+        <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto" Background="#333333">
             <TextBlock Text="Toolbox" FontSize="18" FontWeight="Bold" Margin="10" Foreground="White" HorizontalAlignment="Center"/>
             <ListBox Grid.Row="1" ItemsSource="{Binding AvailableTerrains}" SelectedItem="{Binding SelectedTerrain}" Background="Transparent">
                 <ListBox.ItemTemplate>
@@ -24,7 +24,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
             
-            <Button Grid.Row="1" Content="Export Map" Command="{Binding ExportMapCommand}" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Bottom"/>
+            <Button Grid.Row="2" Content="Export Map" Command="{Binding ExportMapCommand}" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Bottom"/>
         </Grid>
     </Grid>
 </UserControl>
