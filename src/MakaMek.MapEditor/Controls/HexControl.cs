@@ -1,3 +1,4 @@
+using System.Reactive.Linq;
 using AsyncAwaitBestPractices;
 using Avalonia;
 using Avalonia.Controls;
@@ -18,12 +19,12 @@ public class HexControl : Panel
     private readonly IImageService<Bitmap> _imageService;
     private readonly Hex _hex;
 
-    private static readonly IBrush DefaultStroke = Brushes.Gray;
+    private static readonly IBrush DefaultStroke = Brushes.White;
     private static readonly IBrush HighlightStroke = new SolidColorBrush(Color.Parse("#00BFFF")); // Light blue
     private static readonly IBrush HighlightFill = new SolidColorBrush(Color.Parse("#3300BFFF")); // Semi-transparent light blue
     private static readonly IBrush TransparentFill = Brushes.Transparent;
 
-    private const double DefaultStrokeThickness = 1;
+    private const double DefaultStrokeThickness = 2;
     private const double HighlightStrokeThickness = 3;
 
     private static Points GetHexPoints()
@@ -70,26 +71,20 @@ public class HexControl : Panel
             Content = hex.Coordinates.ToString(),
             VerticalAlignment = VerticalAlignment.Top,
             HorizontalAlignment = HorizontalAlignment.Center,
-            Foreground = Brushes.Black,
-            FontSize = 10
+            Foreground = Brushes.White
         };
         
         Children.Add(_terrainImage);
         Children.Add(_hexPolygon);
         Children.Add(label);
         
-        // Create an observable that polls the unit's position
-        // We removed Observable interval for now to simplify, or keep it if System.Reactive is available
-        // Assuming System.Reactive is available
-        /*
+        // Create an observable that polls the hex state
         Observable
             .Interval(TimeSpan.FromMilliseconds(16)) // ~60fps
-            .Select(_ => _hex.IsHighlighted) // Hex.IsHighlighted might not exist in Sanet.MakaMek.Map Hex class? Check.
-            // If Hex class doesn't have IsHighlighted, we might need a wrapper or ignore highlighting for now.
-            // .DistinctUntilChanged()
-            // .ObserveOn(SynchronizationContext.Current)
-            // .Subscribe(_ => Highlight(_hex.IsHighlighted ? HexHighlightType.Selected : HexHighlightType.None));
-        */
+            .Select(_ => _hex.IsHighlighted)
+            .DistinctUntilChanged()
+            .ObserveOn(SynchronizationContext.Current) // Ensure events are processed on the UI thread
+            .Subscribe(_ => Highlight(_hex.IsHighlighted));
         
         // Set position
         SetValue(Canvas.LeftProperty, hex.Coordinates.GetH());
@@ -129,8 +124,7 @@ public class HexControl : Panel
     
     public bool IsPointInside(Point point)
     {
-        // Simple bounding box check might be enough for clicks if precise hit test isn't critical,
-        // but polygon hit test is better. Bounds check is easiest first step.
+        // Check if the point is within the bounds
         return Bounds.Contains(point);
     }
 }

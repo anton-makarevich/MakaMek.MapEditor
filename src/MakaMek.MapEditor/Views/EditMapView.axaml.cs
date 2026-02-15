@@ -48,19 +48,13 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         foreach (var hex in ViewModel.Map.GetHexes())
         {
             var hexControl = new HexControl(hex, imageService);
-            // Click handler
-             hexControl.PointerPressed += HexControl_PointerPressed;
-            
             MapCanvas.Children.Add(hexControl);
-            
-            var x = hex.Coordinates.GetH() + HexCoordinatesPresentationExtensions.HexWidth;
-            var y = hex.Coordinates.GetV() + HexCoordinatesPresentationExtensions.HexHeight;
-            if (x > maxX) maxX = x;
-            if (y > maxY) maxY = y;
+            if (hex.Coordinates.GetH() > maxX) maxX = hex.Coordinates.GetH();
+            if (hex.Coordinates.GetV() > maxY) maxY = hex.Coordinates.GetV();
         }
         
-        MapCanvas.Width = maxX;
-        MapCanvas.Height = maxY;
+        MapCanvas.Width = maxX+ HexCoordinatesPresentationExtensions.HexWidth*0.5;
+        MapCanvas.Height = maxY + HexCoordinatesPresentationExtensions.HexHeight*1.5;
     }
 
     private void HexControl_PointerPressed(object? sender, PointerPressedEventArgs e)

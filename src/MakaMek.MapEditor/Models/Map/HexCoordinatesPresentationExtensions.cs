@@ -15,6 +15,6 @@ public static class HexCoordinatesPresentationExtensions
 
     public static double GetV(this HexCoordinates coordinates)
     {
-        return coordinates.R * HexHeight + (coordinates.Q % 2 == 0 ? 0 : HexHeight * 0.5);
+        return coordinates.R * HexHeight - (coordinates.Q % 2 == 0 ? 0 : HexHeight * 0.5);
     }
 }
