@@ -24,6 +24,7 @@
     <PackageReference Include="Sanet.MakaMek.Map" Version="0.52.2" />
     <PackageReference Include="Sanet.MakaMek.Services" Version="0.52.3" />
     <PackageReference Include="Sanet.MakaMek.Services.Avalonia" Version="0.52.3" />
+    <PackageReference Include="Sanet.MakaMek.Avalonia.Controls" Version="0.52.4" />
     <PackageReference Include="Sanet.MVVM.DI.Avalonia" Version="1.4.1138" />
     <PackageReference Include="Sanet.MVVM.Navigation.Avalonia" Version="1.4.11383" />
     <PackageReference Include="Sanet.MVVM.Views.Avalonia" Version="1.4.11380" />
