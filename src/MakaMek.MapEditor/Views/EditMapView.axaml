@@ -3,14 +3,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:Sanet.MakaMek.MapEditor.ViewModels"
+             xmlns:controls="clr-namespace:Sanet.MakaMek.Avalonia.Controls;assembly=Sanet.MakaMek.Avalonia.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sanet.MakaMek.MapEditor.Views.EditMapView"
              x:CompileBindings="True"
              x:DataType="viewModels:EditMapViewModel">
     <Grid ColumnDefinitions="*,200">
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <Canvas x:Name="MapCanvas" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-        </ScrollViewer>
+        <controls:HexMap x:Name="MapCanvas"/>
         
         <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto" Background="#333333">
             <TextBlock Text="Toolbox" FontSize="18" FontWeight="Bold" Margin="10" Foreground="White" HorizontalAlignment="Center"/>
