@@ -20,4 +20,15 @@
     <PackageReference Include="Sanet.MVVM.Views.Avalonia" Version="1.4.11380" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Assets\avalonia-logo.ico" />
+    <AvaloniaResource Include="Assets\avalonia-logo.ico" />
+    <None Remove="Assets\terrain\clear.png" />
+    <AvaloniaResource Include="Assets\terrain\clear.png" />
+    <None Remove="Assets\terrain\heavywoods.png" />
+    <AvaloniaResource Include="Assets\terrain\heavywoods.png" />
+    <None Remove="Assets\terrain\lightwoods.png" />
+    <AvaloniaResource Include="Assets\terrain\lightwoods.png" />
+  </ItemGroup>
+
 </Project>

@@ -18,10 +18,12 @@ public class EditMapViewModel : BaseViewModel
     }
 
     private readonly IFileService _fileService;
+    public IImageService ImageService { get; }
 
-    public EditMapViewModel(IFileService fileService)
+    public EditMapViewModel(IFileService fileService, IImageService imageService)
     {
         _fileService = fileService;
+        ImageService = imageService;
     }
 
     public ObservableCollection<Terrain> AvailableTerrains { get; } = new();
