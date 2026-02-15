@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,23 +29,37 @@ public partial class App : Application
         services.RegisterViewModels();
 
         var serviceProvider = services.BuildServiceProvider();
+        
+        INavigationService navigationService;
+        MainMenuViewModel? viewModel;
 
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        switch (ApplicationLifetime)
         {
-            var navigationService = new NavigationService(desktop, serviceProvider);
-            RegisterViews(navigationService);
-            var viewModel = navigationService.GetViewModel<MainMenuViewModel>();
-            desktop.MainWindow = new MainWindow
+            case IClassicDesktopStyleApplicationLifetime desktop:
+                navigationService = new NavigationService(desktop, serviceProvider);
+                RegisterViews(navigationService);
+                viewModel = navigationService.GetViewModel<MainMenuViewModel>();
+                desktop.MainWindow = new MainWindow
+                {
+                    Content = new MainMenuView
+                    {
+                        ViewModel = viewModel
+                    }
+                };
+                break;
+            case ISingleViewApplicationLifetime singleViewPlatform:
             {
-                Content = new MainMenuView
+                var mainViewWrapper = new ContentControl();
+                navigationService =
+                    new SingleViewNavigationService(singleViewPlatform, mainViewWrapper, serviceProvider);
+                RegisterViews(navigationService);
+                viewModel = navigationService.GetViewModel<MainMenuViewModel>();
+                mainViewWrapper.Content = new MainMenuView()
                 {
                     ViewModel = viewModel
-                }
-            };
-        }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            // Placeholder for implementation
+                };
+                break;
+            }
         }
 
         base.OnFrameworkInitializationCompleted();

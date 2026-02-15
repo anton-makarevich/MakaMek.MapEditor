@@ -4,58 +4,49 @@ using Sanet.MakaMek.Map.Factories;
 using Sanet.MakaMek.Map.Generators;
 using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MVVM.Core.ViewModels;
-using Sanet.MVVM.Core.Services;
 
 namespace MakaMek.MapEditor.ViewModels;
 
 public class NewMapViewModel : BaseViewModel
 {
-    private readonly INavigationService _navigationService;
     private readonly IBattleMapFactory _mapFactory;
 
-    public NewMapViewModel(INavigationService navigationService, IBattleMapFactory mapFactory)
+    public NewMapViewModel(IBattleMapFactory mapFactory)
     {
-        _navigationService = navigationService;
         _mapFactory = mapFactory;
     }
 
-    private int _mapWidth = 15;
     public int MapWidth
     {
-        get => _mapWidth;
-        set => SetProperty(ref _mapWidth, value);
-    }
+        get;
+        set => SetProperty(ref field, value);
+    } = 15;
 
-    private int _mapHeight = 17;
     public int MapHeight
     {
-        get => _mapHeight;
-        set => SetProperty(ref _mapHeight, value);
-    }
+        get;
+        set => SetProperty(ref field, value);
+    } = 17;
 
-    private bool _isPreGenerated;
     public bool IsPreGenerated
     {
-        get => _isPreGenerated;
-        set => SetProperty(ref _isPreGenerated, value);
+        get;
+        set => SetProperty(ref field, value);
     }
 
-    private int _forestCoverage = 20;
     public int ForestCoverage
     {
-        get => _forestCoverage;
-        set => SetProperty(ref _forestCoverage, value);
-    }
+        get;
+        init => SetProperty(ref field, value);
+    } = 20;
 
-    private int _lightWoodsPercentage = 30;
     public int LightWoodsPercentage
     {
-        get => _lightWoodsPercentage;
-        set => SetProperty(ref _lightWoodsPercentage, value);
-    }
+        get;
+        init => SetProperty(ref field, value);
+    } = 30;
 
-    private ICommand? _createMapCommand;
-    public ICommand CreateMapCommand => _createMapCommand ??= new AsyncCommand(async () =>
+    public ICommand CreateMapCommand => field ??= new AsyncCommand(async () =>
     {
         ITerrainGenerator generator = !IsPreGenerated
             ? new SingleTerrainGenerator(MapWidth, MapHeight, new ClearTerrain())
@@ -67,11 +58,11 @@ public class NewMapViewModel : BaseViewModel
 
         var map = _mapFactory.GenerateMap(MapWidth, MapHeight, generator);
 
-        var editViewModel = _navigationService.GetViewModel<EditMapViewModel>();
+        var editViewModel = NavigationService.GetViewModel<EditMapViewModel>();
         if (editViewModel != null)
         {
             editViewModel.Initialize(map);
-            await _navigationService.NavigateToViewModelAsync(editViewModel);
+            await NavigationService.NavigateToViewModelAsync(editViewModel);
         }
     });
 }

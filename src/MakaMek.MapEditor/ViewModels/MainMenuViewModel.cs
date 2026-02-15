@@ -1,26 +1,26 @@
+using System.Text.Json;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
+using MakaMek.MapEditor.Services;
 using Sanet.MakaMek.Map.Data;
+using Sanet.MakaMek.Map.Factories;
 using Sanet.MVVM.Core.ViewModels;
-using Sanet.MVVM.Core.Services;
 
 namespace MakaMek.MapEditor.ViewModels;
 
 public class MainMenuViewModel : BaseViewModel
 {
-    private readonly INavigationService _navigationService;
-    private readonly Services.IFileService _fileService;
-    private readonly Sanet.MakaMek.Map.Factories.IBattleMapFactory _mapFactory;
+    private readonly IFileService _fileService;
+    private readonly IBattleMapFactory _mapFactory;
 
-    public MainMenuViewModel(INavigationService navigationService, Services.IFileService fileService, Sanet.MakaMek.Map.Factories.IBattleMapFactory mapFactory)
+    public MainMenuViewModel(IFileService fileService, IBattleMapFactory mapFactory)
     {
-        _navigationService = navigationService;
         _fileService = fileService;
         _mapFactory = mapFactory;
     }
 
     public ICommand CreateNewMapCommand => field ??= new AsyncCommand(() => 
-        _navigationService.NavigateToViewModelAsync<NewMapViewModel>());
+        NavigationService.NavigateToViewModelAsync<NewMapViewModel>());
 
     public ICommand LoadMapCommand => field ??= new AsyncCommand(async () =>
     {
@@ -28,15 +28,15 @@ public class MainMenuViewModel : BaseViewModel
         if (string.IsNullOrEmpty(content)) return;
 
 
-        var data = System.Text.Json.JsonSerializer.Deserialize<List<HexData>>(content);
+        var data = JsonSerializer.Deserialize<List<HexData>>(content);
         if (data != null)
         {
             var map = _mapFactory.CreateFromData(data);
-            var editViewModel = _navigationService.GetViewModel<EditMapViewModel>();
+            var editViewModel = NavigationService.GetViewModel<EditMapViewModel>();
             if (editViewModel != null)
             {
                 editViewModel.Initialize(map);
-                await _navigationService.NavigateToViewModelAsync(editViewModel);
+                await NavigationService.NavigateToViewModelAsync(editViewModel);
             }
         }
     });
