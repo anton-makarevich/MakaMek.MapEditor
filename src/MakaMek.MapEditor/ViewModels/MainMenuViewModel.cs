@@ -27,17 +27,23 @@ public class MainMenuViewModel : BaseViewModel
         var content = await _fileService.OpenFileAsync("Load Map");
         if (string.IsNullOrEmpty(content)) return;
 
-
-        var data = JsonSerializer.Deserialize<List<HexData>>(content);
-        if (data != null)
+        try
         {
-            var map = _mapFactory.CreateFromData(data);
-            var editViewModel = NavigationService.GetViewModel<EditMapViewModel>();
-            if (editViewModel != null)
+            var data = JsonSerializer.Deserialize<List<HexData>>(content);
+            if (data != null)
             {
-                editViewModel.Initialize(map);
-                await NavigationService.NavigateToViewModelAsync(editViewModel);
+                var map = _mapFactory.CreateFromData(data);
+                var editViewModel = NavigationService.GetViewModel<EditMapViewModel>();
+                if (editViewModel != null)
+                {
+                    editViewModel.Initialize(map);
+                    await NavigationService.NavigateToViewModelAsync(editViewModel);
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
         }
     });
 }
