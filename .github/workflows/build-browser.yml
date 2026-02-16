@@ -32,11 +32,8 @@ jobs:
       - name: Install WASM workload
         run: dotnet workload install wasm-tools
 
-      - name: Restore dependencies
-        run: dotnet restore src/MakaMek.MapEditor.Browser/MakaMek.MapEditor.Browser.csproj
-
       - name: Build Browser App
-        run: dotnet publish src/MakaMek.MapEditor.Browser/MakaMek.MapEditor.Browser.csproj -c Release -o ./publish
+        run: dotnet publish src/MakaMek.MapEditor.Browser/MakaMek.MapEditor.Browser.csproj -c Release --self-contained true -o ./publish
 
       # For tagged releases only
       - name: Create Release
@@ -65,7 +62,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./publish
+          path: ./publish/wwwroot
 
   deploy:
     environment:

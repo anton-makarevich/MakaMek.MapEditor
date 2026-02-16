@@ -15,7 +15,7 @@ sealed class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .UseDependencyInjection(services => {})
+            .UseDependencyInjection(_ => {})
             .WithInterFont()
             .LogToTrace();
 }
