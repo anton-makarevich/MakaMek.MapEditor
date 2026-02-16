@@ -3,7 +3,7 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Factories;
-using Sanet.MakaMek.MapEditor.Services;
+using Sanet.MakaMek.Services;
 using Sanet.MVVM.Core.ViewModels;
 
 namespace Sanet.MakaMek.MapEditor.ViewModels;

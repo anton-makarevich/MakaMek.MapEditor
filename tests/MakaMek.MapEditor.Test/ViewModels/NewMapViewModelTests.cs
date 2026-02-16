@@ -3,7 +3,6 @@ using NSubstitute;
 using Sanet.MakaMek.Map.Factories;
 using Sanet.MakaMek.Map.Generators;
 using Sanet.MakaMek.Map.Models;
-using Sanet.MakaMek.MapEditor.Services;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Services;
 using Sanet.MVVM.Core.Services;
