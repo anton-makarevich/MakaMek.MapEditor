@@ -5,15 +5,16 @@ using Avalonia.Platform.Storage;
 
 namespace Sanet.MakaMek.MapEditor.Services;
 
-public class FileService : IFileService
+public class AvaloniaFileService : IFileService
 {
     private TopLevel? GetTopLevel()
     {
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        return Application.Current?.ApplicationLifetime switch
         {
-            return TopLevel.GetTopLevel(desktop.MainWindow);
-        }
-        return null;
+            IClassicDesktopStyleApplicationLifetime desktop => TopLevel.GetTopLevel(desktop.MainWindow),
+            ISingleViewApplicationLifetime singleView => TopLevel.GetTopLevel(singleView.MainView),
+            _ => null
+        };
     }
 
     public async Task SaveFileAsync(string title, string defaultFileName, string content)
