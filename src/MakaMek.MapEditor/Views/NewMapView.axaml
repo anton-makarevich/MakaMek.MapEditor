@@ -5,19 +5,22 @@
              xmlns:viewModels="clr-namespace:Sanet.MakaMek.MapEditor.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sanet.MakaMek.MapEditor.Views.NewMapView"
+             x:CompileBindings="True"
              x:DataType="viewModels:NewMapViewModel">
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" Margin="20">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" Margin="20">
         <TextBlock Text="New Map Configuration" Grid.ColumnSpan="2" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
         
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Width:" VerticalAlignment="Center"/>
-        <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding MapWidth}" Minimum="5" Maximum="30" Margin="10,5"/>
+        <Slider Grid.Row="1" Grid.Column="1" Value="{Binding MapWidth}" Minimum="5" Maximum="30" Margin="10,5,10,0"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding MapWidth}" VerticalAlignment="Top"/>
         
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Height:" VerticalAlignment="Center"/>
-        <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding MapHeight}" Minimum="5" Maximum="34" Margin="10,5"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Height:" VerticalAlignment="Center"/>
+        <Slider Grid.Row="3" Grid.Column="1" Value="{Binding MapHeight}" Minimum="6" Maximum="34" Margin="10,5,10,0"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="{Binding MapHeight}" VerticalAlignment="Top"/>
         
-        <CheckBox Grid.Row="3" Grid.ColumnSpan="2" Content="Pre-generate Terrain" IsChecked="{Binding IsPreGenerated}" Margin="0,10"/>
+        <CheckBox Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="0" Content="Pre-generate Terrain" IsChecked="{Binding IsPreGenerated}" Margin="0,10"/>
         
-        <StackPanel Grid.Row="4" Grid.ColumnSpan="2" IsVisible="{Binding IsPreGenerated}" Spacing="10">
+        <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Grid.Column="0" IsVisible="{Binding IsPreGenerated}" Spacing="10">
             <TextBlock Text="Forest Coverage %"/>
             <Slider Value="{Binding ForestCoverage}" Minimum="0" Maximum="100"/>
             <TextBlock Text="{Binding ForestCoverage}"/>
@@ -27,6 +30,6 @@
             <TextBlock Text="{Binding LightWoodsPercentage}"/>
         </StackPanel>
         
-        <Button Grid.Row="5" Grid.ColumnSpan="2" Content="Create Map" Command="{Binding CreateMapCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,20,0,0"/>
+        <Button Grid.Row="7" Grid.ColumnSpan="2" Grid.Column="0" Content="Create Map" Command="{Binding CreateMapCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,20,0,0"/>
     </Grid>
 </UserControl>
