@@ -1,9 +1,9 @@
 using System.ComponentModel;
-using Avalonia.Input;
+using AsyncAwaitBestPractices;
+using Avalonia;
 using Avalonia.Media.Imaging;
 using Sanet.MakaMek.MapEditor.Controls;
 using Sanet.MakaMek.MapEditor.Models.Map;
-using Sanet.MakaMek.MapEditor.Services;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Services;
 using Sanet.MVVM.Views.Avalonia;
@@ -52,7 +52,6 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         foreach (var hex in ViewModel.Map.GetHexes())
         {
             var hexControl = new HexControl(hex, imageService);
-            hexControl.PointerPressed += HexControl_PointerPressed;
             MapCanvas.Children.Add(hexControl);
             if (hex.Coordinates.GetH() > maxX) maxX = hex.Coordinates.GetH();
             if (hex.Coordinates.GetV() > maxY) maxY = hex.Coordinates.GetV();
@@ -62,12 +61,14 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         MapCanvas.Height = maxY + HexCoordinatesPresentationExtensions.HexHeight*1.5;
     }
 
-    private void HexControl_PointerPressed(object? sender, PointerPressedEventArgs e)
+    private void MapCanvas_OnContentClicked(object? sender, Point clickedPosition)
     {
-        if (sender is HexControl hexControl && ViewModel != null)
-        {
-            ViewModel.HandleHexSelection(hexControl.Hex);
-            RenderMap(); // Brute force refresh for now (Optimization later)
-        }
+        var selectedHex = MapCanvas.Children
+            .OfType<HexControl>()
+            .FirstOrDefault(h => h.IsPointInside(clickedPosition));
+
+        if (selectedHex == null || ViewModel == null) return;
+        ViewModel.HandleHexSelection(selectedHex.Hex);
+        selectedHex.Render().SafeFireAndForget(onException: ex => Console.WriteLine(ex.Message));
     }
 }

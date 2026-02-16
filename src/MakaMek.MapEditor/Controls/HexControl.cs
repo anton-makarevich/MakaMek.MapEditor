@@ -127,4 +127,9 @@ public class HexControl : Panel
         // Check if the point is within the bounds
         return Bounds.Contains(point);
     }
+    
+    public async Task Render()
+    {
+        await UpdateTerrainImage();
+    }
 }

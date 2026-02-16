@@ -63,36 +63,7 @@ public class EditMapViewModel : BaseViewModel
     public void HandleHexSelection(Hex hex)
     {
         if (SelectedTerrain == null) return;
-
-        // Try to modify terrains
-        // hex.Terrains is likely a list
-        // We use reflection or dynamic if unsure
-
-        var terrainsProp = hex.GetType().GetProperty("Terrains");
-        if (terrainsProp != null)
-        {
-            var val = terrainsProp.GetValue(hex);
-            if (val is System.Collections.IList list)
-            {
-                list.Clear();
-                var newTerrain = Activator.CreateInstance(SelectedTerrain.GetType());
-                list.Add(newTerrain);
-            }
-        }
-        else
-        {
-            // Try GetTerrains method?
-            // HexControl uses GetTerrains(). That implies it's a method?
-            // HexControl: var terrain = _hex.GetTerrains().FirstOrDefault();
-            // If it's a method, maybe there is SetTerrains or similar?
-            // Or maybe Terrains is private field backing GetTerrains?
-            // If we can't modify, we might need to recreate the hex.
-            // But BattleMap stores hexes.
-            // Let's assume there is a way or I cannot implement it blindly.
-            // But user asked to use reflection to load available terrains.
-            // I'll assume for now I can replace it.
-            // Let's try casting to dynamic.
-        }
+        hex.ReplaceTerrains([SelectedTerrain]);
     }
 
     public ICommand ExportMapCommand => field ??= new AsyncCommand(async () =>
