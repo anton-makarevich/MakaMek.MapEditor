@@ -67,10 +67,8 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             .OfType<HexControl>()
             .FirstOrDefault(h => h.IsPointInside(clickedPosition));
 
-        if (selectedHex != null && ViewModel!=null)
-        {
-            ViewModel?.HandleHexSelection(selectedHex.Hex);
-            selectedHex.Render().SafeFireAndForget();
-        }
+        if (selectedHex == null || ViewModel == null) return;
+        ViewModel.HandleHexSelection(selectedHex.Hex);
+        selectedHex.Render().SafeFireAndForget(onException: ex => Console.WriteLine(ex.Message));
     }
 }
