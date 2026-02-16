@@ -1,9 +1,11 @@
+using AsyncAwaitBestPractices.MVVM;
 using NSubstitute;
 using Sanet.MakaMek.Map.Factories;
 using Sanet.MakaMek.Map.Generators;
 using Sanet.MakaMek.Map.Models;
-using Sanet.MakaMek.Map.Models.Terrains;
+using Sanet.MakaMek.MapEditor.Services;
 using Sanet.MakaMek.MapEditor.ViewModels;
+using Sanet.MakaMek.Services;
 using Sanet.MVVM.Core.Services;
 using Shouldly;
 using Xunit;
@@ -144,7 +146,7 @@ public class NewMapViewModelTests
         _sut.IsPreGenerated = false;
         _sut.MapWidth = 10;
         _sut.MapHeight = 12;
-        var map = new BattleMap();
+        var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             Substitute.For<IFileService>(),
             Substitute.For<IImageService>());
@@ -154,7 +156,7 @@ public class NewMapViewModelTests
         _navigationService.GetViewModel<EditMapViewModel>().Returns(editViewModel);
 
         // Act
-        await _sut.CreateMapCommand.ExecuteAsync(null);
+        await ((AsyncCommand)_sut.CreateMapCommand).ExecuteAsync();
 
         // Assert
         _mapFactory.Received(1).GenerateMap(
@@ -172,7 +174,7 @@ public class NewMapViewModelTests
         _sut.MapHeight = 12;
         _sut.ForestCoverage = 40;
         _sut.LightWoodsPercentage = 50;
-        var map = new BattleMap();
+        var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             Substitute.For<IFileService>(),
             Substitute.For<IImageService>());
@@ -182,7 +184,7 @@ public class NewMapViewModelTests
         _navigationService.GetViewModel<EditMapViewModel>().Returns(editViewModel);
 
         // Act
-        await _sut.CreateMapCommand.ExecuteAsync(null);
+        await ((AsyncCommand)_sut.CreateMapCommand).ExecuteAsync();
 
         // Assert
         _mapFactory.Received(1).GenerateMap(
@@ -195,7 +197,7 @@ public class NewMapViewModelTests
     public async Task CreateMapCommand_ShouldInitializeEditViewModelWithGeneratedMap()
     {
         // Arrange
-        var map = new BattleMap();
+        var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             Substitute.For<IFileService>(),
             Substitute.For<IImageService>());
@@ -205,7 +207,7 @@ public class NewMapViewModelTests
         _navigationService.GetViewModel<EditMapViewModel>().Returns(editViewModel);
 
         // Act
-        await _sut.CreateMapCommand.ExecuteAsync(null);
+        await ((AsyncCommand)_sut.CreateMapCommand).ExecuteAsync();
 
         // Assert
         editViewModel.Received(1).Initialize(map);
@@ -215,7 +217,7 @@ public class NewMapViewModelTests
     public async Task CreateMapCommand_ShouldNavigateToEditViewModel()
     {
         // Arrange
-        var map = new BattleMap();
+        var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             Substitute.For<IFileService>(),
             Substitute.For<IImageService>());
@@ -225,7 +227,7 @@ public class NewMapViewModelTests
         _navigationService.GetViewModel<EditMapViewModel>().Returns(editViewModel);
 
         // Act
-        await _sut.CreateMapCommand.ExecuteAsync(null);
+        await ((AsyncCommand)_sut.CreateMapCommand).ExecuteAsync();
 
         // Assert
         await _navigationService.Received(1).NavigateToViewModelAsync(editViewModel);
@@ -235,13 +237,13 @@ public class NewMapViewModelTests
     public async Task CreateMapCommand_WhenEditViewModelIsNull_ShouldNotNavigate()
     {
         // Arrange
-        var map = new BattleMap();
+        var map = new BattleMap(1,1);
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
         _navigationService.GetViewModel<EditMapViewModel>().Returns((EditMapViewModel?)null);
 
         // Act
-        await _sut.CreateMapCommand.ExecuteAsync(null);
+        await ((AsyncCommand)_sut.CreateMapCommand).ExecuteAsync();
 
         // Assert
         await _navigationService.DidNotReceive().NavigateToViewModelAsync(Arg.Any<EditMapViewModel>());

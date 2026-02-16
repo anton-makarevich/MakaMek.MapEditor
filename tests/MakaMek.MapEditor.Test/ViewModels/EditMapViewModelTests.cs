@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Text.Json;
+using AsyncAwaitBestPractices.MVVM;
 using NSubstitute;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Models;
@@ -53,7 +54,7 @@ public class EditMapViewModelTests
     public void Initialize_ShouldSetMap()
     {
         // Arrange
-        var map = new BattleMap();
+        var map = new BattleMap(1,1);
 
         // Act
         _sut.Initialize(map);
@@ -66,7 +67,7 @@ public class EditMapViewModelTests
     public void Initialize_ShouldLoadTerrains()
     {
         // Arrange
-        var map = new BattleMap();
+        var map = new BattleMap(1,1);
 
         // Act
         _sut.Initialize(map);
@@ -79,7 +80,7 @@ public class EditMapViewModelTests
     public void Initialize_ShouldSetFirstTerrainAsSelected()
     {
         // Arrange
-        var map = new BattleMap();
+        var map = new BattleMap(1,1);
 
         // Act
         _sut.Initialize(map);
@@ -93,7 +94,7 @@ public class EditMapViewModelTests
     public void Initialize_ShouldLoadAllConcreteTerrainTypes()
     {
         // Arrange
-        var map = new BattleMap();
+        var map = new BattleMap(1,1);
 
         // Act
         _sut.Initialize(map);
@@ -107,7 +108,7 @@ public class EditMapViewModelTests
     public void SelectedTerrain_WhenSet_ShouldUpdateValue()
     {
         // Arrange
-        var map = new BattleMap();
+        var map = new BattleMap(1,1);
         _sut.Initialize(map);
         var newTerrain = new ClearTerrain();
 
@@ -122,36 +123,40 @@ public class EditMapViewModelTests
     public void HandleHexSelection_WhenSelectedTerrainIsNull_ShouldNotModifyHex()
     {
         // Arrange
-        var hex = Substitute.For<Hex>(0, 0);
+        var hex = new Hex(new HexCoordinates(0, 0));
+        var initialTerrain = new ClearTerrain();
+        hex.AddTerrain(initialTerrain);
         _sut.SelectedTerrain = null;
 
         // Act
         _sut.HandleHexSelection(hex);
 
         // Assert
-        hex.DidNotReceive().ReplaceTerrains(Arg.Any<Terrain[]>());
+        hex.GetTerrains().First().ShouldBe(initialTerrain);
     }
 
     [Fact]
     public void HandleHexSelection_WhenSelectedTerrainIsSet_ShouldReplaceHexTerrains()
     {
         // Arrange
-        var hex = Substitute.For<Hex>(0, 0);
+        var hex = new Hex(new HexCoordinates(0, 0));
         var terrain = new ClearTerrain();
+        var initialTerrain = new LightWoodsTerrain();
+        hex.AddTerrain(initialTerrain);
         _sut.SelectedTerrain = terrain;
 
         // Act
         _sut.HandleHexSelection(hex);
-
+ 
         // Assert
-        hex.Received(1).ReplaceTerrains(Arg.Is<Terrain[]>(t => t.Length == 1 && t[0] == terrain));
+        hex.GetTerrains().First().ShouldBe(terrain);
     }
 
     [Fact]
     public async Task ExportMapCommand_WhenMapIsNull_ShouldNotSaveFile()
     {
         // Act
-        await _sut.ExportMapCommand.ExecuteAsync(null);
+        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
 
         // Assert
         await _fileService.DidNotReceive().SaveFileAsync(
@@ -164,16 +169,20 @@ public class EditMapViewModelTests
     public async Task ExportMapCommand_WhenMapIsSet_ShouldConvertMapToData()
     {
         // Arrange
-        var map = Substitute.For<BattleMap>();
+        var map = Substitute.For<IBattleMap>();
         var hexData = new List<HexData>
         {
-            new() { X = 0, Y = 0, TerrainTypes = new List<string> { "ClearTerrain" } }
+            new() { Coordinates = new HexCoordinateData(0, 0),
+                TerrainTypes =
+                [
+                    MakaMekTerrains.Clear
+                ] }
         };
         map.ToData().Returns(hexData);
         _sut.Initialize(map);
 
         // Act
-        await _sut.ExportMapCommand.ExecuteAsync(null);
+        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
 
         // Assert
         map.Received(1).ToData();
@@ -183,10 +192,14 @@ public class EditMapViewModelTests
     public async Task ExportMapCommand_WhenMapIsSet_ShouldSerializeToJson()
     {
         // Arrange
-        var map = Substitute.For<BattleMap>();
+        var map = Substitute.For<IBattleMap>();
         var hexData = new List<HexData>
         {
-            new() { X = 0, Y = 0, TerrainTypes = new List<string> { "ClearTerrain" } }
+            new() { Coordinates = new HexCoordinateData(2, 3),
+                TerrainTypes =
+                [
+                    MakaMekTerrains.Clear
+                ] }
         };
         map.ToData().Returns(hexData);
         _sut.Initialize(map);
@@ -198,31 +211,35 @@ public class EditMapViewModelTests
             Arg.Do<string>(content => savedContent = content));
 
         // Act
-        await _sut.ExportMapCommand.ExecuteAsync(null);
+        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
 
         // Assert
         savedContent.ShouldNotBeNull();
         var deserializedData = JsonSerializer.Deserialize<List<HexData>>(savedContent);
         deserializedData.ShouldNotBeNull();
         deserializedData.Count.ShouldBe(1);
-        deserializedData[0].X.ShouldBe(0);
-        deserializedData[0].Y.ShouldBe(0);
+        deserializedData[0].Coordinates.Q.ShouldBe(2);
+        deserializedData[0].Coordinates.R.ShouldBe(3);
     }
 
     [Fact]
     public async Task ExportMapCommand_ShouldSaveWithCorrectParameters()
     {
         // Arrange
-        var map = Substitute.For<BattleMap>();
+        var map = Substitute.For<IBattleMap>();
         var hexData = new List<HexData>
         {
-            new() { X = 0, Y = 0, TerrainTypes = new List<string> { "ClearTerrain" } }
+            new() { Coordinates = new HexCoordinateData(0, 0),
+                TerrainTypes =
+                [
+                    MakaMekTerrains.Clear
+                ] }
         };
         map.ToData().Returns(hexData);
         _sut.Initialize(map);
 
         // Act
-        await _sut.ExportMapCommand.ExecuteAsync(null);
+        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
 
         // Assert
         await _fileService.Received(1).SaveFileAsync(
@@ -235,10 +252,14 @@ public class EditMapViewModelTests
     public async Task ExportMapCommand_ShouldSerializeWithIndentation()
     {
         // Arrange
-        var map = Substitute.For<BattleMap>();
+        var map = Substitute.For<IBattleMap>();
         var hexData = new List<HexData>
         {
-            new() { X = 0, Y = 0, TerrainTypes = new List<string> { "ClearTerrain" } }
+            new() { Coordinates = new HexCoordinateData(0, 0),
+                TerrainTypes =
+                [
+                    MakaMekTerrains.Clear
+                ] }
         };
         map.ToData().Returns(hexData);
         _sut.Initialize(map);
@@ -250,7 +271,7 @@ public class EditMapViewModelTests
             Arg.Do<string>(content => savedContent = content));
 
         // Act
-        await _sut.ExportMapCommand.ExecuteAsync(null);
+        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
 
         // Assert
         savedContent.ShouldNotBeNull();
@@ -267,8 +288,11 @@ public class EditMapViewModelTests
     public void HandleHexSelection_WithMultipleCalls_ShouldUpdateHexEachTime()
     {
         // Arrange
-        var hex1 = Substitute.For<Hex>(0, 0);
-        var hex2 = Substitute.For<Hex>(1, 1);
+        var hex1 = new Hex(new HexCoordinates(0, 0));
+        var hex2 = new Hex(new HexCoordinates(1, 1));
+        var initialTerrain = new LightWoodsTerrain();
+        hex1.AddTerrain(initialTerrain);
+        hex2.AddTerrain(initialTerrain);
         var terrain = new ClearTerrain();
         _sut.SelectedTerrain = terrain;
 
@@ -277,7 +301,7 @@ public class EditMapViewModelTests
         _sut.HandleHexSelection(hex2);
 
         // Assert
-        hex1.Received(1).ReplaceTerrains(Arg.Any<Terrain[]>());
-        hex2.Received(1).ReplaceTerrains(Arg.Any<Terrain[]>());
+        hex1.GetTerrains().First().ShouldBe(terrain);
+        hex2.GetTerrains().First().ShouldBe(terrain);
     }
 }
