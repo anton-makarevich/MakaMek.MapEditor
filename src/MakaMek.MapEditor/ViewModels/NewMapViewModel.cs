@@ -16,6 +16,12 @@ public class NewMapViewModel : BaseViewModel
         _mapFactory = mapFactory;
     }
 
+    public int MapWidthMin => 5;
+    public int MapWidthMax => 30;
+    
+    public int MapHeightMin => 6;
+    public int MapHeightMax => 34;
+    
     public int MapWidth
     {
         get;
