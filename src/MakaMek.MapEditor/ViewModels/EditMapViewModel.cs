@@ -4,7 +4,6 @@ using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
-using Sanet.MakaMek.MapEditor.Services;
 using Sanet.MakaMek.Services;
 using Sanet.MVVM.Core.ViewModels;
 

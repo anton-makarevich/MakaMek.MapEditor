@@ -32,7 +32,7 @@ jobs:
           dotnet-version: 10.x
 
       - name: Run MapEditor tests
-        run: dotnet test tests/MakaMek.MapEditor.Test/MakaMek.MapEditor.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:ExcludeByAttribute=GeneratedCodeAttribute /p:Include=[Sanet.MakaMek.MapEditor]*
+        run: dotnet test tests/MakaMek.MapEditor.Test/MakaMek.MapEditor.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:ExcludeByAttribute=GeneratedCodeAttribute /p:Include=[Sanet.MakaMek.MapEditor.ViewModels]*
 
       - name: Upload MapEditor tests results
         uses: codecov/codecov-action@v5
