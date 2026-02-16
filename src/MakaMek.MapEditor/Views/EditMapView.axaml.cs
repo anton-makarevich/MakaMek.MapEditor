@@ -2,8 +2,8 @@ using System.ComponentModel;
 using AsyncAwaitBestPractices;
 using Avalonia;
 using Avalonia.Media.Imaging;
+using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.MapEditor.Controls;
-using Sanet.MakaMek.MapEditor.Models.Map;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Services;
 using Sanet.MVVM.Views.Avalonia;
@@ -53,12 +53,12 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         {
             var hexControl = new HexControl(hex, imageService);
             MapCanvas.Children.Add(hexControl);
-            if (hex.Coordinates.GetH() > maxX) maxX = hex.Coordinates.GetH();
-            if (hex.Coordinates.GetV() > maxY) maxY = hex.Coordinates.GetV();
+            if (hex.Coordinates.H > maxX) maxX = hex.Coordinates.H;
+            if (hex.Coordinates.V > maxY) maxY = hex.Coordinates.V;
         }
         
-        MapCanvas.Width = maxX+ HexCoordinatesPresentationExtensions.HexWidth*0.5;
-        MapCanvas.Height = maxY + HexCoordinatesPresentationExtensions.HexHeight*1.5;
+        MapCanvas.Width = maxX+ HexCoordinatesPixelExtensions.HexWidth*0.5;
+        MapCanvas.Height = maxY + HexCoordinatesPixelExtensions.HexHeight*1.5;
     }
 
     private void MapCanvas_OnContentClicked(object? sender, Point clickedPosition)
