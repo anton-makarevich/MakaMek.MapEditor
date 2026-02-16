@@ -16,6 +16,7 @@ function initDB() {
         
         request.onerror = () => {
             console.error('Failed to open IndexedDB:', request.error);
+            dbPromise = null;
             reject(request.error);
         };
         

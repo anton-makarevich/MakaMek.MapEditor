@@ -52,7 +52,7 @@
 }
 
 .avalonia-splash.splash-close {
-    transition: opacity 200ms, display 200ms;
-    display: none;
+    transition: opacity 200ms ease-out;
+    visibility: hidden;
     opacity: 0;
 }

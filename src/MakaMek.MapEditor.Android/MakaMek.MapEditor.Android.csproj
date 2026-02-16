@@ -4,6 +4,7 @@
         <TargetFramework>net10.0-android</TargetFramework>
         <SupportedOSPlatformVersion>24</SupportedOSPlatformVersion>
         <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
         <ApplicationId>nl.sanetby.makamek.mapeditor</ApplicationId>
         <!-- Use version from Directory.Build.props -->
         <ApplicationVersion>$([MSBuild]::ValueOrDefault($([System.Text.RegularExpressions.Regex]::Match($(Version), ^\d+\.\d+\.\d+).Value.Replace('.', '')), 0))</ApplicationVersion>

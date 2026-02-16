@@ -1,6 +1,6 @@
 using Avalonia;
 using Avalonia.iOS;
-using Foundation;
+using Sanet.MVVM.DI.Avalonia.Extensions;
 
 namespace Sanet.MakaMek.MapEditor.iOS;
 
@@ -15,6 +15,7 @@ public partial class AppDelegate : AvaloniaAppDelegate<App>
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
         return base.CustomizeAppBuilder(builder)
+            .UseDependencyInjection(_ => {})
             .WithInterFont();
     }
 }
