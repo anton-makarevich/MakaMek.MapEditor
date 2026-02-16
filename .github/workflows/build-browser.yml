@@ -33,7 +33,7 @@ jobs:
         run: dotnet workload install wasm-tools
 
       - name: Build Browser App
-        run: dotnet publish src/MakaMek.MapEditor.Browser/MakaMek.MapEditor.Browser.csproj -c Release -o ./publish
+        run: dotnet publish src/MakaMek.MapEditor.Browser/MakaMek.MapEditor.Browser.csproj -c Release --self-contained true -o ./publish
         
       - name: List published files
         run: ls -la ./publish/wwwroot
