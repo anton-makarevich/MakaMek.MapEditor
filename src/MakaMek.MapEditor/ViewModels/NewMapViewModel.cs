@@ -16,16 +16,22 @@ public class NewMapViewModel : BaseViewModel
         _mapFactory = mapFactory;
     }
 
+    public int MapWidthMin => 5;
+    public int MapWidthMax => 30;
+    
+    public int MapHeightMin => 6;
+    public int MapHeightMax => 34;
+    
     public int MapWidth
     {
         get;
-        set => SetProperty(ref field, value);
+        set => SetProperty(ref field, Math.Clamp(value, MapWidthMin, MapWidthMax));
     } = 15;
 
     public int MapHeight
     {
         get;
-        set => SetProperty(ref field, value);
+        set => SetProperty(ref field, Math.Clamp(value, MapHeightMin, MapHeightMax));
     } = 17;
 
     public bool IsPreGenerated

@@ -12,7 +12,7 @@ namespace Sanet.MakaMek.MapEditor.ViewModels;
 
 public class EditMapViewModel : BaseViewModel
 {
-    public BattleMap? Map
+    public IBattleMap? Map
     {
         get;
         private set => SetProperty(ref field, value);
@@ -35,7 +35,7 @@ public class EditMapViewModel : BaseViewModel
         set => SetProperty(ref field, value);
     }
 
-    public void Initialize(BattleMap map)
+    public void Initialize(IBattleMap map)
     {
         Map = map;
         LoadTerrains();

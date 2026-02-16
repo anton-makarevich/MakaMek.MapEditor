@@ -6,4 +6,7 @@
     <Project Path="src/MakaMek.MapEditor.iOS/MakaMek.MapEditor.iOS.csproj" />
     <Project Path="src/MakaMek.MapEditor/MakaMek.MapEditor.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MakaMek.MapEditor.Test/MakaMek.MapEditor.Test.csproj" />
+  </Folder>
 </Solution>
