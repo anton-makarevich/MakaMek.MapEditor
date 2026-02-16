@@ -13,7 +13,6 @@
   <PropertyGroup>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>
-    <TrimmerDefaultAction>link</TrimmerDefaultAction>
   </PropertyGroup>
   <ItemGroup>
     <!-- Preserve the entire command model namespace -->
