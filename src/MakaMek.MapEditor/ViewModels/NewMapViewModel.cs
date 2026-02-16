@@ -25,13 +25,13 @@ public class NewMapViewModel : BaseViewModel
     public int MapWidth
     {
         get;
-        set => SetProperty(ref field, value);
+        set => SetProperty(ref field, Math.Clamp(value, MapWidthMin, MapWidthMax));
     } = 15;
 
     public int MapHeight
     {
         get;
-        set => SetProperty(ref field, value);
+        set => SetProperty(ref field, Math.Clamp(value, MapHeightMin, MapHeightMax));
     } = 17;
 
     public bool IsPreGenerated
