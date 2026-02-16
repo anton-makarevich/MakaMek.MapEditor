@@ -53,5 +53,7 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
+publish/
+
 # JetBrains Rider
 .idea/
