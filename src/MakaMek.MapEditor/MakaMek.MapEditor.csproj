@@ -21,7 +21,7 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.12" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.3" />
-    <PackageReference Include="Sanet.MakaMek.Map" Version="0.52.2" />
+    <PackageReference Include="Sanet.MakaMek.Map" Version="0.52.5" />
     <PackageReference Include="Sanet.MakaMek.Services" Version="0.52.3" />
     <PackageReference Include="Sanet.MakaMek.Services.Avalonia" Version="0.52.3" />
     <PackageReference Include="Sanet.MakaMek.Avalonia.Controls" Version="0.52.4" />
