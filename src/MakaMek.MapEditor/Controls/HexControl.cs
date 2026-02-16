@@ -7,7 +7,6 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Sanet.MakaMek.Map.Models;
-using Sanet.MakaMek.MapEditor.Models.Map;
 using Sanet.MakaMek.Services;
 
 namespace Sanet.MakaMek.MapEditor.Controls;
@@ -29,8 +28,8 @@ public class HexControl : Panel
 
     private static Points GetHexPoints()
     {
-        const double width = HexCoordinatesPresentationExtensions.HexWidth;
-        const double height = HexCoordinatesPresentationExtensions.HexHeight;
+        const double width = HexCoordinatesPixelExtensions.HexWidth;
+        const double height = HexCoordinatesPixelExtensions.HexHeight;
 
         return new Points([
             new Point(0, height * 0.5),           // Left
@@ -46,8 +45,8 @@ public class HexControl : Panel
     {
         _hex = hex;
         _imageService = imageService;
-        Width = HexCoordinatesPresentationExtensions.HexWidth;
-        Height = HexCoordinatesPresentationExtensions.HexHeight;
+        Width = HexCoordinatesPixelExtensions.HexWidth;
+        Height = HexCoordinatesPixelExtensions.HexHeight;
         
         // Terrain image (bottom layer)
         _terrainImage = new Image
@@ -87,8 +86,8 @@ public class HexControl : Panel
             .Subscribe(_ => Highlight(_hex.IsHighlighted));
         
         // Set position
-        SetValue(Canvas.LeftProperty, hex.Coordinates.GetH());
-        SetValue(Canvas.TopProperty, hex.Coordinates.GetV());
+        SetValue(Canvas.LeftProperty, hex.Coordinates.H);
+        SetValue(Canvas.TopProperty, hex.Coordinates.V);
 
         UpdateTerrainImage().SafeFireAndForget();
     }
