@@ -2,8 +2,8 @@ using System.ComponentModel;
 using AsyncAwaitBestPractices;
 using Avalonia;
 using Avalonia.Media.Imaging;
+using Sanet.MakaMek.Avalonia.Controls;
 using Sanet.MakaMek.Map.Models;
-using Sanet.MakaMek.MapEditor.Controls;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Services;
 using Sanet.MVVM.Views.Avalonia;
@@ -51,7 +51,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
 
         foreach (var hex in ViewModel.Map.GetHexes())
         {
-            var hexControl = new HexControl(hex, imageService);
+            var hexControl = new HexControl(hex, imageService, ViewModel.Logger);
             MapCanvas.Children.Add(hexControl);
             if (hex.Coordinates.H > maxX) maxX = hex.Coordinates.H;
             if (hex.Coordinates.V > maxY) maxY = hex.Coordinates.V;

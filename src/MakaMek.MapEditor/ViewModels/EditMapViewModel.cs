@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
+using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MakaMek.Services;
@@ -20,11 +21,14 @@ public class EditMapViewModel : BaseViewModel
     private readonly IFileService _fileService;
     public IImageService ImageService { get; }
 
-    public EditMapViewModel(IFileService fileService, IImageService imageService)
+    public EditMapViewModel(IFileService fileService, IImageService imageService, ILogger<EditMapViewModel> logger)
     {
         _fileService = fileService;
         ImageService = imageService;
+        Logger = logger;
     }
+    
+    public ILogger<EditMapViewModel> Logger { get; }
 
     public ObservableCollection<Terrain> AvailableTerrains { get; } = new();
 
