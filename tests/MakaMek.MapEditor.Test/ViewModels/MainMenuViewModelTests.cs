@@ -15,16 +15,15 @@ namespace MakaMek.MapEditor.Test.ViewModels;
 
 public class MainMenuViewModelTests
 {
-    private readonly IFileService _fileService;
-    private readonly IBattleMapFactory _mapFactory;
-    private readonly INavigationService _navigationService;
+    private readonly IBattleMapFactory _mapFactory = Substitute.For<IBattleMapFactory>();
+    private readonly INavigationService _navigationService = Substitute.For<INavigationService>();
     private readonly MainMenuViewModel _sut;
+    private readonly ILogger<EditMapViewModel> _logger = Substitute.For<ILogger<EditMapViewModel>>();
+    private readonly IImageService _imageService = Substitute.For<IImageService>();
+    private readonly IFileService _fileService = Substitute.For<IFileService>();
 
     public MainMenuViewModelTests()
     {
-        _fileService = Substitute.For<IFileService>();
-        _mapFactory = Substitute.For<IBattleMapFactory>();
-        _navigationService = Substitute.For<INavigationService>();
         _sut = new MainMenuViewModel(_fileService, _mapFactory);
         _sut.SetNavigationService(_navigationService);
     }
@@ -110,8 +109,8 @@ public class MainMenuViewModelTests
         var json = JsonSerializer.Serialize(hexData);
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
-            Substitute.For<IFileService>(),
-            Substitute.For<IImageService>(), Substitute.For<ILogger<EditMapViewModel>>());
+            _fileService,
+            _imageService, _logger);
 
         _fileService.OpenFileAsync("Load Map").Returns(json);
         _mapFactory.CreateFromData(Arg.Any<List<HexData>>()).Returns(map);
@@ -139,8 +138,8 @@ public class MainMenuViewModelTests
         var json = JsonSerializer.Serialize(hexData);
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
-            Substitute.For<IFileService>(),
-            Substitute.For<IImageService>(), Substitute.For<ILogger<EditMapViewModel>>());
+            _fileService,
+            _imageService, _logger);
 
         _fileService.OpenFileAsync("Load Map").Returns(json);
         _mapFactory.CreateFromData(Arg.Any<List<HexData>>()).Returns(map);

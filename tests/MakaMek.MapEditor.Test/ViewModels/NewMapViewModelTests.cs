@@ -14,14 +14,15 @@ namespace MakaMek.MapEditor.Test.ViewModels;
 
 public class NewMapViewModelTests
 {
-    private readonly IBattleMapFactory _mapFactory;
-    private readonly INavigationService _navigationService;
+    private readonly IBattleMapFactory _mapFactory = Substitute.For<IBattleMapFactory>();
+    private readonly INavigationService _navigationService = Substitute.For<INavigationService>();
     private readonly NewMapViewModel _sut;
+    private readonly ILogger<EditMapViewModel> _logger = Substitute.For<ILogger<EditMapViewModel>>();
+    private readonly IImageService _imageService = Substitute.For<IImageService>();
+    private readonly IFileService _fileService = Substitute.For<IFileService>();
 
     public NewMapViewModelTests()
     {
-        _mapFactory = Substitute.For<IBattleMapFactory>();
-        _navigationService = Substitute.For<INavigationService>();
         _sut = new NewMapViewModel(_mapFactory);
         _sut.SetNavigationService(_navigationService);
     }
@@ -148,8 +149,8 @@ public class NewMapViewModelTests
         _sut.MapHeight = 12;
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
-            Substitute.For<IFileService>(),
-            Substitute.For<IImageService>(), Substitute.For<ILogger<EditMapViewModel>>());
+            _fileService,
+            _imageService, _logger);
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
@@ -176,8 +177,8 @@ public class NewMapViewModelTests
         _sut.LightWoodsPercentage = 50;
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
-            Substitute.For<IFileService>(),
-            Substitute.For<IImageService>(), Substitute.For<ILogger<EditMapViewModel>>());
+            _fileService,
+            _imageService, _logger);
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
@@ -199,8 +200,8 @@ public class NewMapViewModelTests
         // Arrange
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
-            Substitute.For<IFileService>(),
-            Substitute.For<IImageService>(), Substitute.For<ILogger<EditMapViewModel>>());
+            _fileService,
+            _imageService, _logger);
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
@@ -219,8 +220,8 @@ public class NewMapViewModelTests
         // Arrange
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
-            Substitute.For<IFileService>(),
-            Substitute.For<IImageService>(), Substitute.For<ILogger<EditMapViewModel>>());
+            _fileService,
+            _imageService, _logger);
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
