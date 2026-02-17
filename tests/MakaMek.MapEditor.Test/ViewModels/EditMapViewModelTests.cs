@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using AsyncAwaitBestPractices.MVVM;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Models;
@@ -14,15 +15,14 @@ namespace MakaMek.MapEditor.Test.ViewModels;
 
 public class EditMapViewModelTests
 {
-    private readonly IFileService _fileService;
-    private readonly IImageService _imageService;
+    private readonly IFileService _fileService = Substitute.For<IFileService>();
+    private readonly IImageService _imageService = Substitute.For<IImageService>();
     private readonly EditMapViewModel _sut;
+    private readonly ILogger<EditMapViewModel> _logger = Substitute.For<ILogger<EditMapViewModel>>();
 
     public EditMapViewModelTests()
     {
-        _fileService = Substitute.For<IFileService>();
-        _imageService = Substitute.For<IImageService>();
-        _sut = new EditMapViewModel(_fileService, _imageService);
+        _sut = new EditMapViewModel(_fileService, _imageService, _logger);
     }
 
     [Fact]
@@ -41,6 +41,12 @@ public class EditMapViewModelTests
     public void AvailableTerrains_ShouldBeEmpty_WhenNotInitialized()
     {
         _sut.AvailableTerrains.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Logger_ShouldBeAccessible()
+    {
+        _sut.Logger.ShouldBe(_logger);
     }
 
     [Fact]

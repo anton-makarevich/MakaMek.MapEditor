@@ -21,10 +21,12 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.12" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.3" />
-    <PackageReference Include="Sanet.MakaMek.Map" Version="0.52.8" />
-    <PackageReference Include="Sanet.MakaMek.Services" Version="0.52.7" />
-    <PackageReference Include="Sanet.MakaMek.Services.Avalonia" Version="0.52.7" />
-    <PackageReference Include="Sanet.MakaMek.Avalonia.Controls" Version="0.52.6" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.3" />
+    <PackageReference Include="Sanet.MakaMek.Map" Version="0.52.9" />
+    <PackageReference Include="Sanet.MakaMek.Services" Version="0.52.9" />
+    <PackageReference Include="Sanet.MakaMek.Services.Avalonia" Version="0.52.9" />
+    <PackageReference Include="Sanet.MakaMek.Avalonia.Controls" Version="0.52.9" />
     <PackageReference Include="Sanet.MVVM.DI.Avalonia" Version="1.4.1138" />
     <PackageReference Include="Sanet.MVVM.Navigation.Avalonia" Version="1.4.11383" />
     <PackageReference Include="Sanet.MVVM.Views.Avalonia" Version="1.4.11380" />
