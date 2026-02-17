@@ -1,4 +1,5 @@
 using AsyncAwaitBestPractices.MVVM;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Sanet.MakaMek.Map.Factories;
 using Sanet.MakaMek.Map.Generators;
@@ -148,7 +149,7 @@ public class NewMapViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             Substitute.For<IFileService>(),
-            Substitute.For<IImageService>());
+            Substitute.For<IImageService>(), Substitute.For<ILogger<EditMapViewModel>>());
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
@@ -176,7 +177,7 @@ public class NewMapViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             Substitute.For<IFileService>(),
-            Substitute.For<IImageService>());
+            Substitute.For<IImageService>(), Substitute.For<ILogger<EditMapViewModel>>());
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
@@ -199,7 +200,7 @@ public class NewMapViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             Substitute.For<IFileService>(),
-            Substitute.For<IImageService>());
+            Substitute.For<IImageService>(), Substitute.For<ILogger<EditMapViewModel>>());
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
@@ -219,7 +220,7 @@ public class NewMapViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             Substitute.For<IFileService>(),
-            Substitute.For<IImageService>());
+            Substitute.For<IImageService>(), Substitute.For<ILogger<EditMapViewModel>>());
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);

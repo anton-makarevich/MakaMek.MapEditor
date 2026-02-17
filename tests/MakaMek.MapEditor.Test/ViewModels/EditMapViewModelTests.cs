@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using AsyncAwaitBestPractices.MVVM;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Models;
@@ -17,12 +18,13 @@ public class EditMapViewModelTests
     private readonly IFileService _fileService;
     private readonly IImageService _imageService;
     private readonly EditMapViewModel _sut;
+    private readonly ILogger<EditMapViewModel> _logger = Substitute.For<ILogger<EditMapViewModel>>();
 
     public EditMapViewModelTests()
     {
         _fileService = Substitute.For<IFileService>();
         _imageService = Substitute.For<IImageService>();
-        _sut = new EditMapViewModel(_fileService, _imageService);
+        _sut = new EditMapViewModel(_fileService, _imageService, _logger);
     }
 
     [Fact]

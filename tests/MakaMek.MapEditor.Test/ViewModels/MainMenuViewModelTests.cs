@@ -1,5 +1,6 @@
 using System.Text.Json;
 using AsyncAwaitBestPractices.MVVM;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Factories;
@@ -110,7 +111,7 @@ public class MainMenuViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             Substitute.For<IFileService>(),
-            Substitute.For<IImageService>());
+            Substitute.For<IImageService>(), Substitute.For<ILogger<EditMapViewModel>>());
 
         _fileService.OpenFileAsync("Load Map").Returns(json);
         _mapFactory.CreateFromData(Arg.Any<List<HexData>>()).Returns(map);
@@ -139,7 +140,7 @@ public class MainMenuViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             Substitute.For<IFileService>(),
-            Substitute.For<IImageService>());
+            Substitute.For<IImageService>(), Substitute.For<ILogger<EditMapViewModel>>());
 
         _fileService.OpenFileAsync("Load Map").Returns(json);
         _mapFactory.CreateFromData(Arg.Any<List<HexData>>()).Returns(map);
