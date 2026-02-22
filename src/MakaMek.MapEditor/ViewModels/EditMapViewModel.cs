@@ -29,7 +29,7 @@ public class EditMapViewModel : BaseViewModel
     
     public ILogger<EditMapViewModel> Logger { get; }
 
-    public ObservableCollection<Terrain> AvailableTerrains { get; } = new();
+    public ObservableCollection<Terrain> AvailableTerrains { get; } = [];
 
     public Terrain? SelectedTerrain
     {
