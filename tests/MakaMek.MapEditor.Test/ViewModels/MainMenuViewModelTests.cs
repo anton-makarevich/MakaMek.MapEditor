@@ -17,13 +17,14 @@ public class MainMenuViewModelTests
     private readonly IBattleMapFactory _mapFactory = Substitute.For<IBattleMapFactory>();
     private readonly INavigationService _navigationService = Substitute.For<INavigationService>();
     private readonly MainMenuViewModel _sut;
-    private readonly ILogger<EditMapViewModel> _logger = Substitute.For<ILogger<EditMapViewModel>>();
+    private readonly ILogger<EditMapViewModel> _editViewLogger = Substitute.For<ILogger<EditMapViewModel>>();
+    private readonly ILogger<MainMenuViewModel> _mainMenuLogger = Substitute.For<ILogger<MainMenuViewModel>>();
     private readonly IImageService _imageService = Substitute.For<IImageService>();
     private readonly IFileService _fileService = Substitute.For<IFileService>();
 
     public MainMenuViewModelTests()
     {
-        _sut = new MainMenuViewModel(_fileService, _mapFactory);
+        _sut = new MainMenuViewModel(_fileService, _mapFactory, _mainMenuLogger);
         _sut.SetNavigationService(_navigationService);
     }
 
@@ -109,7 +110,7 @@ public class MainMenuViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             _fileService,
-            _imageService, _logger);
+            _imageService, _editViewLogger);
 
         _fileService.OpenFile("Load Map").Returns(("",json));
         _mapFactory.CreateFromData(Arg.Any<List<HexData>>()).Returns(map);
@@ -138,7 +139,7 @@ public class MainMenuViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             _fileService,
-            _imageService, _logger);
+            _imageService, _editViewLogger);
 
         _fileService.OpenFile("Load Map").Returns(("",json));
         _mapFactory.CreateFromData(Arg.Any<List<HexData>>()).Returns(map);
