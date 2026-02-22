@@ -52,7 +52,7 @@ public class NewMapViewModel : BaseViewModel
         set => SetProperty(ref field, value);
     } = 30;
 
-    public ICommand CreateMapCommand => field ??= new AsyncCommand(async () =>
+    public IAsyncCommand CreateMapCommand => field ??= new AsyncCommand(async () =>
     {
         ITerrainGenerator generator = !IsPreGenerated
             ? new SingleTerrainGenerator(MapWidth, MapHeight, new ClearTerrain())

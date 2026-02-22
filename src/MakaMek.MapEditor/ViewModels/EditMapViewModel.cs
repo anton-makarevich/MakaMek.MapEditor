@@ -69,7 +69,7 @@ public class EditMapViewModel : BaseViewModel
         hex.ReplaceTerrains([SelectedTerrain]);
     }
 
-    public ICommand ExportMapCommand => field ??= new AsyncCommand(async () =>
+    public IAsyncCommand ExportMapCommand => field ??= new AsyncCommand(async () =>
     {
         if (Map == null) return;
         var data = Map.ToData();

@@ -157,7 +157,7 @@ public class NewMapViewModelTests
         _navigationService.GetViewModel<EditMapViewModel>().Returns(editViewModel);
 
         // Act
-        await ((AsyncCommand)_sut.CreateMapCommand).ExecuteAsync();
+        await _sut.CreateMapCommand.ExecuteAsync();
 
         // Assert
         _mapFactory.Received(1).GenerateMap(
@@ -185,7 +185,7 @@ public class NewMapViewModelTests
         _navigationService.GetViewModel<EditMapViewModel>().Returns(editViewModel);
 
         // Act
-        await ((AsyncCommand)_sut.CreateMapCommand).ExecuteAsync();
+        await _sut.CreateMapCommand.ExecuteAsync();
 
         // Assert
         _mapFactory.Received(1).GenerateMap(
@@ -208,7 +208,7 @@ public class NewMapViewModelTests
         _navigationService.GetViewModel<EditMapViewModel>().Returns(editViewModel);
 
         // Act
-        await ((AsyncCommand)_sut.CreateMapCommand).ExecuteAsync();
+        await _sut.CreateMapCommand.ExecuteAsync();
 
         // Assert
         editViewModel.Received(1).Initialize(map);
@@ -228,7 +228,7 @@ public class NewMapViewModelTests
         _navigationService.GetViewModel<EditMapViewModel>().Returns(editViewModel);
 
         // Act
-        await ((AsyncCommand)_sut.CreateMapCommand).ExecuteAsync();
+        await _sut.CreateMapCommand.ExecuteAsync();
 
         // Assert
         await _navigationService.Received(1).NavigateToViewModelAsync(editViewModel);
@@ -244,7 +244,7 @@ public class NewMapViewModelTests
         _navigationService.GetViewModel<EditMapViewModel>().Returns((EditMapViewModel?)null);
 
         // Act
-        await ((AsyncCommand)_sut.CreateMapCommand).ExecuteAsync();
+        await _sut.CreateMapCommand.ExecuteAsync();
 
         // Assert
         await _navigationService.DidNotReceive().NavigateToViewModelAsync(Arg.Any<EditMapViewModel>());

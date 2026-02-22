@@ -161,7 +161,7 @@ public class EditMapViewModelTests
     public async Task ExportMapCommand_WhenMapIsNull_ShouldNotSaveFile()
     {
         // Act
-        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
+        await _sut.ExportMapCommand.ExecuteAsync();
 
         // Assert
         await _fileService.DidNotReceive().SaveFile(
@@ -187,7 +187,7 @@ public class EditMapViewModelTests
         _sut.Initialize(map);
 
         // Act
-        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
+        await _sut.ExportMapCommand.ExecuteAsync();
 
         // Assert
         map.Received(1).ToData();
@@ -216,7 +216,7 @@ public class EditMapViewModelTests
             Arg.Do<string>(content => savedContent = content));
 
         // Act
-        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
+        await _sut.ExportMapCommand.ExecuteAsync();
 
         // Assert
         savedContent.ShouldNotBeNull();
@@ -244,7 +244,7 @@ public class EditMapViewModelTests
         _sut.Initialize(map);
 
         // Act
-        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
+        await _sut.ExportMapCommand.ExecuteAsync();
 
         // Assert
         await _fileService.Received(1).SaveFile(
@@ -276,7 +276,7 @@ public class EditMapViewModelTests
             Arg.Do<string>(content => savedContent = content));
 
         // Act
-        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
+        await _sut.ExportMapCommand.ExecuteAsync();
 
         // Assert
         savedContent.ShouldNotBeNull();
