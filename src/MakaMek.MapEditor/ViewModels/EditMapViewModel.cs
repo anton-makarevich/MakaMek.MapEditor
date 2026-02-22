@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Text.Json;
-using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Map.Models;
@@ -30,7 +29,7 @@ public class EditMapViewModel : BaseViewModel
     
     public ILogger<EditMapViewModel> Logger { get; }
 
-    public ObservableCollection<Terrain> AvailableTerrains { get; } = new();
+    public ObservableCollection<Terrain> AvailableTerrains { get; } = [];
 
     public Terrain? SelectedTerrain
     {
@@ -69,11 +68,11 @@ public class EditMapViewModel : BaseViewModel
         hex.ReplaceTerrains([SelectedTerrain]);
     }
 
-    public ICommand ExportMapCommand => field ??= new AsyncCommand(async () =>
+    public IAsyncCommand ExportMapCommand => field ??= new AsyncCommand(async () =>
     {
         if (Map == null) return;
         var data = Map.ToData();
         var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
-        await _fileService.SaveFileAsync("Export Map", "map.json", json);
-    });
+        await _fileService.SaveFile("Export Map", "map.json", json);
+    }, onException: ex => Logger.LogError(ex, "Failed to export map"));
 }

@@ -161,10 +161,10 @@ public class EditMapViewModelTests
     public async Task ExportMapCommand_WhenMapIsNull_ShouldNotSaveFile()
     {
         // Act
-        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
+        await _sut.ExportMapCommand.ExecuteAsync();
 
         // Assert
-        await _fileService.DidNotReceive().SaveFileAsync(
+        await _fileService.DidNotReceive().SaveFile(
             Arg.Any<string>(),
             Arg.Any<string>(),
             Arg.Any<string>());
@@ -187,7 +187,7 @@ public class EditMapViewModelTests
         _sut.Initialize(map);
 
         // Act
-        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
+        await _sut.ExportMapCommand.ExecuteAsync();
 
         // Assert
         map.Received(1).ToData();
@@ -210,13 +210,13 @@ public class EditMapViewModelTests
         _sut.Initialize(map);
 
         string? savedContent = null;
-        await _fileService.SaveFileAsync(
+        await _fileService.SaveFile(
             Arg.Any<string>(),
             Arg.Any<string>(),
             Arg.Do<string>(content => savedContent = content));
 
         // Act
-        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
+        await _sut.ExportMapCommand.ExecuteAsync();
 
         // Assert
         savedContent.ShouldNotBeNull();
@@ -244,10 +244,10 @@ public class EditMapViewModelTests
         _sut.Initialize(map);
 
         // Act
-        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
+        await _sut.ExportMapCommand.ExecuteAsync();
 
         // Assert
-        await _fileService.Received(1).SaveFileAsync(
+        await _fileService.Received(1).SaveFile(
             "Export Map",
             "map.json",
             Arg.Any<string>());
@@ -270,13 +270,13 @@ public class EditMapViewModelTests
         _sut.Initialize(map);
 
         string? savedContent = null;
-        await _fileService.SaveFileAsync(
+        await _fileService.SaveFile(
             Arg.Any<string>(),
             Arg.Any<string>(),
             Arg.Do<string>(content => savedContent = content));
 
         // Act
-        await ((AsyncCommand)_sut.ExportMapCommand).ExecuteAsync();
+        await _sut.ExportMapCommand.ExecuteAsync();
 
         // Assert
         savedContent.ShouldNotBeNull();

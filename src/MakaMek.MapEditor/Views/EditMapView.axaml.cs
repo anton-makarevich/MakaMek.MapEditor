@@ -2,6 +2,7 @@ using System.ComponentModel;
 using AsyncAwaitBestPractices;
 using Avalonia;
 using Avalonia.Media.Imaging;
+using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Avalonia.Controls;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.MapEditor.ViewModels;
@@ -69,6 +70,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
 
         if (selectedHex == null || ViewModel == null) return;
         ViewModel.HandleHexSelection(selectedHex.Hex);
-        selectedHex.Render().SafeFireAndForget(onException: ex => Console.WriteLine(ex.Message));
+        selectedHex.Render().SafeFireAndForget(
+            ex => ViewModel.Logger.LogError(ex, "Failed to render hex"));
     }
 }

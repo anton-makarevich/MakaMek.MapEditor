@@ -1,4 +1,3 @@
-using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using Sanet.MakaMek.Map.Factories;
 using Sanet.MakaMek.Map.Generators;
@@ -52,7 +51,7 @@ public class NewMapViewModel : BaseViewModel
         set => SetProperty(ref field, value);
     } = 30;
 
-    public ICommand CreateMapCommand => field ??= new AsyncCommand(async () =>
+    public IAsyncCommand CreateMapCommand => field ??= new AsyncCommand(async () =>
     {
         ITerrainGenerator generator = !IsPreGenerated
             ? new SingleTerrainGenerator(MapWidth, MapHeight, new ClearTerrain())

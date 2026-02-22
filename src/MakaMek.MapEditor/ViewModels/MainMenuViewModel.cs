@@ -1,6 +1,6 @@
 using System.Text.Json;
-using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
+using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Factories;
 using Sanet.MakaMek.Services;
@@ -12,23 +12,24 @@ public class MainMenuViewModel : BaseViewModel
 {
     private readonly IFileService _fileService;
     private readonly IBattleMapFactory _mapFactory;
+    private readonly ILogger<MainMenuViewModel> _logger;
 
-    public MainMenuViewModel(IFileService fileService, IBattleMapFactory mapFactory)
+    public MainMenuViewModel(IFileService fileService, IBattleMapFactory mapFactory, ILogger<MainMenuViewModel> logger)
     {
         _fileService = fileService;
         _mapFactory = mapFactory;
+        _logger = logger;
     }
 
-    public ICommand CreateNewMapCommand => field ??= new AsyncCommand(() => 
+    public IAsyncCommand CreateNewMapCommand => field ??= new AsyncCommand(() => 
         NavigationService.NavigateToViewModelAsync<NewMapViewModel>());
 
-    public ICommand LoadMapCommand => field ??= new AsyncCommand(async () =>
+    public IAsyncCommand LoadMapCommand => field ??= new AsyncCommand(async () =>
     {
-        var content = await _fileService.OpenFileAsync("Load Map");
-        if (string.IsNullOrEmpty(content)) return;
-
         try
         {
+            var content = (await _fileService.OpenFile("Load Map")).Content;
+            if (string.IsNullOrEmpty(content)) return;
             var data = JsonSerializer.Deserialize<List<HexData>>(content);
             if (data != null)
             {
@@ -43,7 +44,7 @@ public class MainMenuViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            _logger.LogError(ex, "Failed to load map");
         }
     });
 }
