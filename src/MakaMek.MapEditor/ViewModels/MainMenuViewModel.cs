@@ -1,5 +1,6 @@
 using System.Text.Json;
 using AsyncAwaitBestPractices.MVVM;
+using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Factories;
 using Sanet.MakaMek.Services;
@@ -11,11 +12,13 @@ public class MainMenuViewModel : BaseViewModel
 {
     private readonly IFileService _fileService;
     private readonly IBattleMapFactory _mapFactory;
+    private readonly ILogger<MainMenuViewModel> _logger;
 
-    public MainMenuViewModel(IFileService fileService, IBattleMapFactory mapFactory)
+    public MainMenuViewModel(IFileService fileService, IBattleMapFactory mapFactory, ILogger<MainMenuViewModel> logger)
     {
         _fileService = fileService;
         _mapFactory = mapFactory;
+        _logger = logger;
     }
 
     public IAsyncCommand CreateNewMapCommand => field ??= new AsyncCommand(() => 
@@ -42,7 +45,7 @@ public class MainMenuViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            _logger.LogError(ex, "Failed to load map");
         }
     });
 }
