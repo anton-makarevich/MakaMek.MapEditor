@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Factories;
@@ -19,12 +18,12 @@ public class MainMenuViewModel : BaseViewModel
         _mapFactory = mapFactory;
     }
 
-    public ICommand CreateNewMapCommand => field ??= new AsyncCommand(() => 
+    public IAsyncCommand CreateNewMapCommand => field ??= new AsyncCommand(() => 
         NavigationService.NavigateToViewModelAsync<NewMapViewModel>());
 
-    public ICommand LoadMapCommand => field ??= new AsyncCommand(async () =>
+    public IAsyncCommand LoadMapCommand => field ??= new AsyncCommand(async () =>
     {
-        var content = await _fileService.OpenFileAsync("Load Map");
+        var content = (await _fileService.OpenFile("Load Map")).Content;
         if (string.IsNullOrEmpty(content)) return;
 
         try

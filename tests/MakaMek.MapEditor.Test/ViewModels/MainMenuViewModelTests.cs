@@ -1,5 +1,4 @@
 using System.Text.Json;
-using AsyncAwaitBestPractices.MVVM;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Sanet.MakaMek.Map.Data;
@@ -32,7 +31,7 @@ public class MainMenuViewModelTests
     public async Task CreateNewMapCommand_ShouldNavigateToNewMapViewModel()
     {
         // Act
-        await ((AsyncCommand)_sut.CreateNewMapCommand).ExecuteAsync();
+        await _sut.CreateNewMapCommand.ExecuteAsync();
 
         // Assert
         await _navigationService.Received(1).NavigateToViewModelAsync<NewMapViewModel>();
@@ -42,10 +41,10 @@ public class MainMenuViewModelTests
     public async Task LoadMapCommand_WhenFileContentIsEmpty_ShouldNotProcessFile()
     {
         // Arrange
-        _fileService.OpenFileAsync("Load Map").Returns(string.Empty);
+        _fileService.OpenFile("Load Map").Returns(("",""));
 
         // Act
-        await ((AsyncCommand)_sut.LoadMapCommand).ExecuteAsync();
+        await _sut.LoadMapCommand.ExecuteAsync();
 
         // Assert
         _mapFactory.DidNotReceive().CreateFromData(Arg.Any<List<HexData>>());
@@ -55,10 +54,10 @@ public class MainMenuViewModelTests
     public async Task LoadMapCommand_WhenFileContentIsNull_ShouldNotProcessFile()
     {
         // Arrange
-        _fileService.OpenFileAsync("Load Map").Returns((string?)null);
+        _fileService.OpenFile("Load Map").Returns(("",(string?)null));
 
         // Act
-        await ((AsyncCommand)_sut.LoadMapCommand).ExecuteAsync();
+        await _sut.LoadMapCommand.ExecuteAsync();
 
         // Assert
         _mapFactory.DidNotReceive().CreateFromData(Arg.Any<List<HexData>>());
@@ -84,11 +83,11 @@ public class MainMenuViewModelTests
         var json = JsonSerializer.Serialize(hexData);
         var map = new BattleMap(1,1);
 
-        _fileService.OpenFileAsync("Load Map").Returns(json);
+        _fileService.OpenFile("Load Map").Returns(("",json));
         _mapFactory.CreateFromData(Arg.Any<List<HexData>>()).Returns(map);
 
         // Act
-        await ((AsyncCommand)_sut.LoadMapCommand).ExecuteAsync();
+        await _sut.LoadMapCommand.ExecuteAsync();
 
         // Assert
         _mapFactory.Received(1).CreateFromData(Arg.Is<List<HexData>>(data => data.Count == 2));
@@ -112,12 +111,12 @@ public class MainMenuViewModelTests
             _fileService,
             _imageService, _logger);
 
-        _fileService.OpenFileAsync("Load Map").Returns(json);
+        _fileService.OpenFile("Load Map").Returns(("",json));
         _mapFactory.CreateFromData(Arg.Any<List<HexData>>()).Returns(map);
         _navigationService.GetViewModel<EditMapViewModel>().Returns(editViewModel);
 
         // Act
-        await ((AsyncCommand)_sut.LoadMapCommand).ExecuteAsync();
+        await _sut.LoadMapCommand.ExecuteAsync();
 
         // Assert
         editViewModel.Received(1).Initialize(map);
@@ -141,12 +140,12 @@ public class MainMenuViewModelTests
             _fileService,
             _imageService, _logger);
 
-        _fileService.OpenFileAsync("Load Map").Returns(json);
+        _fileService.OpenFile("Load Map").Returns(("",json));
         _mapFactory.CreateFromData(Arg.Any<List<HexData>>()).Returns(map);
         _navigationService.GetViewModel<EditMapViewModel>().Returns(editViewModel);
 
         // Act
-        await ((AsyncCommand)_sut.LoadMapCommand).ExecuteAsync();
+        await _sut.LoadMapCommand.ExecuteAsync();
 
         // Assert
         await _navigationService.Received(1).NavigateToViewModelAsync(editViewModel);
@@ -167,12 +166,12 @@ public class MainMenuViewModelTests
         var json = JsonSerializer.Serialize(hexData);
         var map = new BattleMap(1,1);
 
-        _fileService.OpenFileAsync("Load Map").Returns(json);
+        _fileService.OpenFile("Load Map").Returns(("",json));
         _mapFactory.CreateFromData(Arg.Any<List<HexData>>()).Returns(map);
         _navigationService.GetViewModel<EditMapViewModel>().Returns((EditMapViewModel?)null);
 
         // Act
-        await ((AsyncCommand)_sut.LoadMapCommand).ExecuteAsync();
+        await _sut.LoadMapCommand.ExecuteAsync();
 
         // Assert
         await _navigationService.DidNotReceive().NavigateToViewModelAsync(Arg.Any<EditMapViewModel>());
@@ -183,10 +182,10 @@ public class MainMenuViewModelTests
     {
         // Arrange
         var json = "null";
-        _fileService.OpenFileAsync("Load Map").Returns(json);
+        _fileService.OpenFile("Load Map").Returns(("",json));
 
         // Act
-        await ((AsyncCommand)_sut.LoadMapCommand).ExecuteAsync();
+        await _sut.LoadMapCommand.ExecuteAsync();
 
         // Assert
         _mapFactory.DidNotReceive().CreateFromData(Arg.Any<List<HexData>>());
@@ -196,10 +195,10 @@ public class MainMenuViewModelTests
     public async Task LoadMapCommand_WhenInvalidJson_ShouldHandleExceptionGracefully()
     {
         // Arrange
-        _fileService.OpenFileAsync("Load Map").Returns("invalid json {{{");
+        _fileService.OpenFile("Load Map").Returns(("","invalid json {{{"));
 
         // Act & Assert - Should not throw
-        await ((AsyncCommand)_sut.LoadMapCommand).ExecuteAsync();
+        await _sut.LoadMapCommand.ExecuteAsync();
 
         _mapFactory.DidNotReceive().CreateFromData(Arg.Any<List<HexData>>());
     }
@@ -221,12 +220,12 @@ public class MainMenuViewModelTests
         };
         var json = JsonSerializer.Serialize(hexData);
 
-        _fileService.OpenFileAsync("Load Map").Returns(json);
+        _fileService.OpenFile("Load Map").Returns(("",json));
         _mapFactory.CreateFromData(Arg.Any<List<HexData>>())
             .Returns(_ => throw new InvalidOperationException("Test exception"));
 
         // Act & Assert - Should not throw
-        await ((AsyncCommand)_sut.LoadMapCommand).ExecuteAsync();
+        await _sut.LoadMapCommand.ExecuteAsync();
 
         await _navigationService.DidNotReceive().NavigateToViewModelAsync(Arg.Any<EditMapViewModel>());
     }
