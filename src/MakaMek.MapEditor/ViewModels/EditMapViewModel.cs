@@ -74,6 +74,6 @@ public class EditMapViewModel : BaseViewModel
         if (Map == null) return;
         var data = Map.ToData();
         var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
-        await _fileService.SaveFileAsync("Export Map", "map.json", json);
+        await _fileService.SaveFile("Export Map", "map.json", json);
     });
 }
