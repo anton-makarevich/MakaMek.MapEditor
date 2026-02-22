@@ -26,11 +26,10 @@ public class MainMenuViewModel : BaseViewModel
 
     public IAsyncCommand LoadMapCommand => field ??= new AsyncCommand(async () =>
     {
-        var content = (await _fileService.OpenFile("Load Map")).Content;
-        if (string.IsNullOrEmpty(content)) return;
-
         try
         {
+            var content = (await _fileService.OpenFile("Load Map")).Content;
+            if (string.IsNullOrEmpty(content)) return;
             var data = JsonSerializer.Deserialize<List<HexData>>(content);
             if (data != null)
             {

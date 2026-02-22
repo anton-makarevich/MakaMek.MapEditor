@@ -1,4 +1,3 @@
-using System.Windows.Input;
 using AsyncAwaitBestPractices.MVVM;
 using Sanet.MakaMek.Map.Factories;
 using Sanet.MakaMek.Map.Generators;
