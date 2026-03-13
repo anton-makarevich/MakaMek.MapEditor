@@ -48,7 +48,7 @@ public class MainMenuViewModelTests
         await _sut.LoadMapCommand.ExecuteAsync();
 
         // Assert
-        _mapFactory.DidNotReceive().CreateFromData(Arg.Any<List<HexData>>());
+        _mapFactory.DidNotReceive().CreateFromData(Arg.Any<BattleMapData>());
     }
 
     [Fact]
@@ -61,50 +61,60 @@ public class MainMenuViewModelTests
         await _sut.LoadMapCommand.ExecuteAsync();
 
         // Assert
-        _mapFactory.DidNotReceive().CreateFromData(Arg.Any<List<HexData>>());
+        _mapFactory.DidNotReceive().CreateFromData(Arg.Any<BattleMapData>());
     }
 
     [Fact]
     public async Task LoadMapCommand_WhenValidContent_ShouldDeserializeAndCreateMap()
     {
         // Arrange
-        var hexData = new List<HexData>
+        var hexData = new BattleMapData
         {
-            new() { Coordinates = new HexCoordinateData(0, 0),
+            Biome = "test",
+            HexData = 
+            [
+            new HexData { Coordinates = new HexCoordinateData(0, 0),
                 TerrainTypes =
                 [
                     MakaMekTerrains.Clear
                 ] },
-            new() { Coordinates = new HexCoordinateData(1, 0),
+            new HexData { Coordinates = new HexCoordinateData(1, 0),
                 TerrainTypes =
                 [
                     MakaMekTerrains.Clear
-                ] }
+                ] }]
         };
         var json = JsonSerializer.Serialize(hexData);
         var map = new BattleMap(1,1);
 
         _fileService.OpenFile("Load Map").Returns(("",json));
-        _mapFactory.CreateFromData(Arg.Any<List<HexData>>()).Returns(map);
+        _mapFactory.CreateFromData(Arg.Any<BattleMapData>()).Returns(map);
 
         // Act
         await _sut.LoadMapCommand.ExecuteAsync();
 
         // Assert
-        _mapFactory.Received(1).CreateFromData(Arg.Is<List<HexData>>(data => data.Count == 2));
+        _mapFactory.Received(1).CreateFromData(Arg.Is<BattleMapData>(data => data.HexData.Count == 2));
     }
 
     [Fact]
     public async Task LoadMapCommand_WhenValidContent_ShouldInitializeEditViewModel()
     {
         // Arrange
-        var hexData = new List<HexData>
+        var hexData = new BattleMapData
         {
-            new() { Coordinates = new HexCoordinateData(0, 0),
-                TerrainTypes =
-                [
-                    MakaMekTerrains.Clear
-                ] }
+            Biome = "test",
+            HexData =
+            [
+                new HexData
+                {
+                    Coordinates = new HexCoordinateData(0, 0),
+                    TerrainTypes =
+                    [
+                        MakaMekTerrains.Clear
+                    ]
+                }
+            ]
         };
         var json = JsonSerializer.Serialize(hexData);
         var map = new BattleMap(1,1);
@@ -113,7 +123,7 @@ public class MainMenuViewModelTests
             _imageService, _editViewLogger);
 
         _fileService.OpenFile("Load Map").Returns(("",json));
-        _mapFactory.CreateFromData(Arg.Any<List<HexData>>()).Returns(map);
+        _mapFactory.CreateFromData(Arg.Any<BattleMapData>()).Returns(map);
         _navigationService.GetViewModel<EditMapViewModel>().Returns(editViewModel);
 
         // Act
@@ -127,13 +137,20 @@ public class MainMenuViewModelTests
     public async Task LoadMapCommand_WhenValidContent_ShouldNavigateToEditViewModel()
     {
         // Arrange
-        var hexData = new List<HexData>
+        var hexData = new BattleMapData
         {
-            new() { Coordinates = new HexCoordinateData(0, 0),
-                TerrainTypes =
-                [
-                    MakaMekTerrains.Clear
-                ] }
+            Biome = "test",
+            HexData =
+            [
+                new HexData
+                {
+                    Coordinates = new HexCoordinateData(0, 0),
+                    TerrainTypes =
+                    [
+                        MakaMekTerrains.Clear
+                    ]
+                }
+            ]
         };
         var json = JsonSerializer.Serialize(hexData);
         var map = new BattleMap(1,1);
@@ -142,7 +159,7 @@ public class MainMenuViewModelTests
             _imageService, _editViewLogger);
 
         _fileService.OpenFile("Load Map").Returns(("",json));
-        _mapFactory.CreateFromData(Arg.Any<List<HexData>>()).Returns(map);
+        _mapFactory.CreateFromData(Arg.Any<BattleMapData>()).Returns(map);
         _navigationService.GetViewModel<EditMapViewModel>().Returns(editViewModel);
 
         // Act
@@ -156,19 +173,26 @@ public class MainMenuViewModelTests
     public async Task LoadMapCommand_WhenEditViewModelIsNull_ShouldNotNavigate()
     {
         // Arrange
-        var hexData = new List<HexData>
+        var hexData = new BattleMapData
         {
-            new() { Coordinates = new HexCoordinateData(0, 0),
-                TerrainTypes =
-                [
-                    MakaMekTerrains.Clear
-                ] }
+            Biome = "test",
+            HexData =
+            [
+                new()
+                {
+                    Coordinates = new HexCoordinateData(0, 0),
+                    TerrainTypes =
+                    [
+                        MakaMekTerrains.Clear
+                    ]
+                }
+            ]
         };
         var json = JsonSerializer.Serialize(hexData);
         var map = new BattleMap(1,1);
 
         _fileService.OpenFile("Load Map").Returns(("",json));
-        _mapFactory.CreateFromData(Arg.Any<List<HexData>>()).Returns(map);
+        _mapFactory.CreateFromData(Arg.Any<BattleMapData>()).Returns(map);
         _navigationService.GetViewModel<EditMapViewModel>().Returns((EditMapViewModel?)null);
 
         // Act
@@ -189,7 +213,7 @@ public class MainMenuViewModelTests
         await _sut.LoadMapCommand.ExecuteAsync();
 
         // Assert
-        _mapFactory.DidNotReceive().CreateFromData(Arg.Any<List<HexData>>());
+        _mapFactory.DidNotReceive().CreateFromData(Arg.Any<BattleMapData>());
     }
 
     [Fact]
@@ -201,28 +225,32 @@ public class MainMenuViewModelTests
         // Act & Assert - Should not throw
         await _sut.LoadMapCommand.ExecuteAsync();
 
-        _mapFactory.DidNotReceive().CreateFromData(Arg.Any<List<HexData>>());
+        _mapFactory.DidNotReceive().CreateFromData(Arg.Any<BattleMapData>());
     }
 
     [Fact]
     public async Task LoadMapCommand_WhenMapFactoryThrows_ShouldHandleExceptionGracefully()
     {
         // Arrange
-        var hexData = new List<HexData>
+        var hexData = new BattleMapData
         {
-            new()
-            {
-                Coordinates = new HexCoordinateData(0, 0),
-                TerrainTypes =
-                [
-                    MakaMekTerrains.Clear
-                ]
-            }
+            Biome = "test",
+            HexData =
+            [
+                new HexData
+                {
+                    Coordinates = new HexCoordinateData(0, 0),
+                    TerrainTypes =
+                    [
+                        MakaMekTerrains.Clear
+                    ]
+                }
+            ]
         };
         var json = JsonSerializer.Serialize(hexData);
 
         _fileService.OpenFile("Load Map").Returns(("",json));
-        _mapFactory.CreateFromData(Arg.Any<List<HexData>>())
+        _mapFactory.CreateFromData(Arg.Any<BattleMapData>())
             .Returns(_ => throw new InvalidOperationException("Test exception"));
 
         // Act & Assert - Should not throw

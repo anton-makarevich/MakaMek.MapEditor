@@ -30,7 +30,7 @@ public class MainMenuViewModel : BaseViewModel
         {
             var content = (await _fileService.OpenFile("Load Map")).Content;
             if (string.IsNullOrEmpty(content)) return;
-            var data = JsonSerializer.Deserialize<List<HexData>>(content);
+            var data = JsonSerializer.Deserialize<BattleMapData>(content);
             if (data != null)
             {
                 var map = _mapFactory.CreateFromData(data);

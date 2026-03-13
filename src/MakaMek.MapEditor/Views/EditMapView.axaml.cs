@@ -1,12 +1,10 @@
 using System.ComponentModel;
 using AsyncAwaitBestPractices;
 using Avalonia;
-using Avalonia.Media.Imaging;
 using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Avalonia.Controls;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.MapEditor.ViewModels;
-using Sanet.MakaMek.Services;
 using Sanet.MVVM.Views.Avalonia;
 
 namespace Sanet.MakaMek.MapEditor.Views;
@@ -42,17 +40,12 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         MapCanvas.Children.Clear();
         if (ViewModel?.Map == null) return;
 
-        if (ViewModel.ImageService is not IImageService<Bitmap> imageService)
-        {
-            throw new Exception("ImageService is not initialized");
-        }
-
         double maxX = 0;
         double maxY = 0;
 
         foreach (var hex in ViewModel.Map.GetHexes())
         {
-            var hexControl = new HexControl(hex, imageService, ViewModel.Logger);
+            var hexControl = new HexControl(hex, ViewModel.Logger, ViewModel.AssetService);
             MapCanvas.Children.Add(hexControl);
             if (hex.Coordinates.H > maxX) maxX = hex.Coordinates.H;
             if (hex.Coordinates.V > maxY) maxY = hex.Coordinates.V;
