@@ -25,6 +25,25 @@ public class EditMapViewModelTests
         _sut = new EditMapViewModel(_fileService, _assetService, _logger);
     }
 
+    private static BattleMapData CreateTestBattleMapData(int q = 0, int r = 0)
+    {
+        return new BattleMapData
+        {
+            Biome = "test",
+            HexData =
+            [
+                new HexData
+                {
+                    Coordinates = new HexCoordinateData(q, r),
+                    TerrainTypes =
+                    [
+                        MakaMekTerrains.Clear
+                    ]
+                }
+            ]
+        };
+    }
+
     [Fact]
     public void Map_DefaultValue_ShouldBeNull()
     {
@@ -175,21 +194,7 @@ public class EditMapViewModelTests
     {
         // Arrange
         var map = Substitute.For<IBattleMap>();
-        var hexData = new BattleMapData
-        {
-            Biome = "test",
-            HexData =
-            [
-                new HexData
-                {
-                    Coordinates = new HexCoordinateData(0, 0),
-                    TerrainTypes =
-                    [
-                        MakaMekTerrains.Clear
-                    ]
-                }
-            ]
-        };
+        var hexData = CreateTestBattleMapData();
         map.ToData().Returns(hexData);
         _sut.Initialize(map);
 
@@ -205,21 +210,7 @@ public class EditMapViewModelTests
     {
         // Arrange
         var map = Substitute.For<IBattleMap>();
-        var hexData = new BattleMapData
-        {
-            Biome = "test",
-            HexData =
-            [
-                new()
-                {
-                    Coordinates = new HexCoordinateData(2, 3),
-                    TerrainTypes =
-                    [
-                        MakaMekTerrains.Clear
-                    ]
-                }
-            ]
-        };
+        var hexData = CreateTestBattleMapData(2, 3);
         map.ToData().Returns(hexData);
         _sut.Initialize(map);
 
@@ -247,21 +238,7 @@ public class EditMapViewModelTests
     {
         // Arrange
         var map = Substitute.For<IBattleMap>();
-        var hexData = new BattleMapData
-        {
-            Biome = "test",
-            HexData =
-            [
-                new HexData
-                {
-                    Coordinates = new HexCoordinateData(0, 0),
-                    TerrainTypes =
-                    [
-                        MakaMekTerrains.Clear
-                    ]
-                }
-            ]
-        };
+        var hexData = CreateTestBattleMapData();
         map.ToData().Returns(hexData);
         _sut.Initialize(map);
 
@@ -280,21 +257,7 @@ public class EditMapViewModelTests
     {
         // Arrange
         var map = Substitute.For<IBattleMap>();
-        var hexData = new BattleMapData
-        {
-            Biome = "test",
-            HexData =
-            [
-                new HexData
-                {
-                    Coordinates = new HexCoordinateData(0, 0),
-                    TerrainTypes =
-                    [
-                        MakaMekTerrains.Clear
-                    ]
-                }
-            ]
-        };
+        var hexData = CreateTestBattleMapData();
         map.ToData().Returns(hexData);
         _sut.Initialize(map);
 
