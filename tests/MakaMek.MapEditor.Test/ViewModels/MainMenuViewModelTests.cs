@@ -29,6 +29,52 @@ public class MainMenuViewModelTests
         _sut.SetNavigationService(_navigationService);
     }
 
+    private static BattleMapData BuildTestBattleMapData()
+    {
+        return new BattleMapData
+        {
+            Biome = "test",
+            HexData =
+            [
+                new HexData
+                {
+                    Coordinates = new HexCoordinateData(0, 0),
+                    TerrainTypes =
+                    [
+                        MakaMekTerrains.Clear
+                    ]
+                },
+                new HexData
+                {
+                    Coordinates = new HexCoordinateData(1, 0),
+                    TerrainTypes =
+                    [
+                        MakaMekTerrains.Clear
+                    ]
+                }
+            ]
+        };
+    }
+
+    private static BattleMapData BuildTestBattleMapDataWithSingleHex()
+    {
+        return new BattleMapData
+        {
+            Biome = "test",
+            HexData =
+            [
+                new HexData
+                {
+                    Coordinates = new HexCoordinateData(0, 0),
+                    TerrainTypes =
+                    [
+                        MakaMekTerrains.Clear
+                    ]
+                }
+            ]
+        };
+    }
+
     [Fact]
     public async Task CreateNewMapCommand_ShouldNavigateToNewMapViewModel()
     {
@@ -69,22 +115,7 @@ public class MainMenuViewModelTests
     public async Task LoadMapCommand_WhenValidContent_ShouldDeserializeAndCreateMap()
     {
         // Arrange
-        var hexData = new BattleMapData
-        {
-            Biome = "test",
-            HexData = 
-            [
-            new HexData { Coordinates = new HexCoordinateData(0, 0),
-                TerrainTypes =
-                [
-                    MakaMekTerrains.Clear
-                ] },
-            new HexData { Coordinates = new HexCoordinateData(1, 0),
-                TerrainTypes =
-                [
-                    MakaMekTerrains.Clear
-                ] }]
-        };
+        var hexData = BuildTestBattleMapData();
         var json = JsonSerializer.Serialize(hexData);
         var map = new BattleMap(1,1);
 
@@ -102,21 +133,7 @@ public class MainMenuViewModelTests
     public async Task LoadMapCommand_WhenValidContent_ShouldInitializeEditViewModel()
     {
         // Arrange
-        var hexData = new BattleMapData
-        {
-            Biome = "test",
-            HexData =
-            [
-                new HexData
-                {
-                    Coordinates = new HexCoordinateData(0, 0),
-                    TerrainTypes =
-                    [
-                        MakaMekTerrains.Clear
-                    ]
-                }
-            ]
-        };
+        var hexData = BuildTestBattleMapDataWithSingleHex();
         var json = JsonSerializer.Serialize(hexData);
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
@@ -138,21 +155,7 @@ public class MainMenuViewModelTests
     public async Task LoadMapCommand_WhenValidContent_ShouldNavigateToEditViewModel()
     {
         // Arrange
-        var hexData = new BattleMapData
-        {
-            Biome = "test",
-            HexData =
-            [
-                new HexData
-                {
-                    Coordinates = new HexCoordinateData(0, 0),
-                    TerrainTypes =
-                    [
-                        MakaMekTerrains.Clear
-                    ]
-                }
-            ]
-        };
+        var hexData = BuildTestBattleMapDataWithSingleHex();
         var json = JsonSerializer.Serialize(hexData);
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
@@ -174,21 +177,7 @@ public class MainMenuViewModelTests
     public async Task LoadMapCommand_WhenEditViewModelIsNull_ShouldNotNavigate()
     {
         // Arrange
-        var hexData = new BattleMapData
-        {
-            Biome = "test",
-            HexData =
-            [
-                new()
-                {
-                    Coordinates = new HexCoordinateData(0, 0),
-                    TerrainTypes =
-                    [
-                        MakaMekTerrains.Clear
-                    ]
-                }
-            ]
-        };
+        var hexData = BuildTestBattleMapDataWithSingleHex();
         var json = JsonSerializer.Serialize(hexData);
         var map = new BattleMap(1,1);
 
@@ -233,21 +222,7 @@ public class MainMenuViewModelTests
     public async Task LoadMapCommand_WhenMapFactoryThrows_ShouldHandleExceptionGracefully()
     {
         // Arrange
-        var hexData = new BattleMapData
-        {
-            Biome = "test",
-            HexData =
-            [
-                new HexData
-                {
-                    Coordinates = new HexCoordinateData(0, 0),
-                    TerrainTypes =
-                    [
-                        MakaMekTerrains.Clear
-                    ]
-                }
-            ]
-        };
+        var hexData = BuildTestBattleMapDataWithSingleHex();
         var json = JsonSerializer.Serialize(hexData);
 
         _fileService.OpenFile("Load Map").Returns(("",json));
