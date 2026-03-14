@@ -234,11 +234,12 @@ public class EditMapViewModelTests
 
         // Assert
         savedContent.ShouldNotBeNull();
-        var deserializedData = JsonSerializer.Deserialize<List<HexData>>(savedContent);
+        var deserializedData = JsonSerializer.Deserialize<BattleMapData>(savedContent);
         deserializedData.ShouldNotBeNull();
-        deserializedData.Count.ShouldBe(1);
-        deserializedData[0].Coordinates.Q.ShouldBe(2);
-        deserializedData[0].Coordinates.R.ShouldBe(3);
+        deserializedData.Biome.ShouldBe("test");
+        deserializedData.HexData.Count.ShouldBe(1);
+        deserializedData.HexData[0].Coordinates.Q.ShouldBe(2);
+        deserializedData.HexData[0].Coordinates.R.ShouldBe(3);
     }
 
     [Fact]

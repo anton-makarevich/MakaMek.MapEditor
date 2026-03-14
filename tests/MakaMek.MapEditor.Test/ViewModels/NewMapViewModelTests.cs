@@ -1,6 +1,7 @@
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using Sanet.MakaMek.Assets.Services;
 using Sanet.MakaMek.Map.Factories;
 using Sanet.MakaMek.Map.Generators;
 using Sanet.MakaMek.Map.Models;
@@ -18,7 +19,7 @@ public class NewMapViewModelTests
     private readonly INavigationService _navigationService = Substitute.For<INavigationService>();
     private readonly NewMapViewModel _sut;
     private readonly ILogger<EditMapViewModel> _logger = Substitute.For<ILogger<EditMapViewModel>>();
-    private readonly IImageService _imageService = Substitute.For<IImageService>();
+    private readonly ITerrainAssetService _assetService = Substitute.For<ITerrainAssetService>();
     private readonly IFileService _fileService = Substitute.For<IFileService>();
 
     public NewMapViewModelTests()
@@ -150,7 +151,7 @@ public class NewMapViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             _fileService,
-            _imageService, _logger);
+            _assetService, _logger);
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
@@ -178,7 +179,7 @@ public class NewMapViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             _fileService,
-            _imageService, _logger);
+            _assetService, _logger);
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
@@ -201,7 +202,7 @@ public class NewMapViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             _fileService,
-            _imageService, _logger);
+            _assetService, _logger);
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
@@ -221,7 +222,7 @@ public class NewMapViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             _fileService,
-            _imageService, _logger);
+            _assetService, _logger);
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
