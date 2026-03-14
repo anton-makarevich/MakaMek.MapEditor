@@ -50,7 +50,7 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public void ImageService_ShouldBeAccessible()
+    public void AssetService_ShouldBeAccessible()
     {
         _sut.AssetService.ShouldBe(_assetService);
     }
