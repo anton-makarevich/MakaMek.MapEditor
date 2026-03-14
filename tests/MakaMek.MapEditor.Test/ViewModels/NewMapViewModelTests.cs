@@ -1,4 +1,3 @@
-using AsyncAwaitBestPractices.MVVM;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Sanet.MakaMek.Assets.Services;
@@ -27,6 +26,9 @@ public class NewMapViewModelTests
         _sut = new NewMapViewModel(_mapFactory);
         _sut.SetNavigationService(_navigationService);
     }
+
+    private EditMapViewModel CreateEditMapViewModelSubstitute() 
+        => Substitute.For<EditMapViewModel>(_fileService, _assetService, _logger);
 
     [Fact]
     public void MapWidthMin_ShouldReturn5()
@@ -149,9 +151,7 @@ public class NewMapViewModelTests
         _sut.MapWidth = 10;
         _sut.MapHeight = 12;
         var map = new BattleMap(1,1);
-        var editViewModel = Substitute.For<EditMapViewModel>(
-            _fileService,
-            _assetService, _logger);
+        var editViewModel = CreateEditMapViewModelSubstitute();
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
@@ -177,9 +177,7 @@ public class NewMapViewModelTests
         _sut.ForestCoverage = 40;
         _sut.LightWoodsPercentage = 50;
         var map = new BattleMap(1,1);
-        var editViewModel = Substitute.For<EditMapViewModel>(
-            _fileService,
-            _assetService, _logger);
+        var editViewModel = CreateEditMapViewModelSubstitute();
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
@@ -200,9 +198,7 @@ public class NewMapViewModelTests
     {
         // Arrange
         var map = new BattleMap(1,1);
-        var editViewModel = Substitute.For<EditMapViewModel>(
-            _fileService,
-            _assetService, _logger);
+        var editViewModel = CreateEditMapViewModelSubstitute();
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
@@ -220,9 +216,7 @@ public class NewMapViewModelTests
     {
         // Arrange
         var map = new BattleMap(1,1);
-        var editViewModel = Substitute.For<EditMapViewModel>(
-            _fileService,
-            _assetService, _logger);
+        var editViewModel = CreateEditMapViewModelSubstitute();
 
         _mapFactory.GenerateMap(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<ITerrainGenerator>())
             .Returns(map);
