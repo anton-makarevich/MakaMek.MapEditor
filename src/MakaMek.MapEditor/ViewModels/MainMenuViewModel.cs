@@ -1,6 +1,7 @@
 using System.Text.Json;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.Extensions.Logging;
+using Sanet.MakaMek.Assets.Services;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Factories;
 using Sanet.MakaMek.Services;
@@ -13,12 +14,32 @@ public class MainMenuViewModel : BaseViewModel
     private readonly IFileService _fileService;
     private readonly IBattleMapFactory _mapFactory;
     private readonly ILogger<MainMenuViewModel> _logger;
+    private readonly ITerrainAssetService _terrainAssetService;
 
-    public MainMenuViewModel(IFileService fileService, IBattleMapFactory mapFactory, ILogger<MainMenuViewModel> logger)
+    private string _biomeLoadingStatus = string.Empty;
+    private bool _hasError;
+
+    public string BiomeLoadingStatus
+    {
+        get => _biomeLoadingStatus;
+        private set => SetProperty(ref _biomeLoadingStatus, value);
+    }
+
+    public bool HasError
+    {
+        get => _hasError;
+        private set => SetProperty(ref _hasError, value);
+    }
+
+    public MainMenuViewModel(IFileService fileService, IBattleMapFactory mapFactory, ILogger<MainMenuViewModel> logger, ITerrainAssetService terrainAssetService)
     {
         _fileService = fileService;
         _mapFactory = mapFactory;
         _logger = logger;
+        _terrainAssetService = terrainAssetService;
+        
+        // Initialize preloading
+        _ = PreloadBiomes();
     }
 
     public IAsyncCommand CreateNewMapCommand => field ??= new AsyncCommand(() => 
@@ -47,4 +68,39 @@ public class MainMenuViewModel : BaseViewModel
             _logger.LogError(ex, "Failed to load map");
         }
     });
+
+    /// <summary>
+    /// Preloads biome data from all configured providers
+    /// </summary>
+    private async Task PreloadBiomes()
+    {
+        try
+        {
+            // Trigger initialization of the terrain caching service
+            var biomes = await _terrainAssetService.GetLoadedBiomes();
+            var biomeCount = biomes.Count();
+
+            _biomeLoadingStatus = biomeCount == 0
+                ? "No biomes found"
+                : $"{biomeCount} biomes loaded";
+
+            if (biomeCount == 0)
+                throw new Exception("No biomes found");
+        }
+        catch (Exception ex)
+        {
+            _hasError = true;
+            _biomeLoadingStatus = $"Error loading biomes: {ex.Message}";
+        }
+        finally
+        {
+            UpdateLoadingText();
+        }
+    }
+
+    private void UpdateLoadingText()
+    {
+        // The SetProperty calls in the property setters already handle property notifications
+        // This method can be used for additional UI updates if needed
+    }
 }
