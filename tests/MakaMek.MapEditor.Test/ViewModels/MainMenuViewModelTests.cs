@@ -260,6 +260,7 @@ public class MainMenuViewModelTests
         viewModel.BiomeLoadingStatus.ShouldContain("2 biomes loaded");
         viewModel.HasError.ShouldBeFalse();
         viewModel.IsLoading.ShouldBeFalse();
+        viewModel.CanShowMenu.ShouldBeTrue();
     }
 
     [Fact]

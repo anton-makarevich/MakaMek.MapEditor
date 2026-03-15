@@ -29,14 +29,24 @@ public class MainMenuViewModel : BaseViewModel
     public bool HasError
     {
         get => _hasError;
-        private set => SetProperty(ref _hasError, value);
+        private set
+        {
+            SetProperty(ref _hasError, value);
+            NotifyPropertyChanged(nameof(CanShowMenu));
+        }
     }
 
     public bool IsLoading
     {
         get => _isLoading;
-        private set => SetProperty(ref _isLoading, value);
+        private set
+        {
+            SetProperty(ref _isLoading, value);
+            NotifyPropertyChanged(nameof(CanShowMenu));
+        }
     }
+
+    public bool CanShowMenu => !IsLoading && !HasError;
 
     public MainMenuViewModel(IFileService fileService, IBattleMapFactory mapFactory, ILogger<MainMenuViewModel> logger, ITerrainAssetService terrainAssetService)
     {

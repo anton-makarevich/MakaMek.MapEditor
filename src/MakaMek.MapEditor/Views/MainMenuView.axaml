@@ -7,7 +7,7 @@
              x:Class="Sanet.MakaMek.MapEditor.Views.MainMenuView"
              x:DataType="viewModels:MainMenuViewModel">
     <Grid RowDefinitions="*,Auto,Auto,*" ColumnDefinitions="*,Auto,*">
-        <StackPanel Grid.Row="1" Grid.Column="1" Spacing="20" IsVisible="{Binding !IsLoading}">
+        <StackPanel Grid.Row="1" Grid.Column="1" Spacing="20" IsVisible="{Binding CanShowMenu}">
             <TextBlock Text="MakaMek Map Editor" FontSize="30" HorizontalAlignment="Center" FontWeight="Bold"/>
             <Button Content="Create New Map" Command="{Binding CreateNewMapCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" FontSize="20"/>
             <Button Content="Load Map" Command="{Binding LoadMapCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" FontSize="20"/>
