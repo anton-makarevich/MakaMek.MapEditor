@@ -9,6 +9,7 @@ using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Services;
 using Sanet.MVVM.Core.Services;
+using Shouldly;
 using Xunit;
 
 namespace MakaMek.MapEditor.Test.ViewModels;
@@ -25,7 +26,7 @@ public class MainMenuViewModelTests
 
     public MainMenuViewModelTests()
     {
-        _sut = new MainMenuViewModel(_fileService, _mapFactory, _mainMenuLogger);
+        _sut = new MainMenuViewModel(_fileService, _mapFactory, _mainMenuLogger, _assetService);
         _sut.SetNavigationService(_navigationService);
     }
 
@@ -233,5 +234,69 @@ public class MainMenuViewModelTests
         await _sut.LoadMapCommand.ExecuteAsync();
 
         await _navigationService.DidNotReceive().NavigateToViewModelAsync(Arg.Any<EditMapViewModel>());
+    }
+
+    [Fact]
+    public void Constructor_ShouldInitializePreloading()
+    {
+        // Assert
+        _assetService.Received(1).GetLoadedBiomes();
+    }
+
+    [Fact]
+    public async Task PreloadBiomes_WhenBiomesExist_ShouldSetSuccessStatus()
+    {
+        // Arrange
+        var biomes = new[] { "biome1", "biome2" };
+        _assetService.GetLoadedBiomes().Returns(biomes);
+        
+        // Create a new instance to trigger preloading
+        var viewModel = new MainMenuViewModel(_fileService, _mapFactory, _mainMenuLogger, _assetService);
+        
+        // Wait for the async operation to complete
+        await Task.Delay(100);
+        
+        // Assert
+        viewModel.BiomeLoadingStatus.ShouldContain("2 biomes loaded");
+        viewModel.HasError.ShouldBeFalse();
+        viewModel.IsLoading.ShouldBeFalse();
+        viewModel.CanShowMenu.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task PreloadBiomes_WhenNoBiomesExist_ShouldSetErrorStatus()
+    {
+        // Arrange
+        var biomes = Array.Empty<string>();
+        _assetService.GetLoadedBiomes().Returns(biomes);
+        
+        // Create a new instance to trigger preloading
+        var viewModel = new MainMenuViewModel(_fileService, _mapFactory, _mainMenuLogger, _assetService);
+        
+        // Wait for the async operation to complete
+        await Task.Delay(100);
+        
+        // Assert
+        viewModel.BiomeLoadingStatus.ShouldContain("No biomes found");
+        viewModel.HasError.ShouldBeTrue();
+        viewModel.IsLoading.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task PreloadBiomes_WhenExceptionOccurs_ShouldSetErrorStatus()
+    {
+        // Arrange
+        _assetService.GetLoadedBiomes().Returns(Task.FromException<IEnumerable<string>>(new InvalidOperationException("Service unavailable")));
+        
+        // Create a new instance to trigger preloading
+        var viewModel = new MainMenuViewModel(_fileService, _mapFactory, _mainMenuLogger, _assetService);
+        
+        // Wait for the async operation to complete
+        await Task.Delay(100);
+        
+        // Assert
+        viewModel.BiomeLoadingStatus.ShouldContain("Error loading biomes: Service unavailable");
+        viewModel.HasError.ShouldBeTrue();
+        viewModel.IsLoading.ShouldBeFalse();
     }
 }

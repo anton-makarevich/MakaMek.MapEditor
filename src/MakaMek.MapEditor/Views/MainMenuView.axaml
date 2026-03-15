@@ -7,10 +7,23 @@
              x:Class="Sanet.MakaMek.MapEditor.Views.MainMenuView"
              x:DataType="viewModels:MainMenuViewModel">
     <Grid RowDefinitions="*,Auto,Auto,*" ColumnDefinitions="*,Auto,*">
-        <StackPanel Grid.Row="1" Grid.Column="1" Spacing="20">
+        <StackPanel Grid.Row="1" Grid.Column="1" Spacing="20" IsVisible="{Binding CanShowMenu}">
             <TextBlock Text="MakaMek Map Editor" FontSize="30" HorizontalAlignment="Center" FontWeight="Bold"/>
             <Button Content="Create New Map" Command="{Binding CreateNewMapCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" FontSize="20"/>
             <Button Content="Load Map" Command="{Binding LoadMapCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" FontSize="20"/>
+        </StackPanel>
+        
+        <!-- Loading Section -->
+        <StackPanel Grid.Row="1" Grid.Column="1" Spacing="10" IsVisible="{Binding IsLoading}">
+            <TextBlock Text="Loading terrain data..." FontSize="16" HorizontalAlignment="Center"/>
+            <ProgressBar IsIndeterminate="True" Height="20" Width="200"/>
+            <TextBlock Text="{Binding BiomeLoadingStatus}" FontSize="14" HorizontalAlignment="Center" Foreground="Gray"/>
+        </StackPanel>
+            
+        <!-- Error Section -->
+        <StackPanel Grid.Row="1" Grid.Column="1" Spacing="10" IsVisible="{Binding HasError}">
+            <TextBlock Text="Error loading terrain data" FontSize="16" HorizontalAlignment="Center" Foreground="Red"/>
+            <TextBlock Text="{Binding BiomeLoadingStatus}" FontSize="14" HorizontalAlignment="Center" Foreground="Red" TextWrapping="Wrap"/>
         </StackPanel>
     </Grid>
 </UserControl>
