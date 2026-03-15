@@ -258,6 +258,7 @@ public class MainMenuViewModelTests
         // Assert
         Assert.Contains("2 biomes loaded", viewModel.BiomeLoadingStatus);
         Assert.False(viewModel.HasError);
+        Assert.False(viewModel.IsLoading);
     }
 
     [Fact]
@@ -276,6 +277,7 @@ public class MainMenuViewModelTests
         // Assert
         Assert.Contains("No biomes found", viewModel.BiomeLoadingStatus);
         Assert.True(viewModel.HasError);
+        Assert.False(viewModel.IsLoading);
     }
 
     [Fact]
@@ -293,5 +295,6 @@ public class MainMenuViewModelTests
         // Assert
         Assert.Contains("Error loading biomes: Service unavailable", viewModel.BiomeLoadingStatus);
         Assert.True(viewModel.HasError);
+        Assert.False(viewModel.IsLoading);
     }
 }

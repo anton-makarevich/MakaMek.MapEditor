@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <AssemblyName>Sanet.MakaMek.MapEditor</AssemblyName>
     <RootNamespace>Sanet.MakaMek.MapEditor</RootNamespace>
     <Description>Map editor for MakaMek</Description>

@@ -18,6 +18,7 @@ public class MainMenuViewModel : BaseViewModel
 
     private string _biomeLoadingStatus = string.Empty;
     private bool _hasError;
+    private bool _isLoading;
 
     public string BiomeLoadingStatus
     {
@@ -29,6 +30,12 @@ public class MainMenuViewModel : BaseViewModel
     {
         get => _hasError;
         private set => SetProperty(ref _hasError, value);
+    }
+
+    public bool IsLoading
+    {
+        get => _isLoading;
+        private set => SetProperty(ref _isLoading, value);
     }
 
     public MainMenuViewModel(IFileService fileService, IBattleMapFactory mapFactory, ILogger<MainMenuViewModel> logger, ITerrainAssetService terrainAssetService)
@@ -76,6 +83,7 @@ public class MainMenuViewModel : BaseViewModel
     {
         try
         {
+            IsLoading = true;
             // Trigger initialization of the terrain caching service
             var biomes = await _terrainAssetService.GetLoadedBiomes();
             var biomeCount = biomes.Count();
@@ -89,12 +97,13 @@ public class MainMenuViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            _hasError = true;
-            _biomeLoadingStatus = $"Error loading biomes: {ex.Message}";
+            HasError = true;
+            BiomeLoadingStatus = $"Error loading biomes: {ex.Message}";
         }
         finally
         {
             UpdateLoadingText();
+            IsLoading = false;
         }
     }
 
