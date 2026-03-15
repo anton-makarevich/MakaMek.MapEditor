@@ -88,7 +88,7 @@ public class MainMenuViewModel : BaseViewModel
             var biomes = await _terrainAssetService.GetLoadedBiomes();
             var biomeCount = biomes.Count();
 
-            _biomeLoadingStatus = biomeCount == 0
+            BiomeLoadingStatus = biomeCount == 0
                 ? "No biomes found"
                 : $"{biomeCount} biomes loaded";
 
@@ -102,14 +102,7 @@ public class MainMenuViewModel : BaseViewModel
         }
         finally
         {
-            UpdateLoadingText();
             IsLoading = false;
         }
-    }
-
-    private void UpdateLoadingText()
-    {
-        // The SetProperty calls in the property setters already handle property notifications
-        // This method can be used for additional UI updates if needed
     }
 }
