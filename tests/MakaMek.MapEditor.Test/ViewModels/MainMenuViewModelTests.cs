@@ -9,6 +9,7 @@ using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Services;
 using Sanet.MVVM.Core.Services;
+using Shouldly;
 using Xunit;
 
 namespace MakaMek.MapEditor.Test.ViewModels;
@@ -256,9 +257,9 @@ public class MainMenuViewModelTests
         await Task.Delay(100);
         
         // Assert
-        Assert.Contains("2 biomes loaded", viewModel.BiomeLoadingStatus);
-        Assert.False(viewModel.HasError);
-        Assert.False(viewModel.IsLoading);
+        viewModel.BiomeLoadingStatus.ShouldContain("2 biomes loaded");
+        viewModel.HasError.ShouldBeFalse();
+        viewModel.IsLoading.ShouldBeFalse();
     }
 
     [Fact]
@@ -275,9 +276,9 @@ public class MainMenuViewModelTests
         await Task.Delay(100);
         
         // Assert
-        Assert.Contains("No biomes found", viewModel.BiomeLoadingStatus);
-        Assert.True(viewModel.HasError);
-        Assert.False(viewModel.IsLoading);
+        viewModel.BiomeLoadingStatus.ShouldContain("No biomes found");
+        viewModel.HasError.ShouldBeTrue();
+        viewModel.IsLoading.ShouldBeFalse();
     }
 
     [Fact]
@@ -293,8 +294,8 @@ public class MainMenuViewModelTests
         await Task.Delay(100);
         
         // Assert
-        Assert.Contains("Error loading biomes: Service unavailable", viewModel.BiomeLoadingStatus);
-        Assert.True(viewModel.HasError);
-        Assert.False(viewModel.IsLoading);
+        viewModel.BiomeLoadingStatus.ShouldContain("Error loading biomes: Service unavailable");
+        viewModel.HasError.ShouldBeTrue();
+        viewModel.IsLoading.ShouldBeFalse();
     }
 }
