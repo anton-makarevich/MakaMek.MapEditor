@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia.Browser" Version="11.3.12" />
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Microsoft.DotNet.HotReload.WebAssembly.Browser" Version="10.0.103" PrivateAssets="all" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Microsoft.DotNet.HotReload.WebAssembly.Browser" Version="10.0.201" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MakaMek.MapEditor\MakaMek.MapEditor.csproj" />
