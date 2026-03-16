@@ -301,4 +301,198 @@ public class EditMapViewModelTests
         hex1.GetTerrains().First().ShouldBe(terrain);
         hex2.GetTerrains().First().ShouldBe(terrain);
     }
+
+    // --- EditMode / Level tests ---
+    [Fact]
+    public void ActiveEditMode_DefaultValue_ShouldBeTerrain()
+    {
+        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
+    }
+
+    [Fact]
+    public async Task RaiseLevelCommand_ShouldSetActiveEditModeToRaiseLevel()
+    {
+        // Act
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(EditMode.RaiseLevel);
+    }
+
+    [Fact]
+    public async Task RaiseLevelCommand_WhenAlreadyActive_ShouldRevertToTerrain()
+    {
+        // Arrange
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+
+        // Act
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
+    }
+
+    [Fact]
+    public async Task LowerLevelCommand_ShouldSetActiveEditModeToLowerLevel()
+    {
+        // Act
+        await _sut.LowerLevelCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(EditMode.LowerLevel);
+    }
+
+    [Fact]
+    public async Task LowerLevelCommand_WhenAlreadyActive_ShouldRevertToTerrain()
+    {
+        // Arrange
+        await _sut.LowerLevelCommand.ExecuteAsync();
+
+        // Act
+        await _sut.LowerLevelCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
+    }
+
+    [Fact]
+    public async Task IsRaiseLevelActive_ShouldReflectActiveEditMode()
+    {
+        // Initially false
+        _sut.IsRaiseLevelActive.ShouldBeFalse();
+
+        // After activating raise
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+        _sut.IsRaiseLevelActive.ShouldBeTrue();
+
+        // After deactivating
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+        _sut.IsRaiseLevelActive.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task IsLowerLevelActive_ShouldReflectActiveEditMode()
+    {
+        // Initially false
+        _sut.IsLowerLevelActive.ShouldBeFalse();
+
+        // After activating lower
+        await _sut.LowerLevelCommand.ExecuteAsync();
+        _sut.IsLowerLevelActive.ShouldBeTrue();
+
+        // After deactivating
+        await _sut.LowerLevelCommand.ExecuteAsync();
+        _sut.IsLowerLevelActive.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task HandleHexSelection_InRaiseLevelMode_ShouldCreateNewHexWithIncreasedLevel()
+    {
+        // Arrange
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1), level: 2);
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+
+        // Act
+        var newHex = _sut.HandleHexSelection(hex);
+
+        // Assert
+        newHex.ShouldNotBeNull();
+        newHex.Level.ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task HandleHexSelection_InRaiseLevelMode_ShouldPreserveTerrains()
+    {
+        // Arrange
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1), level: 0);
+        hex.AddTerrain(new LightWoodsTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+
+        // Act
+        var newHex = _sut.HandleHexSelection(hex);
+
+        // Assert
+        newHex.ShouldNotBeNull();
+        newHex.GetTerrains().ShouldContain(t => t is LightWoodsTerrain);
+    }
+
+    [Fact]
+    public async Task HandleHexSelection_InLowerLevelMode_ShouldCreateNewHexWithDecreasedLevel()
+    {
+        // Arrange
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1), level: 2);
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        await _sut.LowerLevelCommand.ExecuteAsync();
+
+        // Act
+        var newHex = _sut.HandleHexSelection(hex);
+
+        // Assert
+        newHex.ShouldNotBeNull();
+        newHex.Level.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task HandleHexSelection_InRaiseLevelMode_ShouldReplaceHexInMap()
+    {
+        // Arrange
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1), level: 0);
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+
+        // Act
+        _sut.HandleHexSelection(hex);
+
+        // Assert
+        var mapHex = map.GetHex(new HexCoordinates(1, 1));
+        mapHex.ShouldNotBeNull();
+        mapHex.Level.ShouldBe(1);
+    }
+
+    [Fact]
+    public void HandleHexSelection_InTerrainMode_ShouldReturnNull()
+    {
+        // Arrange
+        var hex = new Hex(new HexCoordinates(0, 0));
+        _sut.SelectedTerrain = new ClearTerrain();
+
+        // Act
+        var result = _sut.HandleHexSelection(hex);
+
+        // Assert
+        result.ShouldBeNull();
+    }
+
+    [Fact]
+    public void GetEdgeUpdatesForNeighbors_ShouldReturnEdgesForValidOnMapNeighbors()
+    {
+        // Arrange - 3x3 map, center hex at (2,2)
+        var map = new BattleMap(3, 3);
+        for (var q = 1; q <= 3; q++)
+        for (var r = 1; r <= 3; r++)
+            map.AddHex(new Hex(new HexCoordinates(q, r)));
+
+        _sut.Initialize(map);
+        var centerCoords = new HexCoordinates(2, 2);
+
+        // Act
+        var updates = _sut.GetEdgeUpdatesForNeighbors(centerCoords).ToList();
+
+        // Assert
+        updates.ShouldNotBeEmpty();
+        // All returned coordinates must be on the map
+        updates.All(u => map.IsOnMap(u.Coordinates)).ShouldBeTrue();
+        // Each has 6 edges
+        updates.All(u => u.Edges.Count == 6).ShouldBeTrue();
+    }
 }
