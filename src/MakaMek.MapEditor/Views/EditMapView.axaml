@@ -9,8 +9,13 @@
              x:CompileBindings="True"
              x:DataType="viewModels:EditMapViewModel">
     <UserControl.Styles>
+        <Style Selector="UserControl">
+            <Style.Resources>
+                <SolidColorBrush x:Key="ActiveButtonBrush" Color="#005A9E"/>
+            </Style.Resources>
+        </Style>
         <Style Selector="Button.active">
-            <Setter Property="Background" Value="#005A9E"/>
+            <Setter Property="Background" Value="{DynamicResource ActiveButtonBrush}"/>
             <Setter Property="Foreground" Value="White"/>
         </Style>
     </UserControl.Styles>
