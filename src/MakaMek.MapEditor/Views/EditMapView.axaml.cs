@@ -11,6 +11,7 @@ namespace Sanet.MakaMek.MapEditor.Views;
 
 public partial class EditMapView : BaseView<EditMapViewModel>
 {
+    private readonly Dictionary<HexCoordinates, HexControl> _hexControlsByCoords = new();
     
     public EditMapView()
     {
@@ -38,6 +39,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
     private void RenderMap()
     {
         MapCanvas.Children.Clear();
+        _hexControlsByCoords.Clear();
         if (ViewModel?.Map == null) return;
 
         double maxX = 0;
@@ -45,25 +47,51 @@ public partial class EditMapView : BaseView<EditMapViewModel>
 
         foreach (var hex in ViewModel.Map.GetHexes())
         {
-            var hexControl = new HexControl(hex, ViewModel.Logger, ViewModel.AssetService);
+            var edges = ViewModel.Map.GetHexEdges(hex.Coordinates);
+            var hexControl = new HexControl(hex, ViewModel.Logger, ViewModel.AssetService, edges);
             MapCanvas.Children.Add(hexControl);
+            _hexControlsByCoords[hex.Coordinates] = hexControl;
             if (hex.Coordinates.H > maxX) maxX = hex.Coordinates.H;
             if (hex.Coordinates.V > maxY) maxY = hex.Coordinates.V;
         }
         
-        MapCanvas.Width = maxX+ HexCoordinatesPixelExtensions.HexWidth*0.5;
-        MapCanvas.Height = maxY + HexCoordinatesPixelExtensions.HexHeight*1.5;
+        MapCanvas.Width = maxX + HexCoordinatesPixelExtensions.HexWidth * 0.5;
+        MapCanvas.Height = maxY + HexCoordinatesPixelExtensions.HexHeight * 1.5;
     }
 
     private void MapCanvas_OnContentClicked(object? sender, Point clickedPosition)
     {
-        var selectedHex = MapCanvas.Children
+        var selectedHexControl = MapCanvas.Children
             .OfType<HexControl>()
             .FirstOrDefault(h => h.IsPointInside(clickedPosition));
 
-        if (selectedHex == null || ViewModel == null) return;
-        ViewModel.HandleHexSelection(selectedHex.Hex);
-        selectedHex.Render().SafeFireAndForget(
-            ex => ViewModel.Logger.LogError(ex, "Failed to render hex"));
+        if (selectedHexControl == null || ViewModel == null) return;
+
+        var newHex = ViewModel.HandleHexSelection(selectedHexControl.Hex);
+
+        if (newHex != null)
+        {
+            // Level mode: replace the HexControl (Hex is immutable, can't swap _hex)
+            var edges = ViewModel.Map?.GetHexEdges(newHex.Coordinates);
+            var newHexControl = new HexControl(newHex, ViewModel.Logger, ViewModel.AssetService, edges);
+            MapCanvas.Children.Remove(selectedHexControl);
+            MapCanvas.Children.Add(newHexControl);
+            _hexControlsByCoords[newHex.Coordinates] = newHexControl;
+
+            // Update edges on all on-map neighbors via the ViewModel
+            foreach (var (coords, neighborEdges) in ViewModel.GetEdgeUpdatesForNeighbors(newHex.Coordinates))
+            {
+                if (_hexControlsByCoords.TryGetValue(coords, out var neighborControl))
+                {
+                    neighborControl.UpdateEdges(neighborEdges);
+                }
+            }
+        }
+        else
+        {
+            // Terrain mode: re-render the single hex
+            selectedHexControl.Render().SafeFireAndForget(
+                ex => ViewModel.Logger.LogError(ex, "Failed to render hex"));
+        }
     }
 }
