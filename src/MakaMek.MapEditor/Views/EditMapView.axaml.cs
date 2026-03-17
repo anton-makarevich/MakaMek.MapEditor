@@ -11,6 +11,7 @@ namespace Sanet.MakaMek.MapEditor.Views;
 
 public partial class EditMapView : BaseView<EditMapViewModel>
 {
+    private readonly Dictionary<HexCoordinates, HexControl> _hexControlsByCoords = new();
     
     public EditMapView()
     {
@@ -38,6 +39,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
     private void RenderMap()
     {
         MapCanvas.Children.Clear();
+        _hexControlsByCoords.Clear();
         if (ViewModel?.Map == null) return;
 
         double maxX = 0;
@@ -48,6 +50,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             var edges = ViewModel.Map.GetHexEdges(hex.Coordinates);
             var hexControl = new HexControl(hex, ViewModel.Logger, ViewModel.AssetService, edges);
             MapCanvas.Children.Add(hexControl);
+            _hexControlsByCoords[hex.Coordinates] = hexControl;
             if (hex.Coordinates.H > maxX) maxX = hex.Coordinates.H;
             if (hex.Coordinates.V > maxY) maxY = hex.Coordinates.V;
         }
@@ -77,10 +80,10 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             // Update edges on all on-map neighbors via the ViewModel
             foreach (var (coords, neighborEdges) in ViewModel.GetEdgeUpdatesForNeighbors(newHex.Coordinates))
             {
-                var neighborControl = MapCanvas.Children
-                    .OfType<HexControl>()
-                    .FirstOrDefault(h => h.Hex.Coordinates == coords);
-                neighborControl?.UpdateEdges(neighborEdges);
+                if (_hexControlsByCoords.TryGetValue(coords, out var neighborControl))
+                {
+                    neighborControl.UpdateEdges(neighborEdges);
+                }
             }
         }
         else
