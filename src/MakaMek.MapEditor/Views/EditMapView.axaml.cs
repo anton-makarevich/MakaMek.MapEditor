@@ -76,6 +76,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             var newHexControl = new HexControl(newHex, ViewModel.Logger, ViewModel.AssetService, edges);
             MapCanvas.Children.Remove(selectedHexControl);
             MapCanvas.Children.Add(newHexControl);
+            _hexControlsByCoords[newHex.Coordinates] = newHexControl;
 
             // Update edges on all on-map neighbors via the ViewModel
             foreach (var (coords, neighborEdges) in ViewModel.GetEdgeUpdatesForNeighbors(newHex.Coordinates))
