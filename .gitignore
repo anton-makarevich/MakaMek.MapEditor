@@ -57,3 +57,5 @@ publish/
 
 # JetBrains Rider
 .idea/
+
+*.DotSettings.user

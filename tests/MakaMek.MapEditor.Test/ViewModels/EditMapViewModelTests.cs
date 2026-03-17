@@ -529,4 +529,20 @@ public class EditMapViewModelTests
         _sut.IsLowerLevelActive.ShouldBeTrue();
         _sut.IsRaiseLevelActive.ShouldBeFalse();
     }
+
+    [Fact]
+    public void HandleHexSelection_WithInvalidEditMode_ShouldReturnNull()
+    {
+        // Arrange
+        var hex = new Hex(new HexCoordinates(0, 0));
+        // Use reflection to set an invalid EditMode value
+        var propertyInfo = typeof(EditMapViewModel).GetProperty(nameof(EditMapViewModel.ActiveEditMode));
+        propertyInfo?.SetValue(_sut, (EditMode)999);
+
+        // Act
+        var result = _sut.HandleHexSelection(hex);
+
+        // Assert
+        result.ShouldBeNull();
+    }
 }
