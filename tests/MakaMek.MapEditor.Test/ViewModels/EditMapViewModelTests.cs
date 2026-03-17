@@ -509,9 +509,9 @@ public class EditMapViewModelTests
         // Act
         var newHex = _sut.HandleHexSelection(hex);
 
-        // Assert - verify expected behavior (negative level or clamped to 0?)
+        // Assert
         newHex.ShouldNotBeNull();
-        newHex.Level.ShouldBe(-1); // or ShouldBe(0) if clamped
+        newHex.Level.ShouldBe(-1); 
     }
 
     [Fact]
