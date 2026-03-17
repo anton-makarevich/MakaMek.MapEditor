@@ -495,4 +495,38 @@ public class EditMapViewModelTests
         // Each has 6 edges
         updates.All(u => u.Edges.Count == 6).ShouldBeTrue();
     }
+    
+    [Fact]
+    public async Task HandleHexSelection_InLowerLevelMode_WhenLevelIsZero_ShouldCreateNegativeLevel()
+    {
+        // Arrange
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1), level: 0);
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        await _sut.LowerLevelCommand.ExecuteAsync();
+
+        // Act
+        var newHex = _sut.HandleHexSelection(hex);
+
+        // Assert - verify expected behavior (negative level or clamped to 0?)
+        newHex.ShouldNotBeNull();
+        newHex.Level.ShouldBe(-1); // or ShouldBe(0) if clamped
+    }
+
+    [Fact]
+    public async Task SwitchingFromRaiseLevelToLowerLevel_ShouldChangeActiveMode()
+    {
+        // Arrange
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+        _sut.ActiveEditMode.ShouldBe(EditMode.RaiseLevel);
+
+        // Act
+        await _sut.LowerLevelCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(EditMode.LowerLevel);
+        _sut.IsLowerLevelActive.ShouldBeTrue();
+        _sut.IsRaiseLevelActive.ShouldBeFalse();
+    }
 }
