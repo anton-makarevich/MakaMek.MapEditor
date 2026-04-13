@@ -159,5 +159,5 @@ public class EditMapViewModel : BaseViewModel
         await _fileService.SaveFile("Export Map", "map.json", json);
     }, onException: ex => Logger.LogError(ex, "Failed to export map"));
 
-    public ILocalizationService? LocalizationService { get; }
+    public ILocalizationService LocalizationService { get; }
 }

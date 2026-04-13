@@ -80,6 +80,14 @@ public class EditMapViewModelTests
     }
 
     [Fact]
+    public void LocalizationService_ShouldBeInitializedViaConstructor()
+    {
+        // Assert
+        _sut.LocalizationService.ShouldNotBeNull();
+        _sut.LocalizationService.ShouldBe(_localizationService);
+    }
+
+    [Fact]
     public void Initialize_ShouldSetMap()
     {
         // Arrange
