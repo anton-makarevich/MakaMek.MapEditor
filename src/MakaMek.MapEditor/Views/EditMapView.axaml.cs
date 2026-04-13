@@ -48,7 +48,11 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         foreach (var hex in ViewModel.Map.GetHexes())
         {
             var edges = ViewModel.Map.GetHexEdges(hex.Coordinates);
-            var hexControl = new HexControl(hex, ViewModel.Logger, ViewModel.AssetService, edges);
+            var hexControl = new HexControl(hex,
+                ViewModel.Logger,
+                ViewModel.AssetService,
+                ViewModel.LocalizationService,
+                edges);
             MapCanvas.Children.Add(hexControl);
             _hexControlsByCoords[hex.Coordinates] = hexControl;
             if (hex.Coordinates.H > maxX) maxX = hex.Coordinates.H;
@@ -73,7 +77,11 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         {
             // Level mode: replace the HexControl (Hex is immutable, can't swap _hex)
             var edges = ViewModel.Map?.GetHexEdges(newHex.Coordinates);
-            var newHexControl = new HexControl(newHex, ViewModel.Logger, ViewModel.AssetService, edges);
+            var newHexControl = new HexControl(newHex,
+                ViewModel.Logger,
+                ViewModel.AssetService,
+                ViewModel.LocalizationService,
+                edges);
             MapCanvas.Children.Remove(selectedHexControl);
             MapCanvas.Children.Add(newHexControl);
             _hexControlsByCoords[newHex.Coordinates] = newHexControl;
