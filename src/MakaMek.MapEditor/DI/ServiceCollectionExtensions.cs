@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Assets.Services;
 using Sanet.MakaMek.Core.Services;
 using Sanet.MakaMek.Core.Services.ResourceProviders;
+using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Services;
 using Sanet.MakaMek.Services.Avalonia;
@@ -28,6 +29,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<Map.Factories.IBattleMapFactory, Map.Factories.BattleMapFactory>();
         services.AddSingleton<IImageService>(_ => new AvaloniaAssetImageService("avares://Sanet.MakaMek.MapEditor/Assets"));
         services.AddSingleton<IFileService, AvaloniaFileService>();
+        services.AddSingleton<ILocalizationService, FakeLocalizationService>();
         // Register terrain caching service with stream providers
         services.AddSingleton<ITerrainAssetService>(sp =>
         {

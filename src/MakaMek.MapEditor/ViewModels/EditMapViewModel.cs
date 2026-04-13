@@ -3,6 +3,7 @@ using System.Text.Json;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Assets.Services;
+using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MakaMek.Services;
@@ -21,10 +22,14 @@ public class EditMapViewModel : BaseViewModel
     private readonly IFileService _fileService;
     public ITerrainAssetService AssetService { get; }
 
-    public EditMapViewModel(IFileService fileService, ITerrainAssetService assetService, ILogger<EditMapViewModel> logger)
+    public EditMapViewModel(IFileService fileService,
+        ITerrainAssetService assetService,
+        ILocalizationService localizationService,
+        ILogger<EditMapViewModel> logger)
     {
         _fileService = fileService;
         AssetService = assetService;
+        LocalizationService = localizationService;
         Logger = logger;
     }
     
@@ -153,4 +158,6 @@ public class EditMapViewModel : BaseViewModel
         var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
         await _fileService.SaveFile("Export Map", "map.json", json);
     }, onException: ex => Logger.LogError(ex, "Failed to export map"));
+
+    public ILocalizationService LocalizationService { get; }
 }

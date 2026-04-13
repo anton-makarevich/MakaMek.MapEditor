@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Sanet.MakaMek.Assets.Services;
+using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Factories;
 using Sanet.MakaMek.Map.Models;
@@ -19,6 +20,7 @@ public class MainMenuViewModelTests
     private readonly IBattleMapFactory _mapFactory = Substitute.For<IBattleMapFactory>();
     private readonly INavigationService _navigationService = Substitute.For<INavigationService>();
     private readonly MainMenuViewModel _sut;
+    private readonly ILocalizationService _localizationService = Substitute.For<ILocalizationService>();
     private readonly ILogger<EditMapViewModel> _editViewLogger = Substitute.For<ILogger<EditMapViewModel>>();
     private readonly ILogger<MainMenuViewModel> _mainMenuLogger = Substitute.For<ILogger<MainMenuViewModel>>();
     private readonly ITerrainAssetService _assetService = Substitute.For<ITerrainAssetService>();
@@ -139,7 +141,7 @@ public class MainMenuViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             _fileService,
-            _assetService, _editViewLogger);
+            _assetService, _localizationService, _editViewLogger);
 
         _fileService.OpenFile("Load Map").Returns(("",json));
         _mapFactory.CreateFromData(Arg.Any<BattleMapData>()).Returns(map);
@@ -161,7 +163,7 @@ public class MainMenuViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             _fileService,
-            _assetService, _editViewLogger);
+            _assetService, _localizationService, _editViewLogger);
 
         _fileService.OpenFile("Load Map").Returns(("",json));
         _mapFactory.CreateFromData(Arg.Any<BattleMapData>()).Returns(map);

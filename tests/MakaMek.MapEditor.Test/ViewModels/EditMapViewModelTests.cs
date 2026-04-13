@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Sanet.MakaMek.Assets.Services;
+using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
@@ -17,12 +18,16 @@ public class EditMapViewModelTests
 {
     private readonly IFileService _fileService = Substitute.For<IFileService>();
     private readonly ITerrainAssetService _assetService = Substitute.For<ITerrainAssetService>();
+    private readonly ILocalizationService _localizationService = Substitute.For<ILocalizationService>();
     private readonly EditMapViewModel _sut;
     private readonly ILogger<EditMapViewModel> _logger = Substitute.For<ILogger<EditMapViewModel>>();
 
     public EditMapViewModelTests()
     {
-        _sut = new EditMapViewModel(_fileService, _assetService, _logger);
+        _sut = new EditMapViewModel(_fileService,
+            _assetService,
+            _localizationService,
+            _logger);
     }
 
     private static BattleMapData CreateTestBattleMapData(int q = 0, int r = 0)
@@ -72,6 +77,14 @@ public class EditMapViewModelTests
     public void AssetService_ShouldBeAccessible()
     {
         _sut.AssetService.ShouldBe(_assetService);
+    }
+
+    [Fact]
+    public void LocalizationService_ShouldBeInitializedViaConstructor()
+    {
+        // Assert
+        _sut.LocalizationService.ShouldNotBeNull();
+        _sut.LocalizationService.ShouldBe(_localizationService);
     }
 
     [Fact]

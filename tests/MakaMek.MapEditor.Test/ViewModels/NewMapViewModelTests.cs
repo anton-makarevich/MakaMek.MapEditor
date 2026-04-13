@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Sanet.MakaMek.Assets.Services;
+using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Factories;
 using Sanet.MakaMek.Map.Generators;
 using Sanet.MakaMek.Map.Models;
@@ -17,6 +18,7 @@ public class NewMapViewModelTests
     private readonly IBattleMapFactory _mapFactory = Substitute.For<IBattleMapFactory>();
     private readonly INavigationService _navigationService = Substitute.For<INavigationService>();
     private readonly NewMapViewModel _sut;
+    private readonly ILocalizationService _localizationService = Substitute.For<ILocalizationService>();
     private readonly ILogger<EditMapViewModel> _logger = Substitute.For<ILogger<EditMapViewModel>>();
     private readonly ITerrainAssetService _assetService = Substitute.For<ITerrainAssetService>();
     private readonly IFileService _fileService = Substitute.For<IFileService>();
@@ -27,8 +29,8 @@ public class NewMapViewModelTests
         _sut.SetNavigationService(_navigationService);
     }
 
-    private EditMapViewModel CreateEditMapViewModelSubstitute() 
-        => Substitute.For<EditMapViewModel>(_fileService, _assetService, _logger);
+    private EditMapViewModel CreateEditMapViewModelSubstitute()
+        => Substitute.For<EditMapViewModel>(_fileService, _assetService, _localizationService, _logger);
 
     [Fact]
     public void MapWidthMin_ShouldReturn5()
