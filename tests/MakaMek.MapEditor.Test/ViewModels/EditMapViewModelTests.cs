@@ -697,4 +697,35 @@ public class EditMapViewModelTests
         _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
         _sut.SelectedTerrain.ShouldBe(terrainTool.Terrain);
     }
+    
+    [Fact]
+    public void HandleHexSelection_InTerrainMode_WhenSelectedTerrainIsNull_ShouldReturnNull()
+    {
+        // Arrange
+        var hex = new Hex(new HexCoordinates(0, 0));
+        var initialTerrain = new ClearTerrain();
+        hex.AddTerrain(initialTerrain);
+        _sut.SelectedTerrain = null;
+
+        // Act
+        var result = _sut.HandleHexSelection(hex);
+
+        // Assert
+        result.ShouldBeNull();
+        hex.GetTerrains().First().ShouldBe(initialTerrain);
+    }
+
+    [Fact]
+    public async Task HandleHexSelection_InRaiseLevelMode_WhenMapIsNull_ShouldReturnNull()
+    {
+        // Arrange
+        var hex = new Hex(new HexCoordinates(0, 0));
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+
+        // Act
+        var result = _sut.HandleHexSelection(hex);
+
+        // Assert
+        result.ShouldBeNull();
+    }
 }
