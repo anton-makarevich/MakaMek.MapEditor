@@ -62,3 +62,4 @@ publish/
 
 # AI tools
 .qwen
+.serena/cache
