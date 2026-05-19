@@ -699,33 +699,40 @@ public class EditMapViewModelTests
     }
     
     [Fact]
-    public void HandleHexSelection_InTerrainMode_WhenSelectedTerrainIsNull_ShouldReturnNull()
+    public async Task RaiseLevelCommand_WhenAlreadyActiveAndToolsPopulated_ShouldSelectTerrainTool()
     {
         // Arrange
-        var hex = new Hex(new HexCoordinates(0, 0));
-        var initialTerrain = new ClearTerrain();
-        hex.AddTerrain(initialTerrain);
-        _sut.SelectedTerrain = null;
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var raiseTool = _sut.AvailableTools.First(t => t.Type == ToolType.RaiseLevel);
+        _sut.SelectedTool = raiseTool;
+        _sut.ActiveEditMode.ShouldBe(EditMode.RaiseLevel);
+        var terrainTool = _sut.AvailableTools.First(t => t.Type == ToolType.Terrain);
 
         // Act
-        var result = _sut.HandleHexSelection(hex);
+        await _sut.RaiseLevelCommand.ExecuteAsync();
 
         // Assert
-        result.ShouldBeNull();
-        hex.GetTerrains().First().ShouldBe(initialTerrain);
+        _sut.SelectedTool.ShouldBe(terrainTool);
+        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
     }
 
     [Fact]
-    public async Task HandleHexSelection_InRaiseLevelMode_WhenMapIsNull_ShouldReturnNull()
+    public async Task LowerLevelCommand_WhenAlreadyActiveAndToolsPopulated_ShouldSelectTerrainTool()
     {
         // Arrange
-        var hex = new Hex(new HexCoordinates(0, 0));
-        await _sut.RaiseLevelCommand.ExecuteAsync();
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var lowerTool = _sut.AvailableTools.First(t => t.Type == ToolType.LowerLevel);
+        _sut.SelectedTool = lowerTool;
+        _sut.ActiveEditMode.ShouldBe(EditMode.LowerLevel);
+        var terrainTool = _sut.AvailableTools.First(t => t.Type == ToolType.Terrain);
 
         // Act
-        var result = _sut.HandleHexSelection(hex);
+        await _sut.LowerLevelCommand.ExecuteAsync();
 
         // Assert
-        result.ShouldBeNull();
+        _sut.SelectedTool.ShouldBe(terrainTool);
+        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
     }
 }
