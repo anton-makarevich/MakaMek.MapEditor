@@ -14,8 +14,8 @@
                 <SolidColorBrush x:Key="ActiveButtonBrush" Color="#005A9E"/>
             </Style.Resources>
         </Style>
-        <Style Selector="Button.active">
-            <Setter Property="Background" Value="{DynamicResource ActiveButtonBrush}"/>
+        <Style Selector="ListBoxItem:selected">
+            <Setter Property="Background" Value="#005A9E"/>
             <Setter Property="Foreground" Value="White"/>
         </Style>
     </UserControl.Styles>
@@ -24,28 +24,14 @@
             ContentClicked="MapCanvas_OnContentClicked"
             x:Name="MapCanvas"/>
         
-        <Grid Grid.Column="1" RowDefinitions="Auto,Auto,Auto,*,Auto" Background="#333333">
+        <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto" Background="#333333">
             <TextBlock Text="Toolbox" FontSize="18" FontWeight="Bold" Margin="10" Foreground="White" HorizontalAlignment="Center"/>
 
-            <Button Grid.Row="1"
-                    Content="▲ Raise Level"
-                    Command="{Binding RaiseLevelCommand}"
-                    Classes.active="{Binding IsRaiseLevelActive}"
-                    HorizontalAlignment="Stretch"
-                    Margin="10,5,10,2"/>
-
-            <Button Grid.Row="2"
-                    Content="▼ Lower Level"
-                    Command="{Binding LowerLevelCommand}"
-                    Classes.active="{Binding IsLowerLevelActive}"
-                    HorizontalAlignment="Stretch"
-                    Margin="10,2,10,5"/>
-
-            <ListBox Grid.Row="3" ItemsSource="{Binding AvailableTerrains}" SelectedItem="{Binding SelectedTerrain}" Background="Transparent">
+            <ListBox Grid.Row="1" ItemsSource="{Binding AvailableTools}" SelectedItem="{Binding SelectedTool}" Background="Transparent">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <TextBlock Text="{Binding Id}" Foreground="White"/>
+                            <TextBlock Text="{Binding DisplayName}" Foreground="White"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

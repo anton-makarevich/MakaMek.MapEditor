@@ -6,6 +6,7 @@ using Sanet.MakaMek.Assets.Services;
 using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
+using Sanet.MakaMek.MapEditor.Models;
 using Sanet.MakaMek.Services;
 using Sanet.MVVM.Core.ViewModels;
 
@@ -37,10 +38,16 @@ public class EditMapViewModel : BaseViewModel
 
     public ObservableCollection<Terrain> AvailableTerrains { get; } = [];
 
+    public ObservableCollection<ToolItem> AvailableTools { get; } = [];
+
     public Terrain? SelectedTerrain
     {
         get;
-        set => SetProperty(ref field, value);
+        set
+        {
+            SetProperty(ref field, value);
+            ActiveEditMode = EditMode.Terrain;
+        }
     }
 
     public EditMode ActiveEditMode
@@ -57,15 +64,53 @@ public class EditMapViewModel : BaseViewModel
     public bool IsRaiseLevelActive => ActiveEditMode == EditMode.RaiseLevel;
     public bool IsLowerLevelActive => ActiveEditMode == EditMode.LowerLevel;
 
+    private ToolItem? _selectedTool;
+    public ToolItem? SelectedTool
+    {
+        get => _selectedTool;
+        set
+        {
+            SetProperty(ref _selectedTool, value);
+            if (value == null) return;
+
+            switch (value.Type)
+            {
+                case ToolType.Terrain:
+                    SelectedTerrain = value.Terrain;
+                    break;
+                case ToolType.RaiseLevel:
+                    ActiveEditMode = EditMode.RaiseLevel;
+                    break;
+                case ToolType.LowerLevel:
+                    ActiveEditMode = EditMode.LowerLevel;
+                    break;
+            }
+        }
+    }
+
     public IAsyncCommand RaiseLevelCommand => field ??= new AsyncCommand(() =>
     {
-        ActiveEditMode = ActiveEditMode == EditMode.RaiseLevel ? EditMode.Terrain : EditMode.RaiseLevel;
+        if (AvailableTools.Count == 0)
+        {
+            ActiveEditMode = ActiveEditMode == EditMode.RaiseLevel ? EditMode.Terrain : EditMode.RaiseLevel;
+            return Task.CompletedTask;
+        }
+        SelectedTool = ActiveEditMode == EditMode.RaiseLevel
+            ? AvailableTools.FirstOrDefault(t => t.Terrain == SelectedTerrain)
+            : AvailableTools.FirstOrDefault(t => t.Type == ToolType.RaiseLevel);
         return Task.CompletedTask;
     });
 
     public IAsyncCommand LowerLevelCommand => field ??= new AsyncCommand(() =>
     {
-        ActiveEditMode = ActiveEditMode == EditMode.LowerLevel ? EditMode.Terrain : EditMode.LowerLevel;
+        if (AvailableTools.Count == 0)
+        {
+            ActiveEditMode = ActiveEditMode == EditMode.LowerLevel ? EditMode.Terrain : EditMode.LowerLevel;
+            return Task.CompletedTask;
+        }
+        SelectedTool = ActiveEditMode == EditMode.LowerLevel
+            ? AvailableTools.FirstOrDefault(t => t.Terrain == SelectedTerrain)
+            : AvailableTools.FirstOrDefault(t => t.Type == ToolType.LowerLevel);
         return Task.CompletedTask;
     });
 
@@ -78,6 +123,11 @@ public class EditMapViewModel : BaseViewModel
     private void LoadTerrains()
     {
         AvailableTerrains.Clear();
+        AvailableTools.Clear();
+
+        AvailableTools.Add(new ToolItem("▲ Raise Level", ToolType.RaiseLevel));
+        AvailableTools.Add(new ToolItem("▼ Lower Level", ToolType.LowerLevel));
+
         var terrainType = typeof(Terrain);
         var assembly = terrainType.Assembly;
         var terrainTypes = assembly.GetTypes()
@@ -88,10 +138,12 @@ public class EditMapViewModel : BaseViewModel
             if (Activator.CreateInstance(type) is Terrain terrain)
             {
                 AvailableTerrains.Add(terrain);
+                AvailableTools.Add(new ToolItem(terrain.Id.ToString(), ToolType.Terrain, terrain));
             }
         }
-        
+
         SelectedTerrain = AvailableTerrains.FirstOrDefault();
+        SelectedTool = AvailableTools.FirstOrDefault(t => t.Terrain == SelectedTerrain);
     }
 
     /// <summary>

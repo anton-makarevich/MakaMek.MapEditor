@@ -42,17 +42,17 @@ public class MainMenuViewModelTests
                 new HexData
                 {
                     Coordinates = new HexCoordinateData(0, 0),
-                    TerrainTypes =
+                    Terrains =
                     [
-                        MakaMekTerrains.Clear
+                        new TerrainData { Type = MakaMekTerrains.Clear }
                     ]
                 },
                 new HexData
                 {
                     Coordinates = new HexCoordinateData(1, 0),
-                    TerrainTypes =
+                    Terrains =
                     [
-                        MakaMekTerrains.Clear
+                        new TerrainData { Type = MakaMekTerrains.Clear }
                     ]
                 }
             ]
@@ -69,9 +69,9 @@ public class MainMenuViewModelTests
                 new HexData
                 {
                     Coordinates = new HexCoordinateData(0, 0),
-                    TerrainTypes =
+                    Terrains =
                     [
-                        MakaMekTerrains.Clear
+                        new TerrainData { Type = MakaMekTerrains.Clear }
                     ]
                 }
             ]
