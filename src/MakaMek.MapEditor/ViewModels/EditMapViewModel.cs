@@ -191,10 +191,10 @@ public class EditMapViewModel : BaseViewModel
                 return ReplaceHexWithNewLevel(hex, hex.Level - 1);
 
             case ToolType.IncreaseWaterDepth:
-                return ReplaceHexWithNewWaterDepth(hex, -1);
+                return UpdateHexWithNewWaterDepth(hex, -1);
 
             case ToolType.DecreaseWaterDepth:
-                return ReplaceHexWithNewWaterDepth(hex, 1);
+                return UpdateHexWithNewWaterDepth(hex, 1);
 
             default:
                 return null;
@@ -215,7 +215,7 @@ public class EditMapViewModel : BaseViewModel
         return newHex;
     }
 
-    private Hex? ReplaceHexWithNewWaterDepth(Hex hex, int depthDelta)
+    private Hex? UpdateHexWithNewWaterDepth(Hex hex, int depthDelta)
     {
         if (Map == null) return null;
 
@@ -223,6 +223,8 @@ public class EditMapViewModel : BaseViewModel
         if (waterTerrain == null)
             return hex;
         var newDepth = waterTerrain.Height + depthDelta;
+        if (newDepth > 0)
+            return hex;
         hex.RemoveTerrain(MakaMekTerrains.Water);
         hex.AddTerrain(new WaterTerrain(newDepth));
 

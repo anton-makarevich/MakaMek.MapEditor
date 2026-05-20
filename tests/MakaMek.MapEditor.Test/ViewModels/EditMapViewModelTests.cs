@@ -1039,4 +1039,25 @@ public class EditMapViewModelTests
         waterTerrain.ShouldNotBeNull();
         waterTerrain.Height.ShouldBe(-3); // deeper still
     }
+
+    [Fact]
+    public async Task HandleHexSelection_InDecreaseWaterDepthMode_WhenDepthIsZero_ShouldNotBecomePositive()
+    {
+        // Arrange
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
+
+        // Act
+        var newHex = _sut.HandleHexSelection(hex);
+
+        // Assert
+        newHex.ShouldNotBeNull();
+        var waterTerrain = newHex.GetTerrain(MakaMekTerrains.Water) as WaterTerrain;
+        waterTerrain.ShouldNotBeNull();
+        waterTerrain.Height.ShouldBe(0); // should not become positive
+    }
 }
