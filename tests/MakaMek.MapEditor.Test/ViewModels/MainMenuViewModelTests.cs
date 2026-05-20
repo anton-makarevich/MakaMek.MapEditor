@@ -28,7 +28,9 @@ public class MainMenuViewModelTests
 
     public MainMenuViewModelTests()
     {
-        _sut = new MainMenuViewModel(_fileService, _mapFactory, _mainMenuLogger, _assetService);
+        _localizationService.GetString(Arg.Any<string>()).Returns(callInfo => callInfo.Arg<string>());
+        _localizationService.GetString("MainMenu_LoadMap").Returns("Load Map");
+        _sut = new MainMenuViewModel(_fileService, _mapFactory, _mainMenuLogger, _assetService, _localizationService);
         _sut.SetNavigationService(_navigationService);
     }
 
@@ -42,17 +44,17 @@ public class MainMenuViewModelTests
                 new HexData
                 {
                     Coordinates = new HexCoordinateData(0, 0),
-                    TerrainTypes =
+                    Terrains =
                     [
-                        MakaMekTerrains.Clear
+                        new TerrainData { Type = MakaMekTerrains.Clear }
                     ]
                 },
                 new HexData
                 {
                     Coordinates = new HexCoordinateData(1, 0),
-                    TerrainTypes =
+                    Terrains =
                     [
-                        MakaMekTerrains.Clear
+                        new TerrainData { Type = MakaMekTerrains.Clear }
                     ]
                 }
             ]
@@ -69,9 +71,9 @@ public class MainMenuViewModelTests
                 new HexData
                 {
                     Coordinates = new HexCoordinateData(0, 0),
-                    TerrainTypes =
+                    Terrains =
                     [
-                        MakaMekTerrains.Clear
+                        new TerrainData { Type = MakaMekTerrains.Clear }
                     ]
                 }
             ]
@@ -253,7 +255,8 @@ public class MainMenuViewModelTests
         _assetService.GetLoadedBiomes().Returns(biomes);
         
         // Create a new instance to trigger preloading
-        var viewModel = new MainMenuViewModel(_fileService, _mapFactory, _mainMenuLogger, _assetService);
+        _localizationService.GetString("Status_BiomesLoaded").Returns("{0} biomes loaded");
+        var viewModel = new MainMenuViewModel(_fileService, _mapFactory, _mainMenuLogger, _assetService, _localizationService);
         
         // Wait for the async operation to complete
         await Task.Delay(100);
@@ -273,7 +276,9 @@ public class MainMenuViewModelTests
         _assetService.GetLoadedBiomes().Returns(biomes);
         
         // Create a new instance to trigger preloading
-        var viewModel = new MainMenuViewModel(_fileService, _mapFactory, _mainMenuLogger, _assetService);
+        _localizationService.GetString("Status_NoBiomesFound").Returns("No biomes found");
+        _localizationService.GetString("Status_ErrorLoadingBiomes").Returns("Error loading biomes: {0}");
+        var viewModel = new MainMenuViewModel(_fileService, _mapFactory, _mainMenuLogger, _assetService, _localizationService);
         
         // Wait for the async operation to complete
         await Task.Delay(100);
@@ -291,7 +296,8 @@ public class MainMenuViewModelTests
         _assetService.GetLoadedBiomes().Returns(Task.FromException<IEnumerable<string>>(new InvalidOperationException("Service unavailable")));
         
         // Create a new instance to trigger preloading
-        var viewModel = new MainMenuViewModel(_fileService, _mapFactory, _mainMenuLogger, _assetService);
+        _localizationService.GetString("Status_ErrorLoadingBiomes").Returns("Error loading biomes: {0}");
+        var viewModel = new MainMenuViewModel(_fileService, _mapFactory, _mainMenuLogger, _assetService, _localizationService);
         
         // Wait for the async operation to complete
         await Task.Delay(100);

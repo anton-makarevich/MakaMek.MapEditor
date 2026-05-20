@@ -7,6 +7,7 @@ using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
+using Sanet.MakaMek.MapEditor.Models;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Services;
 using Shouldly;
@@ -24,6 +25,7 @@ public class EditMapViewModelTests
 
     public EditMapViewModelTests()
     {
+        _localizationService.GetString(Arg.Any<string>()).Returns(callInfo => callInfo.Arg<string>());
         _sut = new EditMapViewModel(_fileService,
             _assetService,
             _localizationService,
@@ -40,9 +42,9 @@ public class EditMapViewModelTests
                 new HexData
                 {
                     Coordinates = new HexCoordinateData(q, r),
-                    TerrainTypes =
+                    Terrains =
                     [
-                        MakaMekTerrains.Clear
+                        new TerrainData { Type = MakaMekTerrains.Clear }
                     ]
                 }
             ]
@@ -260,7 +262,7 @@ public class EditMapViewModelTests
 
         // Assert
         await _fileService.Received(1).SaveFile(
-            "Export Map",
+            _localizationService.GetString("EditMap_ExportMapDialogTitle"),
             "map.json",
             Arg.Any<string>());
     }
@@ -557,5 +559,181 @@ public class EditMapViewModelTests
 
         // Assert
         result.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task SelectedTerrain_WhenSetInRaiseLevelMode_ShouldSwitchToTerrainMode()
+    {
+        // Arrange
+        var map = new BattleMap(1,1);
+        _sut.Initialize(map);
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+        _sut.ActiveEditMode.ShouldBe(EditMode.RaiseLevel);
+
+        // Act
+        _sut.SelectedTerrain = new ClearTerrain();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
+    }
+
+    [Fact]
+    public async Task IsRaiseLevelActive_ShouldBeFalse_WhenTerrainSelectedInRaiseLevelMode()
+    {
+        // Arrange
+        var map = new BattleMap(1,1);
+        _sut.Initialize(map);
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+        _sut.IsRaiseLevelActive.ShouldBeTrue();
+
+        // Act
+        _sut.SelectedTerrain = new ClearTerrain();
+
+        // Assert
+        _sut.IsRaiseLevelActive.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task IsLowerLevelActive_ShouldBeFalse_WhenTerrainSelectedInLowerLevelMode()
+    {
+        // Arrange
+        var map = new BattleMap(1,1);
+        _sut.Initialize(map);
+        await _sut.LowerLevelCommand.ExecuteAsync();
+        _sut.IsLowerLevelActive.ShouldBeTrue();
+
+        // Act
+        _sut.SelectedTerrain = new ClearTerrain();
+
+        // Assert
+        _sut.IsLowerLevelActive.ShouldBeFalse();
+    }
+
+    // --- AvailableTools / SelectedTool tests ---
+    [Fact]
+    public void AvailableTools_DefaultValue_ShouldBeEmpty()
+    {
+        _sut.AvailableTools.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Initialize_ShouldPopulateAvailableToolsWithElevationAndTerrains()
+    {
+        // Arrange
+        var map = new BattleMap(1,1);
+
+        // Act
+        _sut.Initialize(map);
+
+        // Assert
+        _sut.AvailableTools.ShouldNotBeEmpty();
+        _sut.AvailableTools.Count.ShouldBe(_sut.AvailableTerrains.Count + 2);
+        _sut.AvailableTools.Count(t => t.Type == ToolType.RaiseLevel).ShouldBe(1);
+        _sut.AvailableTools.Count(t => t.Type == ToolType.LowerLevel).ShouldBe(1);
+    }
+
+    [Fact]
+    public void SelectedTool_DefaultValue_ShouldBeNull()
+    {
+        _sut.SelectedTool.ShouldBeNull();
+    }
+
+    [Fact]
+    public void Initialize_ShouldSetSelectedToolToFirstTerrainTool()
+    {
+        // Arrange
+        var map = new BattleMap(1,1);
+
+        // Act
+        _sut.Initialize(map);
+
+        // Assert
+        _sut.SelectedTool.ShouldNotBeNull();
+        _sut.SelectedTool.Type.ShouldBe(ToolType.Terrain);
+        _sut.SelectedTool.Terrain.ShouldBe(_sut.SelectedTerrain);
+    }
+
+    [Fact]
+    public void SelectedTool_WhenSetToRaiseLevel_ShouldSetActiveEditModeToRaiseLevel()
+    {
+        // Arrange
+        var map = new BattleMap(1,1);
+        _sut.Initialize(map);
+        var raiseTool = _sut.AvailableTools.First(t => t.Type == ToolType.RaiseLevel);
+
+        // Act
+        _sut.SelectedTool = raiseTool;
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(EditMode.RaiseLevel);
+    }
+
+    [Fact]
+    public void SelectedTool_WhenSetToLowerLevel_ShouldSetActiveEditModeToLowerLevel()
+    {
+        // Arrange
+        var map = new BattleMap(1,1);
+        _sut.Initialize(map);
+        var lowerTool = _sut.AvailableTools.First(t => t.Type == ToolType.LowerLevel);
+
+        // Act
+        _sut.SelectedTool = lowerTool;
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(EditMode.LowerLevel);
+    }
+
+    [Fact]
+    public void SelectedTool_WhenSetToTerrain_ShouldSetSelectedTerrainAndTerrainMode()
+    {
+        // Arrange
+        var map = new BattleMap(1,1);
+        _sut.Initialize(map);
+        var terrainTool = _sut.AvailableTools.First(t => t.Type == ToolType.Terrain);
+
+        // Act
+        _sut.SelectedTool = terrainTool;
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
+        _sut.SelectedTerrain.ShouldBe(terrainTool.Terrain);
+    }
+    
+    [Fact]
+    public async Task RaiseLevelCommand_WhenAlreadyActiveAndToolsPopulated_ShouldSelectTerrainTool()
+    {
+        // Arrange
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var raiseTool = _sut.AvailableTools.First(t => t.Type == ToolType.RaiseLevel);
+        _sut.SelectedTool = raiseTool;
+        _sut.ActiveEditMode.ShouldBe(EditMode.RaiseLevel);
+        var terrainTool = _sut.AvailableTools.First(t => t.Type == ToolType.Terrain);
+
+        // Act
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+
+        // Assert
+        _sut.SelectedTool.ShouldBe(terrainTool);
+        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
+    }
+
+    [Fact]
+    public async Task LowerLevelCommand_WhenAlreadyActiveAndToolsPopulated_ShouldSelectTerrainTool()
+    {
+        // Arrange
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var lowerTool = _sut.AvailableTools.First(t => t.Type == ToolType.LowerLevel);
+        _sut.SelectedTool = lowerTool;
+        _sut.ActiveEditMode.ShouldBe(EditMode.LowerLevel);
+        var terrainTool = _sut.AvailableTools.First(t => t.Type == ToolType.Terrain);
+
+        // Act
+        await _sut.LowerLevelCommand.ExecuteAsync();
+
+        // Assert
+        _sut.SelectedTool.ShouldBe(terrainTool);
+        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
     }
 }

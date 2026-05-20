@@ -1,0 +1,102 @@
+using Sanet.MakaMek.MapEditor.Services;
+using Shouldly;
+using Xunit;
+
+namespace MakaMek.MapEditor.Test.Services;
+
+public class MapEditorFakeLocalizationServiceTests
+{
+    [Theory]
+    [InlineData("MainMenu_Title", "MakaMek Map Editor")]
+    [InlineData("MainMenu_CreateNewMap", "Create New Map")]
+    [InlineData("MainMenu_LoadMap", "Load Map")]
+    [InlineData("MainMenu_LoadingTerrain", "Loading terrain data...")]
+    [InlineData("MainMenu_ErrorLoadingTerrain", "Error loading terrain data")]
+    public void GetString_MainMenu_ReturnsExpectedString(string key, string expected)
+    {
+        var localizationService = new MapEditorFakeLocalizationService();
+
+        var result = localizationService.GetString(key);
+
+        result.ShouldBe(expected);
+    }
+
+    [Theory]
+    [InlineData("Status_BiomesLoaded", "{0} biomes loaded")]
+    [InlineData("Status_NoBiomesFound", "No biomes found")]
+    [InlineData("Status_ErrorLoadingBiomes", "Error loading biomes: {0}")]
+    public void GetString_StatusMessages_ReturnsExpectedString(string key, string expected)
+    {
+        var localizationService = new MapEditorFakeLocalizationService();
+
+        var result = localizationService.GetString(key);
+
+        result.ShouldBe(expected);
+    }
+
+    [Theory]
+    [InlineData("NewMap_Title", "New Map Configuration")]
+    [InlineData("NewMap_Width", "Width:")]
+    [InlineData("NewMap_Height", "Height:")]
+    [InlineData("NewMap_PreGenerateTerrain", "Pre-generate Terrain")]
+    [InlineData("NewMap_ForestCoverage", "Forest Coverage %")]
+    [InlineData("NewMap_LightWoods", "Light Woods %")]
+    [InlineData("NewMap_CreateMap", "Create Map")]
+    public void GetString_NewMapView_ReturnsExpectedString(string key, string expected)
+    {
+        var localizationService = new MapEditorFakeLocalizationService();
+
+        var result = localizationService.GetString(key);
+
+        result.ShouldBe(expected);
+    }
+
+    [Theory]
+    [InlineData("EditMap_Toolbox", "Toolbox")]
+    [InlineData("EditMap_ExportMap", "Export Map")]
+    [InlineData("EditMap_RaiseLevel", "▲ Raise Level")]
+    [InlineData("EditMap_LowerLevel", "▼ Lower Level")]
+    [InlineData("EditMap_ExportMapDialogTitle", "Export Map")]
+    public void GetString_EditMapView_ReturnsExpectedString(string key, string expected)
+    {
+        var localizationService = new MapEditorFakeLocalizationService();
+
+        var result = localizationService.GetString(key);
+
+        result.ShouldBe(expected);
+    }
+
+    [Theory]
+    [InlineData("Window_Title", "MakaMek Map Editor")]
+    public void GetString_Window_ReturnsExpectedString(string key, string expected)
+    {
+        var localizationService = new MapEditorFakeLocalizationService();
+
+        var result = localizationService.GetString(key);
+
+        result.ShouldBe(expected);
+    }
+
+    [Theory]
+    [InlineData("NonExistentKey")]
+    [InlineData("Some_Random_Key")]
+    [InlineData("")]
+    public void GetString_UnknownKey_ReturnsKeyItself(string key)
+    {
+        var localizationService = new MapEditorFakeLocalizationService();
+
+        var result = localizationService.GetString(key);
+
+        result.ShouldBe(key);
+    }
+
+    [Fact]
+    public void GetString_InheritedKey_ReturnsBaseClassValue()
+    {
+        var localizationService = new MapEditorFakeLocalizationService();
+
+        var result = localizationService.GetString("Command_JoinGame");
+
+        result.ShouldBe("{0} has joined game with {1} units");
+    }
+}
