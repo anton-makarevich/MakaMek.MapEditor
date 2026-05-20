@@ -44,6 +44,27 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         return bitmaskService.ComputeCanonicalBitmask(ViewModel.Map, hex.Coordinates, MakaMekTerrains.Water);
     }
 
+    private void ReplaceHexControl(HexCoordinates coords, CanonicalBitmaskResult? waterBitmask)
+    {
+        if (ViewModel?.Map == null) return;
+        var hex = ViewModel.Map.GetHex(coords);
+        if (hex == null) return;
+
+        var edges = ViewModel.Map.GetHexEdges(coords);
+        var newControl = new HexControl(hex,
+            ViewModel.Logger,
+            ViewModel.AssetService,
+            ViewModel.LocalizationService,
+            edges, null, waterBitmask);
+
+        if (_hexControlsByCoords.TryGetValue(coords, out var oldControl))
+            MapCanvas.Children.Remove(oldControl);
+
+        MapCanvas.Children.Add(newControl);
+        _hexControlsByCoords[coords] = newControl;
+        _waterBitmasksByCoords[coords] = waterBitmask;
+    }
+
     private void RenderMap()
     {
         MapCanvas.Children.Clear();
@@ -56,17 +77,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
 
         foreach (var hex in ViewModel.Map.GetHexes())
         {
-            var edges = ViewModel.Map.GetHexEdges(hex.Coordinates);
-            var waterBitmask = ComputeWaterBitmask(hex);
-
-            var hexControl = new HexControl(hex,
-                ViewModel.Logger,
-                ViewModel.AssetService,
-                ViewModel.LocalizationService,
-                edges, null, waterBitmask);
-            MapCanvas.Children.Add(hexControl);
-            _hexControlsByCoords[hex.Coordinates] = hexControl;
-            _waterBitmasksByCoords[hex.Coordinates] = waterBitmask;
+            ReplaceHexControl(hex.Coordinates, ComputeWaterBitmask(hex));
             if (hex.Coordinates.H > maxX) maxX = hex.Coordinates.H;
             if (hex.Coordinates.V > maxY) maxY = hex.Coordinates.V;
         }
@@ -82,26 +93,11 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         if (hex == null || !_hexControlsByCoords.ContainsKey(coords)) return;
 
         var newBitmask = ComputeWaterBitmask(hex);
-        
-        if (_waterBitmasksByCoords.TryGetValue(coords, out var oldBitmask) 
+        if (_waterBitmasksByCoords.TryGetValue(coords, out var oldBitmask)
             && EqualityComparer<CanonicalBitmaskResult?>.Default.Equals(oldBitmask, newBitmask))
-        {
             return;
-        }
 
-        var edges = ViewModel.Map.GetHexEdges(coords);
-        var newControl = new HexControl(hex,
-            ViewModel.Logger,
-            ViewModel.AssetService,
-            ViewModel.LocalizationService,
-            edges, null, newBitmask);
-
-        if (_hexControlsByCoords.TryGetValue(coords, out var oldControl))
-            MapCanvas.Children.Remove(oldControl);
-
-        MapCanvas.Children.Add(newControl);
-        _hexControlsByCoords[coords] = newControl;
-        _waterBitmasksByCoords[coords] = newBitmask;
+        ReplaceHexControl(coords, newBitmask);
     }
 
     private void MapCanvas_OnContentClicked(object? sender, Point clickedPosition)
@@ -112,17 +108,23 @@ public partial class EditMapView : BaseView<EditMapViewModel>
 
         if (selectedHexControl == null || ViewModel == null) return;
 
+        var hadWater = selectedHexControl.Hex.HasTerrain(MakaMekTerrains.Water);
+
         var newHex = ViewModel.HandleHexSelection(selectedHexControl.Hex);
         var hex = newHex ?? selectedHexControl.Hex;
         var coords = hex.Coordinates;
 
-        // Refresh water bitmask for the changed hex and all on-map neighbors
-        // (adding/removing water on one hex affects neighbors' water bitmasks)
-        RefreshWaterBitmask(coords);
-        foreach (var neighborCoords in coords.GetAllNeighbours())
+        // Always replace the clicked hex (its terrain/level/depth changed)
+        ReplaceHexControl(coords, ComputeWaterBitmask(hex));
+
+        // Refresh neighbors' water bitmasks only when water was added or removed
+        if (hadWater != hex.HasTerrain(MakaMekTerrains.Water))
         {
-            if (ViewModel.Map != null && ViewModel.Map.IsOnMap(neighborCoords))
-                RefreshWaterBitmask(neighborCoords);
+            foreach (var neighborCoords in coords.GetAllNeighbours())
+            {
+                if (ViewModel.Map != null && ViewModel.Map.IsOnMap(neighborCoords))
+                    RefreshWaterBitmask(neighborCoords);
+            }
         }
 
         // Update edges on all on-map neighbors
