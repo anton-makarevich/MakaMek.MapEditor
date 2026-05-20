@@ -25,6 +25,7 @@ public class EditMapViewModelTests
 
     public EditMapViewModelTests()
     {
+        _localizationService.GetString(Arg.Any<string>()).Returns(callInfo => callInfo.Arg<string>());
         _sut = new EditMapViewModel(_fileService,
             _assetService,
             _localizationService,
@@ -261,7 +262,7 @@ public class EditMapViewModelTests
 
         // Assert
         await _fileService.Received(1).SaveFile(
-            "Export Map",
+            _localizationService.GetString("EditMap_ExportMapDialogTitle"),
             "map.json",
             Arg.Any<string>());
     }

@@ -2,27 +2,28 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:extensions="clr-namespace:Sanet.MakaMek.MapEditor.Extensions"
              xmlns:viewModels="clr-namespace:Sanet.MakaMek.MapEditor.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sanet.MakaMek.MapEditor.Views.MainMenuView"
              x:DataType="viewModels:MainMenuViewModel">
     <Grid RowDefinitions="*,Auto,Auto,*" ColumnDefinitions="*,Auto,*">
         <StackPanel Grid.Row="1" Grid.Column="1" Spacing="20" IsVisible="{Binding CanShowMenu}">
-            <TextBlock Text="MakaMek Map Editor" FontSize="30" HorizontalAlignment="Center" FontWeight="Bold"/>
-            <Button Content="Create New Map" Command="{Binding CreateNewMapCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" FontSize="20"/>
-            <Button Content="Load Map" Command="{Binding LoadMapCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" FontSize="20"/>
+            <TextBlock Text="{extensions:Localize 'MainMenu_Title'}" FontSize="30" HorizontalAlignment="Center" FontWeight="Bold"/>
+            <Button Content="{extensions:Localize 'MainMenu_CreateNewMap'}" Command="{Binding CreateNewMapCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" FontSize="20"/>
+            <Button Content="{extensions:Localize 'MainMenu_LoadMap'}" Command="{Binding LoadMapCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" FontSize="20"/>
         </StackPanel>
         
         <!-- Loading Section -->
         <StackPanel Grid.Row="1" Grid.Column="1" Spacing="10" IsVisible="{Binding IsLoading}">
-            <TextBlock Text="Loading terrain data..." FontSize="16" HorizontalAlignment="Center"/>
+            <TextBlock Text="{extensions:Localize 'MainMenu_LoadingTerrain'}" FontSize="16" HorizontalAlignment="Center"/>
             <ProgressBar IsIndeterminate="True" Height="20" Width="200"/>
             <TextBlock Text="{Binding BiomeLoadingStatus}" FontSize="14" HorizontalAlignment="Center" Foreground="Gray"/>
         </StackPanel>
             
         <!-- Error Section -->
         <StackPanel Grid.Row="1" Grid.Column="1" Spacing="10" IsVisible="{Binding HasError}">
-            <TextBlock Text="Error loading terrain data" FontSize="16" HorizontalAlignment="Center" Foreground="Red"/>
+            <TextBlock Text="{extensions:Localize 'MainMenu_ErrorLoadingTerrain'}" FontSize="16" HorizontalAlignment="Center" Foreground="Red"/>
             <TextBlock Text="{Binding BiomeLoadingStatus}" FontSize="14" HorizontalAlignment="Center" Foreground="Red" TextWrapping="Wrap"/>
         </StackPanel>
     </Grid>

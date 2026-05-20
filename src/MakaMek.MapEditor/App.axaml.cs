@@ -3,7 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
+using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.MapEditor.DI;
+using Sanet.MakaMek.MapEditor.Extensions;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.MapEditor.Views;
 using Sanet.MVVM.Core.Services;
@@ -20,7 +22,7 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        if (Resources[Sanet.MVVM.DI.Avalonia.Extensions.AppBuilderExtensions.ServiceCollectionResourceKey] is not IServiceCollection services)
+        if (Resources[MVVM.DI.Avalonia.Extensions.AppBuilderExtensions.ServiceCollectionResourceKey] is not IServiceCollection services)
         {
             throw new Exception("Services are not initialized");
         }
@@ -29,6 +31,9 @@ public partial class App : Application
         services.RegisterViewModels();
 
         var serviceProvider = services.BuildServiceProvider();
+
+        var localizationService = serviceProvider.GetRequiredService<ILocalizationService>();
+        LocalizeExtension.Initialize(localizationService);
         
         INavigationService navigationService;
         MainMenuViewModel? viewModel;

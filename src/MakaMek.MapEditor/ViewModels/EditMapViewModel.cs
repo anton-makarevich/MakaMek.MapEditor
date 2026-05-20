@@ -125,8 +125,8 @@ public class EditMapViewModel : BaseViewModel
         AvailableTerrains.Clear();
         AvailableTools.Clear();
 
-        AvailableTools.Add(new ToolItem("▲ Raise Level", ToolType.RaiseLevel));
-        AvailableTools.Add(new ToolItem("▼ Lower Level", ToolType.LowerLevel));
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_RaiseLevel"), ToolType.RaiseLevel));
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_LowerLevel"), ToolType.LowerLevel));
 
         var terrainType = typeof(Terrain);
         var assembly = terrainType.Assembly;
@@ -208,7 +208,7 @@ public class EditMapViewModel : BaseViewModel
         if (Map == null) return;
         var data = Map.ToData();
         var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
-        await _fileService.SaveFile("Export Map", "map.json", json);
+        await _fileService.SaveFile(LocalizationService.GetString("EditMap_ExportMapDialogTitle"), "map.json", json);
     }, onException: ex => Logger.LogError(ex, "Failed to export map"));
 
     public ILocalizationService LocalizationService { get; }
