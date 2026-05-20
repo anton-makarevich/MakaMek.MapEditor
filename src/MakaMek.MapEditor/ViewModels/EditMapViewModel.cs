@@ -46,11 +46,11 @@ public class EditMapViewModel : BaseViewModel
         set
         {
             SetProperty(ref field, value);
-            ActiveEditMode = EditMode.Terrain;
+            ActiveEditMode = ToolType.Terrain;
         }
     }
 
-    public EditMode ActiveEditMode
+    public ToolType ActiveEditMode
     {
         get;
         private set
@@ -59,10 +59,10 @@ public class EditMapViewModel : BaseViewModel
             NotifyPropertyChanged(nameof(IsRaiseLevelActive));
             NotifyPropertyChanged(nameof(IsLowerLevelActive));
         }
-    } = EditMode.Terrain;
+    } = ToolType.Terrain;
 
-    public bool IsRaiseLevelActive => ActiveEditMode == EditMode.RaiseLevel;
-    public bool IsLowerLevelActive => ActiveEditMode == EditMode.LowerLevel;
+    public bool IsRaiseLevelActive => ActiveEditMode == ToolType.RaiseLevel;
+    public bool IsLowerLevelActive => ActiveEditMode == ToolType.LowerLevel;
 
     private ToolItem? _selectedTool;
     public ToolItem? SelectedTool
@@ -73,18 +73,9 @@ public class EditMapViewModel : BaseViewModel
             SetProperty(ref _selectedTool, value);
             if (value == null) return;
 
-            switch (value.Type)
-            {
-                case ToolType.Terrain:
-                    SelectedTerrain = value.Terrain;
-                    break;
-                case ToolType.RaiseLevel:
-                    ActiveEditMode = EditMode.RaiseLevel;
-                    break;
-                case ToolType.LowerLevel:
-                    ActiveEditMode = EditMode.LowerLevel;
-                    break;
-            }
+            ActiveEditMode = value.Type;
+            if (value.Type == ToolType.Terrain)
+                SelectedTerrain = value.Terrain;
         }
     }
 
@@ -92,10 +83,10 @@ public class EditMapViewModel : BaseViewModel
     {
         if (AvailableTools.Count == 0)
         {
-            ActiveEditMode = ActiveEditMode == EditMode.RaiseLevel ? EditMode.Terrain : EditMode.RaiseLevel;
+            ActiveEditMode = ActiveEditMode == ToolType.RaiseLevel ? ToolType.Terrain : ToolType.RaiseLevel;
             return Task.CompletedTask;
         }
-        SelectedTool = ActiveEditMode == EditMode.RaiseLevel
+        SelectedTool = ActiveEditMode == ToolType.RaiseLevel
             ? AvailableTools.FirstOrDefault(t => t.Type == ToolType.Terrain && t.Terrain == SelectedTerrain)
             : AvailableTools.FirstOrDefault(t => t.Type == ToolType.RaiseLevel);
         return Task.CompletedTask;
@@ -105,10 +96,10 @@ public class EditMapViewModel : BaseViewModel
     {
         if (AvailableTools.Count == 0)
         {
-            ActiveEditMode = ActiveEditMode == EditMode.LowerLevel ? EditMode.Terrain : EditMode.LowerLevel;
+            ActiveEditMode = ActiveEditMode == ToolType.LowerLevel ? ToolType.Terrain : ToolType.LowerLevel;
             return Task.CompletedTask;
         }
-        SelectedTool = ActiveEditMode == EditMode.LowerLevel
+        SelectedTool = ActiveEditMode == ToolType.LowerLevel
             ? AvailableTools.FirstOrDefault(t => t.Type == ToolType.Terrain && t.Terrain == SelectedTerrain)
             : AvailableTools.FirstOrDefault(t => t.Type == ToolType.LowerLevel);
         return Task.CompletedTask;
@@ -156,15 +147,15 @@ public class EditMapViewModel : BaseViewModel
     {
         switch (ActiveEditMode)
         {
-            case EditMode.Terrain:
+            case ToolType.Terrain:
                 if (SelectedTerrain == null) return null;
                 hex.ReplaceTerrains([SelectedTerrain]);
                 return null;
 
-            case EditMode.RaiseLevel:
+            case ToolType.RaiseLevel:
                 return ReplaceHexWithNewLevel(hex, hex.Level + 1);
 
-            case EditMode.LowerLevel:
+            case ToolType.LowerLevel:
                 return ReplaceHexWithNewLevel(hex, hex.Level - 1);
 
             default:

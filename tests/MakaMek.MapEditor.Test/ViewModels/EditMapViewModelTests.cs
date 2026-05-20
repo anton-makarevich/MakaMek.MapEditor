@@ -321,7 +321,7 @@ public class EditMapViewModelTests
     [Fact]
     public void ActiveEditMode_DefaultValue_ShouldBeTerrain()
     {
-        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
+        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
     }
 
     [Fact]
@@ -331,7 +331,7 @@ public class EditMapViewModelTests
         await _sut.RaiseLevelCommand.ExecuteAsync();
 
         // Assert
-        _sut.ActiveEditMode.ShouldBe(EditMode.RaiseLevel);
+        _sut.ActiveEditMode.ShouldBe(ToolType.RaiseLevel);
     }
 
     [Fact]
@@ -344,7 +344,7 @@ public class EditMapViewModelTests
         await _sut.RaiseLevelCommand.ExecuteAsync();
 
         // Assert
-        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
+        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
     }
 
     [Fact]
@@ -354,7 +354,7 @@ public class EditMapViewModelTests
         await _sut.LowerLevelCommand.ExecuteAsync();
 
         // Assert
-        _sut.ActiveEditMode.ShouldBe(EditMode.LowerLevel);
+        _sut.ActiveEditMode.ShouldBe(ToolType.LowerLevel);
     }
 
     [Fact]
@@ -367,7 +367,7 @@ public class EditMapViewModelTests
         await _sut.LowerLevelCommand.ExecuteAsync();
 
         // Assert
-        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
+        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
     }
 
     [Fact]
@@ -534,13 +534,13 @@ public class EditMapViewModelTests
     {
         // Arrange
         await _sut.RaiseLevelCommand.ExecuteAsync();
-        _sut.ActiveEditMode.ShouldBe(EditMode.RaiseLevel);
+        _sut.ActiveEditMode.ShouldBe(ToolType.RaiseLevel);
 
         // Act
         await _sut.LowerLevelCommand.ExecuteAsync();
 
         // Assert
-        _sut.ActiveEditMode.ShouldBe(EditMode.LowerLevel);
+        _sut.ActiveEditMode.ShouldBe(ToolType.LowerLevel);
         _sut.IsLowerLevelActive.ShouldBeTrue();
         _sut.IsRaiseLevelActive.ShouldBeFalse();
     }
@@ -552,7 +552,7 @@ public class EditMapViewModelTests
         var hex = new Hex(new HexCoordinates(0, 0));
         // Use reflection to set an invalid EditMode value
         var propertyInfo = typeof(EditMapViewModel).GetProperty(nameof(EditMapViewModel.ActiveEditMode));
-        propertyInfo?.SetValue(_sut, (EditMode)999);
+        propertyInfo?.SetValue(_sut, (ToolType)999);
 
         // Act
         var result = _sut.HandleHexSelection(hex);
@@ -568,13 +568,13 @@ public class EditMapViewModelTests
         var map = new BattleMap(1,1);
         _sut.Initialize(map);
         await _sut.RaiseLevelCommand.ExecuteAsync();
-        _sut.ActiveEditMode.ShouldBe(EditMode.RaiseLevel);
+        _sut.ActiveEditMode.ShouldBe(ToolType.RaiseLevel);
 
         // Act
         _sut.SelectedTerrain = new ClearTerrain();
 
         // Assert
-        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
+        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
     }
 
     [Fact]
@@ -665,7 +665,7 @@ public class EditMapViewModelTests
         _sut.SelectedTool = raiseTool;
 
         // Assert
-        _sut.ActiveEditMode.ShouldBe(EditMode.RaiseLevel);
+        _sut.ActiveEditMode.ShouldBe(ToolType.RaiseLevel);
     }
 
     [Fact]
@@ -680,7 +680,7 @@ public class EditMapViewModelTests
         _sut.SelectedTool = lowerTool;
 
         // Assert
-        _sut.ActiveEditMode.ShouldBe(EditMode.LowerLevel);
+        _sut.ActiveEditMode.ShouldBe(ToolType.LowerLevel);
     }
 
     [Fact]
@@ -695,7 +695,7 @@ public class EditMapViewModelTests
         _sut.SelectedTool = terrainTool;
 
         // Assert
-        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
+        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
         _sut.SelectedTerrain.ShouldBe(terrainTool.Terrain);
     }
     
@@ -707,7 +707,7 @@ public class EditMapViewModelTests
         _sut.Initialize(map);
         var raiseTool = _sut.AvailableTools.First(t => t.Type == ToolType.RaiseLevel);
         _sut.SelectedTool = raiseTool;
-        _sut.ActiveEditMode.ShouldBe(EditMode.RaiseLevel);
+        _sut.ActiveEditMode.ShouldBe(ToolType.RaiseLevel);
         var terrainTool = _sut.AvailableTools.First(t => t.Type == ToolType.Terrain);
 
         // Act
@@ -715,7 +715,7 @@ public class EditMapViewModelTests
 
         // Assert
         _sut.SelectedTool.ShouldBe(terrainTool);
-        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
+        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
     }
 
     [Fact]
@@ -726,7 +726,7 @@ public class EditMapViewModelTests
         _sut.Initialize(map);
         var lowerTool = _sut.AvailableTools.First(t => t.Type == ToolType.LowerLevel);
         _sut.SelectedTool = lowerTool;
-        _sut.ActiveEditMode.ShouldBe(EditMode.LowerLevel);
+        _sut.ActiveEditMode.ShouldBe(ToolType.LowerLevel);
         var terrainTool = _sut.AvailableTools.First(t => t.Type == ToolType.Terrain);
 
         // Act
@@ -734,6 +734,6 @@ public class EditMapViewModelTests
 
         // Assert
         _sut.SelectedTool.ShouldBe(terrainTool);
-        _sut.ActiveEditMode.ShouldBe(EditMode.Terrain);
+        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
     }
 }
