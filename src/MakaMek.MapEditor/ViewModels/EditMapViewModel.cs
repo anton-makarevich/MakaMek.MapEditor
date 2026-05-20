@@ -96,7 +96,7 @@ public class EditMapViewModel : BaseViewModel
             return Task.CompletedTask;
         }
         SelectedTool = ActiveEditMode == EditMode.RaiseLevel
-            ? AvailableTools.FirstOrDefault(t => t.Terrain == SelectedTerrain)
+            ? AvailableTools.FirstOrDefault(t => t.Type == ToolType.Terrain && t.Terrain == SelectedTerrain)
             : AvailableTools.FirstOrDefault(t => t.Type == ToolType.RaiseLevel);
         return Task.CompletedTask;
     });
@@ -109,7 +109,7 @@ public class EditMapViewModel : BaseViewModel
             return Task.CompletedTask;
         }
         SelectedTool = ActiveEditMode == EditMode.LowerLevel
-            ? AvailableTools.FirstOrDefault(t => t.Terrain == SelectedTerrain)
+            ? AvailableTools.FirstOrDefault(t => t.Type == ToolType.Terrain && t.Terrain == SelectedTerrain)
             : AvailableTools.FirstOrDefault(t => t.Type == ToolType.LowerLevel);
         return Task.CompletedTask;
     });
@@ -143,7 +143,7 @@ public class EditMapViewModel : BaseViewModel
         }
 
         SelectedTerrain = AvailableTerrains.FirstOrDefault();
-        SelectedTool = AvailableTools.FirstOrDefault(t => t.Terrain == SelectedTerrain);
+        SelectedTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.Terrain && t.Terrain == SelectedTerrain);
     }
 
     /// <summary>
