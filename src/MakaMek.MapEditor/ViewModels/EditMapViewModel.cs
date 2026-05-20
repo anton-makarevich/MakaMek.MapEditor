@@ -58,11 +58,15 @@ public class EditMapViewModel : BaseViewModel
             SetProperty(ref field, value);
             NotifyPropertyChanged(nameof(IsRaiseLevelActive));
             NotifyPropertyChanged(nameof(IsLowerLevelActive));
+            NotifyPropertyChanged(nameof(IsIncreaseWaterDepthActive));
+            NotifyPropertyChanged(nameof(IsDecreaseWaterDepthActive));
         }
     } = ToolType.Terrain;
 
     public bool IsRaiseLevelActive => ActiveEditMode == ToolType.RaiseLevel;
     public bool IsLowerLevelActive => ActiveEditMode == ToolType.LowerLevel;
+    public bool IsIncreaseWaterDepthActive => ActiveEditMode == ToolType.IncreaseWaterDepth;
+    public bool IsDecreaseWaterDepthActive => ActiveEditMode == ToolType.DecreaseWaterDepth;
 
     private ToolItem? _selectedTool;
     public ToolItem? SelectedTool
@@ -105,6 +109,32 @@ public class EditMapViewModel : BaseViewModel
         return Task.CompletedTask;
     });
 
+    public IAsyncCommand IncreaseWaterDepthCommand => field ??= new AsyncCommand(() =>
+    {
+        if (AvailableTools.Count == 0)
+        {
+            ActiveEditMode = ActiveEditMode == ToolType.IncreaseWaterDepth ? ToolType.Terrain : ToolType.IncreaseWaterDepth;
+            return Task.CompletedTask;
+        }
+        SelectedTool = ActiveEditMode == ToolType.IncreaseWaterDepth
+            ? AvailableTools.FirstOrDefault(t => t.Type == ToolType.Terrain && t.Terrain == SelectedTerrain)
+            : AvailableTools.FirstOrDefault(t => t.Type == ToolType.IncreaseWaterDepth);
+        return Task.CompletedTask;
+    });
+
+    public IAsyncCommand DecreaseWaterDepthCommand => field ??= new AsyncCommand(() =>
+    {
+        if (AvailableTools.Count == 0)
+        {
+            ActiveEditMode = ActiveEditMode == ToolType.DecreaseWaterDepth ? ToolType.Terrain : ToolType.DecreaseWaterDepth;
+            return Task.CompletedTask;
+        }
+        SelectedTool = ActiveEditMode == ToolType.DecreaseWaterDepth
+            ? AvailableTools.FirstOrDefault(t => t.Type == ToolType.Terrain && t.Terrain == SelectedTerrain)
+            : AvailableTools.FirstOrDefault(t => t.Type == ToolType.DecreaseWaterDepth);
+        return Task.CompletedTask;
+    });
+
     public void Initialize(IBattleMap map)
     {
         Map = map;
@@ -118,6 +148,8 @@ public class EditMapViewModel : BaseViewModel
 
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_RaiseLevel"), ToolType.RaiseLevel));
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_LowerLevel"), ToolType.LowerLevel));
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_IncreaseWaterDepth"), ToolType.IncreaseWaterDepth));
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_DecreaseWaterDepth"), ToolType.DecreaseWaterDepth));
 
         var terrainType = typeof(Terrain);
         var assembly = terrainType.Assembly;
@@ -158,6 +190,12 @@ public class EditMapViewModel : BaseViewModel
             case ToolType.LowerLevel:
                 return ReplaceHexWithNewLevel(hex, hex.Level - 1);
 
+            case ToolType.IncreaseWaterDepth:
+                return ReplaceHexWithNewWaterDepth(hex, -1);
+
+            case ToolType.DecreaseWaterDepth:
+                return ReplaceHexWithNewWaterDepth(hex, 1);
+
             default:
                 return null;
         }
@@ -175,6 +213,20 @@ public class EditMapViewModel : BaseViewModel
 
         Map.AddHex(newHex);
         return newHex;
+    }
+
+    private Hex? ReplaceHexWithNewWaterDepth(Hex hex, int depthDelta)
+    {
+        if (Map == null) return null;
+
+        var waterTerrain = hex.GetTerrain(MakaMekTerrains.Water) as WaterTerrain;
+        if (waterTerrain == null)
+            return hex;
+        var newDepth = waterTerrain.Height + depthDelta;
+        hex.RemoveTerrain(MakaMekTerrains.Water);
+        hex.AddTerrain(new WaterTerrain(newDepth));
+
+        return hex;
     }
 
     /// <summary>

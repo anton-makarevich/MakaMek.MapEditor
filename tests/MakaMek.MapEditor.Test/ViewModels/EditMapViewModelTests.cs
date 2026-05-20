@@ -627,9 +627,11 @@ public class EditMapViewModelTests
 
         // Assert
         _sut.AvailableTools.ShouldNotBeEmpty();
-        _sut.AvailableTools.Count.ShouldBe(_sut.AvailableTerrains.Count + 2);
+        _sut.AvailableTools.Count.ShouldBe(_sut.AvailableTerrains.Count + 4);
         _sut.AvailableTools.Count(t => t.Type == ToolType.RaiseLevel).ShouldBe(1);
         _sut.AvailableTools.Count(t => t.Type == ToolType.LowerLevel).ShouldBe(1);
+        _sut.AvailableTools.Count(t => t.Type == ToolType.IncreaseWaterDepth).ShouldBe(1);
+        _sut.AvailableTools.Count(t => t.Type == ToolType.DecreaseWaterDepth).ShouldBe(1);
     }
 
     [Fact]
@@ -735,5 +737,306 @@ public class EditMapViewModelTests
         // Assert
         _sut.SelectedTool.ShouldBe(terrainTool);
         _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
+    }
+
+    // --- Water Depth Command Tests ---
+    [Fact]
+    public async Task IncreaseWaterDepthCommand_ShouldSetActiveEditModeToIncreaseWaterDepth()
+    {
+        // Act
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.IncreaseWaterDepth);
+    }
+
+    [Fact]
+    public async Task IncreaseWaterDepthCommand_WhenAlreadyActive_ShouldRevertToTerrain()
+    {
+        // Arrange
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+
+        // Act
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
+    }
+
+    [Fact]
+    public async Task IsIncreaseWaterDepthActive_ShouldReflectActiveEditMode()
+    {
+        // Initially false
+        _sut.IsIncreaseWaterDepthActive.ShouldBeFalse();
+
+        // After activating
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+        _sut.IsIncreaseWaterDepthActive.ShouldBeTrue();
+
+        // After deactivating
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+        _sut.IsIncreaseWaterDepthActive.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task DecreaseWaterDepthCommand_ShouldSetActiveEditModeToDecreaseWaterDepth()
+    {
+        // Act
+        await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.DecreaseWaterDepth);
+    }
+
+    [Fact]
+    public async Task DecreaseWaterDepthCommand_WhenAlreadyActive_ShouldRevertToTerrain()
+    {
+        // Arrange
+        await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
+
+        // Act
+        await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
+    }
+
+    [Fact]
+    public async Task IsDecreaseWaterDepthActive_ShouldReflectActiveEditMode()
+    {
+        // Initially false
+        _sut.IsDecreaseWaterDepthActive.ShouldBeFalse();
+
+        // After activating
+        await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
+        _sut.IsDecreaseWaterDepthActive.ShouldBeTrue();
+
+        // After deactivating
+        await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
+        _sut.IsDecreaseWaterDepthActive.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task SwitchingFromIncreaseWaterDepthToDecreaseWaterDepth_ShouldChangeActiveMode()
+    {
+        // Arrange
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+        _sut.ActiveEditMode.ShouldBe(ToolType.IncreaseWaterDepth);
+
+        // Act
+        await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.DecreaseWaterDepth);
+        _sut.IsDecreaseWaterDepthActive.ShouldBeTrue();
+        _sut.IsIncreaseWaterDepthActive.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task SwitchingFromDecreaseWaterDepthToIncreaseWaterDepth_ShouldChangeActiveMode()
+    {
+        // Arrange
+        await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
+        _sut.ActiveEditMode.ShouldBe(ToolType.DecreaseWaterDepth);
+
+        // Act
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.IncreaseWaterDepth);
+        _sut.IsIncreaseWaterDepthActive.ShouldBeTrue();
+        _sut.IsDecreaseWaterDepthActive.ShouldBeFalse();
+    }
+
+    // --- Water Depth Tool Selection Tests ---
+    [Fact]
+    public void SelectedTool_WhenSetToIncreaseWaterDepth_ShouldSetActiveEditModeToIncreaseWaterDepth()
+    {
+        // Arrange
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var waterDepthTool = _sut.AvailableTools.First(t => t.Type == ToolType.IncreaseWaterDepth);
+
+        // Act
+        _sut.SelectedTool = waterDepthTool;
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.IncreaseWaterDepth);
+    }
+
+    [Fact]
+    public void SelectedTool_WhenSetToDecreaseWaterDepth_ShouldSetActiveEditModeToDecreaseWaterDepth()
+    {
+        // Arrange
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var waterDepthTool = _sut.AvailableTools.First(t => t.Type == ToolType.DecreaseWaterDepth);
+
+        // Act
+        _sut.SelectedTool = waterDepthTool;
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.DecreaseWaterDepth);
+    }
+
+    [Fact]
+    public void SelectedTool_WhenSetToTerrainInWaterDepthMode_ShouldRevertToTerrainMode()
+    {
+        // Arrange
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var increaseDepthTool = _sut.AvailableTools.First(t => t.Type == ToolType.IncreaseWaterDepth);
+        _sut.SelectedTool = increaseDepthTool;
+        _sut.ActiveEditMode.ShouldBe(ToolType.IncreaseWaterDepth);
+        var terrainTool = _sut.AvailableTools.First(t => t.Type == ToolType.Terrain);
+
+        // Act
+        _sut.SelectedTool = terrainTool;
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
+        _sut.SelectedTerrain.ShouldBe(terrainTool.Terrain);
+    }
+
+    // --- Water Depth Hex Selection Tests ---
+    [Fact]
+    public async Task HandleHexSelection_InIncreaseWaterDepthMode_ShouldReturnNewHexWithIncreasedDepth()
+    {
+        // Arrange
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0)); // shallow water
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+
+        // Act
+        var newHex = _sut.HandleHexSelection(hex);
+
+        // Assert
+        newHex.ShouldNotBeNull();
+        var waterTerrain = newHex.GetTerrain(MakaMekTerrains.Water) as WaterTerrain;
+        waterTerrain.ShouldNotBeNull();
+        waterTerrain.Height.ShouldBe(-1); // depth increased from 0 to -1
+    }
+
+    [Fact]
+    public async Task HandleHexSelection_InDecreaseWaterDepthMode_ShouldReturnNewHexWithDecreasedDepth()
+    {
+        // Arrange
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(-1)); // standard depth
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
+
+        // Act
+        var newHex = _sut.HandleHexSelection(hex);
+
+        // Assert
+        newHex.ShouldNotBeNull();
+        var waterTerrain = newHex.GetTerrain(MakaMekTerrains.Water) as WaterTerrain;
+        waterTerrain.ShouldNotBeNull();
+        waterTerrain.Height.ShouldBe(0); // depth decreased from -1 to 0
+    }
+
+    [Fact]
+    public async Task HandleHexSelection_InIncreaseWaterDepthMode_ShouldPreserveNonWaterTerrains()
+    {
+        // Arrange
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        hex.AddTerrain(new LightWoodsTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+
+        // Act
+        var newHex = _sut.HandleHexSelection(hex);
+
+        // Assert
+        newHex.ShouldNotBeNull();
+        newHex.GetTerrains().ShouldContain(t => t is LightWoodsTerrain);
+        newHex.GetTerrains().ShouldContain(t => t is WaterTerrain);
+    }
+
+    [Fact]
+    public async Task HandleHexSelection_InDecreaseWaterDepthMode_WhenHexHasNoWater_ShouldNotAddWater()
+    {
+        // Arrange
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new ClearTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
+
+        // Act
+        var newHex = _sut.HandleHexSelection(hex);
+
+        // Assert
+        newHex.ShouldNotBeNull();
+        newHex.HasTerrain(MakaMekTerrains.Water).ShouldBeFalse();
+        newHex.GetTerrains().ShouldContain(t => t is ClearTerrain);
+    }
+
+    [Fact]
+    public async Task HandleHexSelection_InIncreaseWaterDepthMode_ShouldReplaceHexInMap()
+    {
+        // Arrange
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+
+        // Act
+        _sut.HandleHexSelection(hex);
+
+        // Assert
+        var mapHex = map.GetHex(new HexCoordinates(1, 1));
+        mapHex.ShouldNotBeNull();
+        var waterTerrain = mapHex.GetTerrain(MakaMekTerrains.Water) as WaterTerrain;
+        waterTerrain.ShouldNotBeNull();
+        waterTerrain.Height.ShouldBe(-1);
+    }
+
+    [Fact]
+    public async Task HandleHexSelection_InIncreaseWaterDepthMode_WhenMapIsNull_ShouldReturnNull()
+    {
+        // Arrange
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new WaterTerrain(0));
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+
+        // Act
+        var result = _sut.HandleHexSelection(hex);
+
+        // Assert
+        result.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task HandleHexSelection_InIncreaseWaterDepthMode_WhenDepthAlreadyNegative_ShouldDecreaseFurther()
+    {
+        // Arrange
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(-2)); // already deep
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+
+        // Act
+        var newHex = _sut.HandleHexSelection(hex);
+
+        // Assert
+        newHex.ShouldNotBeNull();
+        var waterTerrain = newHex.GetTerrain(MakaMekTerrains.Water) as WaterTerrain;
+        waterTerrain.ShouldNotBeNull();
+        waterTerrain.Height.ShouldBe(-3); // deeper still
     }
 }

@@ -4,5 +4,7 @@ public enum ToolType
 {
     Terrain,
     RaiseLevel,
-    LowerLevel
+    LowerLevel,
+    IncreaseWaterDepth,
+    DecreaseWaterDepth
 }
