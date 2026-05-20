@@ -6,6 +6,7 @@ using Sanet.MakaMek.Assets.Services;
 using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
+using Sanet.MakaMek.Map.Services;
 using Sanet.MakaMek.MapEditor.Models;
 using Sanet.MakaMek.Services;
 using Sanet.MVVM.Core.ViewModels;
@@ -23,15 +24,19 @@ public class EditMapViewModel : BaseViewModel
     private readonly IFileService _fileService;
     public ITerrainAssetService AssetService { get; }
 
+    public ITerrainBitmaskService TerrainBitmaskService { get; }
+
     public EditMapViewModel(IFileService fileService,
         ITerrainAssetService assetService,
         ILocalizationService localizationService,
-        ILogger<EditMapViewModel> logger)
+        ILogger<EditMapViewModel> logger,
+        ITerrainBitmaskService terrainBitmaskService)
     {
         _fileService = fileService;
         AssetService = assetService;
         LocalizationService = localizationService;
         Logger = logger;
+        TerrainBitmaskService = terrainBitmaskService;
     }
     
     public ILogger<EditMapViewModel> Logger { get; }

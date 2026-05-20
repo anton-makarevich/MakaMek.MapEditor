@@ -7,6 +7,7 @@ using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
+using Sanet.MakaMek.Map.Services;
 using Sanet.MakaMek.MapEditor.Models;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Services;
@@ -22,6 +23,7 @@ public class EditMapViewModelTests
     private readonly ILocalizationService _localizationService = Substitute.For<ILocalizationService>();
     private readonly EditMapViewModel _sut;
     private readonly ILogger<EditMapViewModel> _logger = Substitute.For<ILogger<EditMapViewModel>>();
+    private readonly ITerrainBitmaskService _bitmaskService = Substitute.For<ITerrainBitmaskService>();
 
     public EditMapViewModelTests()
     {
@@ -29,7 +31,8 @@ public class EditMapViewModelTests
         _sut = new EditMapViewModel(_fileService,
             _assetService,
             _localizationService,
-            _logger);
+            _logger,
+            _bitmaskService);
     }
 
     private static BattleMapData CreateTestBattleMapData(int q = 0, int r = 0)

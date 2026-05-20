@@ -1,9 +1,8 @@
 using System.ComponentModel;
-using AsyncAwaitBestPractices;
 using Avalonia;
-using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Avalonia.Controls;
 using Sanet.MakaMek.Map.Models;
+using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MVVM.Views.Avalonia;
 
@@ -45,14 +44,24 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         double maxX = 0;
         double maxY = 0;
 
+        var bitmaskService = ViewModel.TerrainBitmaskService;
+
         foreach (var hex in ViewModel.Map.GetHexes())
         {
             var edges = ViewModel.Map.GetHexEdges(hex.Coordinates);
+
+            CanonicalBitmaskResult? waterBitmask = null;
+            if (bitmaskService != null && hex.HasTerrain(MakaMekTerrains.Water))
+            {
+                waterBitmask = bitmaskService.ComputeCanonicalBitmask(
+                    ViewModel.Map, hex.Coordinates, MakaMekTerrains.Water);
+            }
+
             var hexControl = new HexControl(hex,
                 ViewModel.Logger,
                 ViewModel.AssetService,
                 ViewModel.LocalizationService,
-                edges);
+                edges, null, waterBitmask);
             MapCanvas.Children.Add(hexControl);
             _hexControlsByCoords[hex.Coordinates] = hexControl;
             if (hex.Coordinates.H > maxX) maxX = hex.Coordinates.H;
@@ -72,34 +81,34 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         if (selectedHexControl == null || ViewModel == null) return;
 
         var newHex = ViewModel.HandleHexSelection(selectedHexControl.Hex);
+        var hex = newHex ?? selectedHexControl.Hex;
 
-        if (newHex != null)
+        // Always replace the HexControl so the water bitmask is computed fresh
+        CanonicalBitmaskResult? waterBitmask = null;
+        var bitmaskService = ViewModel.TerrainBitmaskService;
+        if (ViewModel.Map != null && hex.HasTerrain(MakaMekTerrains.Water))
         {
-            // Level mode: replace the HexControl (Hex is immutable, can't swap _hex)
-            var edges = ViewModel.Map?.GetHexEdges(newHex.Coordinates);
-            var newHexControl = new HexControl(newHex,
-                ViewModel.Logger,
-                ViewModel.AssetService,
-                ViewModel.LocalizationService,
-                edges);
-            MapCanvas.Children.Remove(selectedHexControl);
-            MapCanvas.Children.Add(newHexControl);
-            _hexControlsByCoords[newHex.Coordinates] = newHexControl;
-
-            // Update edges on all on-map neighbors via the ViewModel
-            foreach (var (coords, neighborEdges) in ViewModel.GetEdgeUpdatesForNeighbors(newHex.Coordinates))
-            {
-                if (_hexControlsByCoords.TryGetValue(coords, out var neighborControl))
-                {
-                    neighborControl.UpdateEdges(neighborEdges);
-                }
-            }
+            waterBitmask = bitmaskService.ComputeCanonicalBitmask(
+                ViewModel.Map, hex.Coordinates, MakaMekTerrains.Water);
         }
-        else
+
+        var edges = ViewModel.Map?.GetHexEdges(hex.Coordinates);
+        var newHexControl = new HexControl(hex,
+            ViewModel.Logger,
+            ViewModel.AssetService,
+            ViewModel.LocalizationService,
+            edges, null, waterBitmask);
+        MapCanvas.Children.Remove(selectedHexControl);
+        MapCanvas.Children.Add(newHexControl);
+        _hexControlsByCoords[hex.Coordinates] = newHexControl;
+
+        // Update edges on all on-map neighbors via the ViewModel
+        foreach (var (coords, neighborEdges) in ViewModel.GetEdgeUpdatesForNeighbors(hex.Coordinates))
         {
-            // Terrain mode: re-render the single hex
-            selectedHexControl.Render().SafeFireAndForget(
-                ex => ViewModel.Logger.LogError(ex, "Failed to render hex"));
+            if (_hexControlsByCoords.TryGetValue(coords, out var neighborControl))
+            {
+                neighborControl.UpdateEdges(neighborEdges);
+            }
         }
     }
 }
