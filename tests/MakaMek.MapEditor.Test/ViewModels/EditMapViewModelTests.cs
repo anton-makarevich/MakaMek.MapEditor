@@ -85,6 +85,12 @@ public class EditMapViewModelTests
     }
 
     [Fact]
+    public void BitmaskService_ShouldBeSet()
+    {
+        _sut.TerrainBitmaskService.ShouldBe(_bitmaskService);
+    }
+
+    [Fact]
     public void LocalizationService_ShouldBeInitializedViaConstructor()
     {
         // Assert
