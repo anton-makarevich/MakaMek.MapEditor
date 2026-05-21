@@ -11,7 +11,6 @@ namespace Sanet.MakaMek.MapEditor.Views;
 public partial class EditMapView : BaseView<EditMapViewModel>
 {
     private readonly Dictionary<HexCoordinates, HexControl> _hexControlsByCoords = new();
-    private readonly Dictionary<HexCoordinates, CanonicalBitmaskResult?> _waterBitmasksByCoords = new();
     
     public EditMapView()
     {
@@ -62,14 +61,12 @@ public partial class EditMapView : BaseView<EditMapViewModel>
 
         MapCanvas.Children.Add(newControl);
         _hexControlsByCoords[coords] = newControl;
-        _waterBitmasksByCoords[coords] = waterBitmask;
     }
 
     private void RenderMap()
     {
         MapCanvas.Children.Clear();
         _hexControlsByCoords.Clear();
-        _waterBitmasksByCoords.Clear();
         if (ViewModel?.Map == null) return;
 
         double maxX = 0;
@@ -90,11 +87,10 @@ public partial class EditMapView : BaseView<EditMapViewModel>
     {
         if (ViewModel?.Map == null) return;
         var hex = ViewModel.Map.GetHex(coords);
-        if (hex == null || !_hexControlsByCoords.ContainsKey(coords)) return;
+        if (hex == null || !_hexControlsByCoords.TryGetValue(coords, out var oldControl)) return;
 
         var newBitmask = ComputeWaterBitmask(hex);
-        if (_waterBitmasksByCoords.TryGetValue(coords, out var oldBitmask)
-            && EqualityComparer<CanonicalBitmaskResult?>.Default.Equals(oldBitmask, newBitmask))
+        if (EqualityComparer<CanonicalBitmaskResult?>.Default.Equals(oldControl.WaterBitmask, newBitmask))
             return;
 
         ReplaceHexControl(coords, newBitmask);
