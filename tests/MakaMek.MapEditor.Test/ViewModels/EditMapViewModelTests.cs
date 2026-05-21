@@ -773,6 +773,25 @@ public class EditMapViewModelTests
     }
 
     [Fact]
+    public async Task IncreaseWaterDepthCommand_WhenAlreadyActiveAndToolsPopulated_ShouldSelectTerrainTool()
+    {
+        // Arrange
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var increaseDepthTool = _sut.AvailableTools.First(t => t.Type == ToolType.IncreaseWaterDepth);
+        _sut.SelectedTool = increaseDepthTool;
+        _sut.ActiveEditMode.ShouldBe(ToolType.IncreaseWaterDepth);
+        var terrainTool = _sut.AvailableTools.First(t => t.Type == ToolType.Terrain);
+
+        // Act
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+
+        // Assert
+        _sut.SelectedTool.ShouldBe(terrainTool);
+        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
+    }
+
+    [Fact]
     public async Task IsIncreaseWaterDepthActive_ShouldReflectActiveEditMode()
     {
         // Initially false
@@ -807,6 +826,25 @@ public class EditMapViewModelTests
         await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
 
         // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
+    }
+
+    [Fact]
+    public async Task DecreaseWaterDepthCommand_WhenAlreadyActiveAndToolsPopulated_ShouldSelectTerrainTool()
+    {
+        // Arrange
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var decreaseDepthTool = _sut.AvailableTools.First(t => t.Type == ToolType.DecreaseWaterDepth);
+        _sut.SelectedTool = decreaseDepthTool;
+        _sut.ActiveEditMode.ShouldBe(ToolType.DecreaseWaterDepth);
+        var terrainTool = _sut.AvailableTools.First(t => t.Type == ToolType.Terrain);
+
+        // Act
+        await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
+
+        // Assert
+        _sut.SelectedTool.ShouldBe(terrainTool);
         _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
     }
 
