@@ -1,9 +1,8 @@
 using System.ComponentModel;
-using AsyncAwaitBestPractices;
 using Avalonia;
-using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Avalonia.Controls;
 using Sanet.MakaMek.Map.Models;
+using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MVVM.Views.Avalonia;
 
@@ -36,6 +35,34 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         }
     }
 
+    private CanonicalBitmaskResult? ComputeWaterBitmask(Hex hex)
+    {
+        var bitmaskService = ViewModel?.TerrainBitmaskService;
+        if (bitmaskService == null || ViewModel?.Map == null || !hex.HasTerrain(MakaMekTerrains.Water))
+            return null;
+        return bitmaskService.ComputeCanonicalBitmask(ViewModel.Map, hex.Coordinates, MakaMekTerrains.Water);
+    }
+
+    private void ReplaceHexControl(HexCoordinates coords, CanonicalBitmaskResult? waterBitmask)
+    {
+        if (ViewModel?.Map == null) return;
+        var hex = ViewModel.Map.GetHex(coords);
+        if (hex == null) return;
+
+        var edges = ViewModel.Map.GetHexEdges(coords);
+        var newControl = new HexControl(hex,
+            ViewModel.Logger,
+            ViewModel.AssetService,
+            ViewModel.LocalizationService,
+            edges, null, waterBitmask);
+
+        if (_hexControlsByCoords.TryGetValue(coords, out var oldControl))
+            MapCanvas.Children.Remove(oldControl);
+
+        MapCanvas.Children.Add(newControl);
+        _hexControlsByCoords[coords] = newControl;
+    }
+
     private void RenderMap()
     {
         MapCanvas.Children.Clear();
@@ -47,20 +74,26 @@ public partial class EditMapView : BaseView<EditMapViewModel>
 
         foreach (var hex in ViewModel.Map.GetHexes())
         {
-            var edges = ViewModel.Map.GetHexEdges(hex.Coordinates);
-            var hexControl = new HexControl(hex,
-                ViewModel.Logger,
-                ViewModel.AssetService,
-                ViewModel.LocalizationService,
-                edges);
-            MapCanvas.Children.Add(hexControl);
-            _hexControlsByCoords[hex.Coordinates] = hexControl;
+            ReplaceHexControl(hex.Coordinates, ComputeWaterBitmask(hex));
             if (hex.Coordinates.H > maxX) maxX = hex.Coordinates.H;
             if (hex.Coordinates.V > maxY) maxY = hex.Coordinates.V;
         }
         
         MapCanvas.Width = maxX + HexCoordinatesPixelExtensions.HexWidth * 0.5;
         MapCanvas.Height = maxY + HexCoordinatesPixelExtensions.HexHeight * 1.5;
+    }
+
+    private void RefreshWaterBitmask(HexCoordinates coords)
+    {
+        if (ViewModel?.Map == null) return;
+        var hex = ViewModel.Map.GetHex(coords);
+        if (hex == null || !_hexControlsByCoords.TryGetValue(coords, out var oldControl)) return;
+
+        var newBitmask = ComputeWaterBitmask(hex);
+        if (EqualityComparer<CanonicalBitmaskResult?>.Default.Equals(oldControl.WaterBitmask, newBitmask))
+            return;
+
+        ReplaceHexControl(coords, newBitmask);
     }
 
     private void MapCanvas_OnContentClicked(object? sender, Point clickedPosition)
@@ -71,35 +104,30 @@ public partial class EditMapView : BaseView<EditMapViewModel>
 
         if (selectedHexControl == null || ViewModel == null) return;
 
+        var hadWater = selectedHexControl.Hex.HasTerrain(MakaMekTerrains.Water);
+
         var newHex = ViewModel.HandleHexSelection(selectedHexControl.Hex);
+        var hex = newHex ?? selectedHexControl.Hex;
+        var coords = hex.Coordinates;
 
-        if (newHex != null)
+        // Always replace the clicked hex (its terrain/level/depth changed)
+        ReplaceHexControl(coords, ComputeWaterBitmask(hex));
+
+        // Refresh neighbors' water bitmasks only when water was added or removed
+        if (hadWater != hex.HasTerrain(MakaMekTerrains.Water))
         {
-            // Level mode: replace the HexControl (Hex is immutable, can't swap _hex)
-            var edges = ViewModel.Map?.GetHexEdges(newHex.Coordinates);
-            var newHexControl = new HexControl(newHex,
-                ViewModel.Logger,
-                ViewModel.AssetService,
-                ViewModel.LocalizationService,
-                edges);
-            MapCanvas.Children.Remove(selectedHexControl);
-            MapCanvas.Children.Add(newHexControl);
-            _hexControlsByCoords[newHex.Coordinates] = newHexControl;
-
-            // Update edges on all on-map neighbors via the ViewModel
-            foreach (var (coords, neighborEdges) in ViewModel.GetEdgeUpdatesForNeighbors(newHex.Coordinates))
+            foreach (var neighborCoords in coords.GetAllNeighbours())
             {
-                if (_hexControlsByCoords.TryGetValue(coords, out var neighborControl))
-                {
-                    neighborControl.UpdateEdges(neighborEdges);
-                }
+                if (ViewModel.Map != null && ViewModel.Map.IsOnMap(neighborCoords))
+                    RefreshWaterBitmask(neighborCoords);
             }
         }
-        else
+
+        // Update edges on all on-map neighbors
+        foreach (var (neighborCoords, neighborEdges) in ViewModel.GetEdgeUpdatesForNeighbors(coords))
         {
-            // Terrain mode: re-render the single hex
-            selectedHexControl.Render().SafeFireAndForget(
-                ex => ViewModel.Logger.LogError(ex, "Failed to render hex"));
+            if (_hexControlsByCoords.TryGetValue(neighborCoords, out var neighborControl))
+                neighborControl.UpdateEdges(neighborEdges);
         }
     }
 }

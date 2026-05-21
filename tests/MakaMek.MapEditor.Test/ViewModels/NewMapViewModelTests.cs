@@ -5,6 +5,7 @@ using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Factories;
 using Sanet.MakaMek.Map.Generators;
 using Sanet.MakaMek.Map.Models;
+using Sanet.MakaMek.Map.Services;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Services;
 using Sanet.MVVM.Core.Services;
@@ -22,6 +23,7 @@ public class NewMapViewModelTests
     private readonly ILogger<EditMapViewModel> _logger = Substitute.For<ILogger<EditMapViewModel>>();
     private readonly ITerrainAssetService _assetService = Substitute.For<ITerrainAssetService>();
     private readonly IFileService _fileService = Substitute.For<IFileService>();
+    private readonly ITerrainBitmaskService _bitmaskService = Substitute.For<ITerrainBitmaskService>();
 
     public NewMapViewModelTests()
     {
@@ -30,7 +32,7 @@ public class NewMapViewModelTests
     }
 
     private EditMapViewModel CreateEditMapViewModelSubstitute()
-        => Substitute.For<EditMapViewModel>(_fileService, _assetService, _localizationService, _logger);
+        => Substitute.For<EditMapViewModel>(_fileService, _assetService, _localizationService, _logger, _bitmaskService);
 
     [Fact]
     public void MapWidthMin_ShouldReturn5()
