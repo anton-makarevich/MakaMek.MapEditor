@@ -64,3 +64,6 @@ publish/
 
 # AI tools
 .qwen
+
+# NuGet-provided wwwroot files (copied during build)
+src/MakaMek.MapEditor.Browser/wwwroot/cacheStorage.js
