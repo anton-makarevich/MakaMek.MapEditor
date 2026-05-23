@@ -13,8 +13,12 @@
   <PropertyGroup>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>
+    <TrimmerDefaultAction>link</TrimmerDefaultAction>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Preserve entire assemblies required by the app -->
+    <TrimmerRootAssembly Include="Sanet.MakaMek.Core" />
+    <TrimmerRootAssembly Include="Sanet.MakaMek.MapEditor" />
     <!-- Preserve the entire command model namespace -->
     <TrimmerRootDescriptor Include="TrimmerRoots.xml" />
   </ItemGroup>
