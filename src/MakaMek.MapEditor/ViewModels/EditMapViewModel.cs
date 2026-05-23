@@ -146,6 +146,15 @@ public class EditMapViewModel : BaseViewModel
         LoadTerrains();
     }
 
+    private static readonly IReadOnlyList<Terrain> KnownTerrains =
+    [
+        new ClearTerrain(),
+        new LightWoodsTerrain(),
+        new HeavyWoodsTerrain(),
+        new RoughTerrain(),
+        new WaterTerrain()
+    ];
+
     private void LoadTerrains()
     {
         AvailableTerrains.Clear();
@@ -156,18 +165,10 @@ public class EditMapViewModel : BaseViewModel
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_IncreaseWaterDepth"), ToolType.IncreaseWaterDepth));
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_DecreaseWaterDepth"), ToolType.DecreaseWaterDepth));
 
-        var terrainType = typeof(Terrain);
-        var assembly = terrainType.Assembly;
-        var terrainTypes = assembly.GetTypes()
-            .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsSubclassOf(terrainType));
-
-        foreach (var type in terrainTypes)
+        foreach (var terrain in KnownTerrains)
         {
-            if (Activator.CreateInstance(type) is Terrain terrain)
-            {
-                AvailableTerrains.Add(terrain);
-                AvailableTools.Add(new ToolItem(terrain.Id.ToString(), ToolType.Terrain, terrain));
-            }
+            AvailableTerrains.Add(terrain);
+            AvailableTools.Add(new ToolItem(terrain.Id.ToString(), ToolType.Terrain, terrain));
         }
 
         SelectedTerrain = AvailableTerrains.FirstOrDefault();
