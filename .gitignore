@@ -22,6 +22,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+**/*.user
 
 # .NET Core
 project.lock.json
@@ -35,6 +36,7 @@ ScaffoldingReadMe.txt
 *.nupkg
 # NuGet Symbol Packages
 *.snupkg
+.vs
 
 # Others
 ~$*
