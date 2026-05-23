@@ -54,7 +54,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             ViewModel.Logger,
             ViewModel.AssetService,
             ViewModel.LocalizationService,
-            edges, null, waterBitmask);
+            edges, null, waterBitmask, ViewModel.Scheduler);
 
         if (_hexControlsByCoords.TryGetValue(coords, out var oldControl))
             MapCanvas.Children.Remove(oldControl);

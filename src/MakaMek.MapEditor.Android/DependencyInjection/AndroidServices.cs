@@ -1,3 +1,4 @@
+using System.Reactive.Concurrency;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Core.Services;
@@ -21,5 +22,6 @@ public static class AndroidServices
             );
         });
         services.AddSingleton<IFileCachingService, FileSystemCachingService>();
+        services.AddSingleton<IScheduler>(TaskPoolScheduler.Default);
     }
 }

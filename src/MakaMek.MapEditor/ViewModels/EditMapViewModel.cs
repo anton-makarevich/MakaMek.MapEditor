@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Reactive.Concurrency;
 using System.Text.Json;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.Extensions.Logging;
@@ -25,18 +26,22 @@ public class EditMapViewModel : BaseViewModel
     public ITerrainAssetService AssetService { get; }
 
     public ITerrainBitmaskService TerrainBitmaskService { get; }
+    
+    public IScheduler? Scheduler { get; }
 
     public EditMapViewModel(IFileService fileService,
         ITerrainAssetService assetService,
         ILocalizationService localizationService,
         ILogger<EditMapViewModel> logger,
-        ITerrainBitmaskService terrainBitmaskService)
+        ITerrainBitmaskService terrainBitmaskService,
+        IScheduler? sheduler)
     {
         _fileService = fileService;
         AssetService = assetService;
         LocalizationService = localizationService;
         Logger = logger;
         TerrainBitmaskService = terrainBitmaskService;
+        Scheduler = sheduler;
     }
     
     public ILogger<EditMapViewModel> Logger { get; }
