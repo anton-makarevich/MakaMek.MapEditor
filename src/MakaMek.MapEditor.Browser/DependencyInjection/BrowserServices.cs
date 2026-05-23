@@ -19,6 +19,7 @@ public static class BrowserServices
 #endif
                 );
         });
+
         // Register browser caching service for WASM platform
         services.AddSingleton<IFileCachingService, BrowserCachingService>();
     }
