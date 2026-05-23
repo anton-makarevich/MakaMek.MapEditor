@@ -1,5 +1,8 @@
 <linker>
     <assembly fullname="Sanet.MakaMek.Map" preserve="all"/>
+    <assembly fullname="Sanet.MakaMek.Core" preserve="all"/>
+    <assembly fullname="Sanet.MakaMek.Services" preserve="all"/>
     <assembly fullname="System.Text.Json" preserve="all" />
     <assembly fullname="System.Reactive" preserve="all" />
+    <assembly fullname="Microsoft.Extensions.DependencyInjection" preserve="all" />
 </linker>
