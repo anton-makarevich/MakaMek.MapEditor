@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Sanet.MakaMek.MapEditor.Desktop.DependencyInjection;
 using Sanet.MVVM.DI.Avalonia.Extensions;
 
 namespace Sanet.MakaMek.MapEditor.Desktop;
@@ -15,7 +16,7 @@ sealed class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .UseDependencyInjection(_ => {})
+            .UseDependencyInjection(services => services.RegisterPlatformServices())
             .WithInterFont()
             .LogToTrace();
 }

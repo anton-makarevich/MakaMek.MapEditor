@@ -27,7 +27,6 @@ public static class ServiceCollectionExtensions
 #endif
             );
         });
-        services.AddSingleton<IFileCachingService, FileSystemCachingService>();
         services.AddSingleton<Map.Factories.IBattleMapFactory, Map.Factories.BattleMapFactory>();
         services.AddSingleton<ITerrainBitmaskService, TerrainBitmaskService>();
         services.AddSingleton<IImageService>(_ => new AvaloniaAssetImageService("avares://Sanet.MakaMek.MapEditor/Assets"));

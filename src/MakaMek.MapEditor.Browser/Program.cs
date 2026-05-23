@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Versioning;
 using Avalonia;
 using Avalonia.Browser;
+using Sanet.MakaMek.MapEditor.Browser.DependencyInjection;
 using Sanet.MVVM.DI.Avalonia.Extensions;
 
 [assembly: SupportedOSPlatform("browser")]
@@ -11,7 +12,7 @@ internal sealed partial class Program
 {
     private static Task Main(string[] args) => BuildAvaloniaApp()
         .WithInterFont()
-        .UseDependencyInjection(_ => {})
+        .UseDependencyInjection(services => services.RegisterBrowserServices())
         .StartBrowserAppAsync("out");
 
     public static AppBuilder BuildAvaloniaApp()
