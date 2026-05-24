@@ -34,14 +34,14 @@ public class EditMapViewModel : BaseViewModel
         ILocalizationService localizationService,
         ILogger<EditMapViewModel> logger,
         ITerrainBitmaskService terrainBitmaskService,
-        IScheduler? sheduler)
+        IScheduler? scheduler)
     {
         _fileService = fileService;
         AssetService = assetService;
         LocalizationService = localizationService;
         Logger = logger;
         TerrainBitmaskService = terrainBitmaskService;
-        Scheduler = sheduler;
+        Scheduler = scheduler;
     }
     
     public ILogger<EditMapViewModel> Logger { get; }
