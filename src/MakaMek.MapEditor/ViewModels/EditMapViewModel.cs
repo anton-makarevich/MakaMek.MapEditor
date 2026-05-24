@@ -65,6 +65,7 @@ public class EditMapViewModel : BaseViewModel
         get;
         private set
         {
+            if (field == value) return;
             SetProperty(ref field, value);
             NotifyPropertyChanged(nameof(IsRaiseLevelActive));
             NotifyPropertyChanged(nameof(IsLowerLevelActive));
@@ -145,7 +146,7 @@ public class EditMapViewModel : BaseViewModel
         return Task.CompletedTask;
     });
 
-    public void Initialize(IBattleMap map)
+    public virtual void Initialize(IBattleMap map)
     {
         Map = map;
         LoadTerrains();
