@@ -1116,4 +1116,50 @@ public class EditMapViewModelTests
         waterTerrain.ShouldNotBeNull();
         waterTerrain.Height.ShouldBe(0); // should not become positive
     }
+    [Fact]
+    public void HexConfiguration_ShouldBeInitializedViaConstructor()
+    {
+        _sut.HexConfiguration.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void HexConfiguration_WhenPropertyChanged_ShouldRaiseViewModelPropertyChanged()
+    {
+        // Arrange
+        var propertyChangedRaised = false;
+        _sut.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(EditMapViewModel.HexConfiguration))
+            {
+                propertyChangedRaised = true;
+            }
+        };
+
+        // Act
+        _sut.HexConfiguration.ShowLabels = !_sut.HexConfiguration.ShowLabels;
+
+        // Assert
+        propertyChangedRaised.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void DetachHandlers_ShouldUnsubscribeFromHexConfigurationPropertyChanged()
+    {
+        // Arrange
+        var propertyChangedRaised = false;
+        _sut.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(EditMapViewModel.HexConfiguration))
+            {
+                propertyChangedRaised = true;
+            }
+        };
+        _sut.DetachHandlers();
+
+        // Act
+        _sut.HexConfiguration.ShowLabels = !_sut.HexConfiguration.ShowLabels;
+
+        // Assert
+        propertyChangedRaised.ShouldBeFalse();
+    }
 }
