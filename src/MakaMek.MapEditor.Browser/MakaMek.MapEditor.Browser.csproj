@@ -13,15 +13,18 @@
   <PropertyGroup>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>
+    <TrimmerDefaultAction>link</TrimmerDefaultAction>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Preserve entire assemblies required by the app -->
+    <TrimmerRootAssembly Include="Sanet.MakaMek.Core" />
+    <TrimmerRootAssembly Include="Sanet.MakaMek.MapEditor" />
     <!-- Preserve the entire command model namespace -->
     <TrimmerRootDescriptor Include="TrimmerRoots.xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia.Browser" Version="12.0.3" />
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Microsoft.DotNet.HotReload.WebAssembly.Browser" Version="10.0.204" PrivateAssets="all" />
-    <PackageReference Include="Sanet.MakaMek.Services.Avalonia.Browser" Version="0.57.1" />
+    <PackageReference Include="Sanet.MakaMek.Services.Avalonia.Browser" Version="0.57.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MakaMek.MapEditor\MakaMek.MapEditor.csproj" />

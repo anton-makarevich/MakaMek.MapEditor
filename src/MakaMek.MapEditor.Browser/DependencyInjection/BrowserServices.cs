@@ -1,3 +1,4 @@
+using System.Reactive.Concurrency;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Services;
@@ -19,7 +20,11 @@ public static class BrowserServices
 #endif
                 );
         });
+
         // Register browser caching service for WASM platform
         services.AddSingleton<IFileCachingService, BrowserCachingService>();
+        
+        // Register CurrentThreadScheduler for WASM (single-threaded)
+        services.AddSingleton<IScheduler>(CurrentThreadScheduler.Instance);
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Reactive.Concurrency;
 using System.Text.Json;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.Extensions.Logging;
@@ -25,18 +26,22 @@ public class EditMapViewModel : BaseViewModel
     public ITerrainAssetService AssetService { get; }
 
     public ITerrainBitmaskService TerrainBitmaskService { get; }
+    
+    public IScheduler? Scheduler { get; }
 
     public EditMapViewModel(IFileService fileService,
         ITerrainAssetService assetService,
         ILocalizationService localizationService,
         ILogger<EditMapViewModel> logger,
-        ITerrainBitmaskService terrainBitmaskService)
+        ITerrainBitmaskService terrainBitmaskService,
+        IScheduler? scheduler)
     {
         _fileService = fileService;
         AssetService = assetService;
         LocalizationService = localizationService;
         Logger = logger;
         TerrainBitmaskService = terrainBitmaskService;
+        Scheduler = scheduler;
     }
     
     public ILogger<EditMapViewModel> Logger { get; }
@@ -60,6 +65,7 @@ public class EditMapViewModel : BaseViewModel
         get;
         private set
         {
+            if (field == value) return;
             SetProperty(ref field, value);
             NotifyPropertyChanged(nameof(IsRaiseLevelActive));
             NotifyPropertyChanged(nameof(IsLowerLevelActive));
@@ -140,11 +146,22 @@ public class EditMapViewModel : BaseViewModel
         return Task.CompletedTask;
     });
 
-    public void Initialize(IBattleMap map)
+    public virtual void Initialize(IBattleMap map)
     {
         Map = map;
         LoadTerrains();
     }
+
+    // IMPORTANT: When adding new Terrain subclasses, manually add them here.
+    // This list replaces reflection-based discovery for WASM compatibility.
+    private static readonly IReadOnlyList<Terrain> KnownTerrains =
+    [
+        new ClearTerrain(),
+        new LightWoodsTerrain(),
+        new HeavyWoodsTerrain(),
+        new RoughTerrain(),
+        new WaterTerrain()
+    ];
 
     private void LoadTerrains()
     {
@@ -156,18 +173,10 @@ public class EditMapViewModel : BaseViewModel
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_IncreaseWaterDepth"), ToolType.IncreaseWaterDepth));
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_DecreaseWaterDepth"), ToolType.DecreaseWaterDepth));
 
-        var terrainType = typeof(Terrain);
-        var assembly = terrainType.Assembly;
-        var terrainTypes = assembly.GetTypes()
-            .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsSubclassOf(terrainType));
-
-        foreach (var type in terrainTypes)
+        foreach (var terrain in KnownTerrains)
         {
-            if (Activator.CreateInstance(type) is Terrain terrain)
-            {
-                AvailableTerrains.Add(terrain);
-                AvailableTools.Add(new ToolItem(terrain.Id.ToString(), ToolType.Terrain, terrain));
-            }
+            AvailableTerrains.Add(terrain);
+            AvailableTools.Add(new ToolItem(terrain.Id.ToString(), ToolType.Terrain, terrain));
         }
 
         SelectedTerrain = AvailableTerrains.FirstOrDefault();

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Reactive.Concurrency;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -24,6 +25,7 @@ public class EditMapViewModelTests
     private readonly EditMapViewModel _sut;
     private readonly ILogger<EditMapViewModel> _logger = Substitute.For<ILogger<EditMapViewModel>>();
     private readonly ITerrainBitmaskService _bitmaskService = Substitute.For<ITerrainBitmaskService>();
+    private readonly IScheduler  _scheduler = ImmediateScheduler.Instance;
 
     public EditMapViewModelTests()
     {
@@ -32,7 +34,8 @@ public class EditMapViewModelTests
             _assetService,
             _localizationService,
             _logger,
-            _bitmaskService);
+            _bitmaskService,
+            _scheduler);
     }
 
     private static BattleMapData CreateTestBattleMapData(int q = 0, int r = 0)
@@ -96,6 +99,12 @@ public class EditMapViewModelTests
         // Assert
         _sut.LocalizationService.ShouldNotBeNull();
         _sut.LocalizationService.ShouldBe(_localizationService);
+    }
+
+    [Fact]
+    public void Scheduler_ShouldBeSet()
+    {
+        _sut.Scheduler.ShouldBe(_scheduler);
     }
 
     [Fact]

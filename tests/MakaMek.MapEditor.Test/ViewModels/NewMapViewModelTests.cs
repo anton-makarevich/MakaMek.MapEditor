@@ -1,3 +1,4 @@
+using System.Reactive.Concurrency;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Sanet.MakaMek.Assets.Services;
@@ -24,6 +25,7 @@ public class NewMapViewModelTests
     private readonly ITerrainAssetService _assetService = Substitute.For<ITerrainAssetService>();
     private readonly IFileService _fileService = Substitute.For<IFileService>();
     private readonly ITerrainBitmaskService _bitmaskService = Substitute.For<ITerrainBitmaskService>();
+    private readonly IScheduler _scheduler = Substitute.For<IScheduler>();
 
     public NewMapViewModelTests()
     {
@@ -32,7 +34,13 @@ public class NewMapViewModelTests
     }
 
     private EditMapViewModel CreateEditMapViewModelSubstitute()
-        => Substitute.For<EditMapViewModel>(_fileService, _assetService, _localizationService, _logger, _bitmaskService);
+        =>
+            Substitute.For<EditMapViewModel>(_fileService,
+                _assetService,
+                _localizationService,
+                _logger,
+                _bitmaskService,
+                _scheduler);
 
     [Fact]
     public void MapWidthMin_ShouldReturn5()

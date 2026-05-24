@@ -1,3 +1,4 @@
+using System.Reactive.Concurrency;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -27,6 +28,7 @@ public class MainMenuViewModelTests
     private readonly ITerrainAssetService _assetService = Substitute.For<ITerrainAssetService>();
     private readonly IFileService _fileService = Substitute.For<IFileService>();
     private readonly ITerrainBitmaskService _bitmaskService = Substitute.For<ITerrainBitmaskService>();
+    private readonly IScheduler _scheduler = Substitute.For<IScheduler>(); 
 
     public MainMenuViewModelTests()
     {
@@ -145,7 +147,7 @@ public class MainMenuViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             _fileService,
-            _assetService, _localizationService, _editViewLogger, _bitmaskService);
+            _assetService, _localizationService, _editViewLogger, _bitmaskService, _scheduler);
 
         _fileService.OpenFile("Load Map").Returns(("",json));
         _mapFactory.CreateFromData(Arg.Any<BattleMapData>()).Returns(map);
@@ -167,7 +169,7 @@ public class MainMenuViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             _fileService,
-            _assetService, _localizationService, _editViewLogger, _bitmaskService);
+            _assetService, _localizationService, _editViewLogger, _bitmaskService, _scheduler);
 
         _fileService.OpenFile("Load Map").Returns(("",json));
         _mapFactory.CreateFromData(Arg.Any<BattleMapData>()).Returns(map);
