@@ -33,6 +33,17 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         {
             RenderMap();
         }
+        else if (e.PropertyName == nameof(EditMapViewModel.HexConfiguration))
+        {
+            if (ViewModel?.HexConfiguration != null)
+            {
+                var config = ViewModel.HexConfiguration.ToConfiguration();
+                foreach (var hexControl in MapCanvas.Children.OfType<HexControl>())
+                {
+                    hexControl.UpdateRenderConfiguration(config);
+                }
+            }
+        }
     }
 
     private CanonicalBitmaskResult? ComputeWaterBitmask(Hex hex)
@@ -54,7 +65,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             ViewModel.Logger,
             ViewModel.AssetService,
             ViewModel.LocalizationService,
-            edges, null, waterBitmask, ViewModel.Scheduler);
+            edges, ViewModel.HexConfiguration?.ToConfiguration(), waterBitmask, ViewModel.Scheduler);
 
         if (_hexControlsByCoords.TryGetValue(coords, out var oldControl))
             MapCanvas.Children.Remove(oldControl);

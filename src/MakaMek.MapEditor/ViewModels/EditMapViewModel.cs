@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Reactive.Concurrency;
 using System.Text.Json;
 using AsyncAwaitBestPractices.MVVM;
@@ -9,6 +10,7 @@ using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MakaMek.Map.Services;
 using Sanet.MakaMek.MapEditor.Models;
+using Sanet.MakaMek.MapEditor.ViewModels.Wrappers;
 using Sanet.MakaMek.Services;
 using Sanet.MVVM.Core.ViewModels;
 
@@ -29,6 +31,10 @@ public class EditMapViewModel : BaseViewModel
     
     public IScheduler? Scheduler { get; }
 
+    private readonly PropertyChangedEventHandler? _hexConfigurationChangedHandler;
+
+    public HexRenderConfigurationViewModel HexConfiguration { get; }
+
     public EditMapViewModel(IFileService fileService,
         ITerrainAssetService assetService,
         ILocalizationService localizationService,
@@ -42,8 +48,17 @@ public class EditMapViewModel : BaseViewModel
         Logger = logger;
         TerrainBitmaskService = terrainBitmaskService;
         Scheduler = scheduler;
+        HexConfiguration = new HexRenderConfigurationViewModel();
+        _hexConfigurationChangedHandler = (_, _) => NotifyPropertyChanged(nameof(HexConfiguration));
+        HexConfiguration.PropertyChanged += _hexConfigurationChangedHandler;
     }
-    
+
+    public override void DetachHandlers()
+    {
+        base.DetachHandlers();
+        HexConfiguration.PropertyChanged -= _hexConfigurationChangedHandler;
+    }
+
     public ILogger<EditMapViewModel> Logger { get; }
 
     public ObservableCollection<Terrain> AvailableTerrains { get; } = [];

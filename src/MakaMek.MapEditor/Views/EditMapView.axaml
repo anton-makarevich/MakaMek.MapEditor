@@ -20,7 +20,7 @@
             ContentClicked="MapCanvas_OnContentClicked"
             x:Name="MapCanvas"/>
         
-        <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto" Background="#333333">
+        <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto,Auto" Background="#333333">
             <TextBlock Text="{extensions:Localize 'EditMap_Toolbox'}" FontSize="18" FontWeight="Bold" Margin="10" Foreground="White" HorizontalAlignment="Center"/>
 
             <ListBox Grid.Row="1" ItemsSource="{Binding AvailableTools}" SelectedItem="{Binding SelectedTool}" Background="Transparent">
@@ -33,7 +33,17 @@
                 </ListBox.ItemTemplate>
             </ListBox>
             
-            <Button Grid.Row="2" Content="{extensions:Localize 'EditMap_ExportMap'}" Command="{Binding ExportMapCommand}" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Bottom"/>
+            <StackPanel Grid.Row="2" Margin="10" Spacing="10">
+                <TextBlock Text="{extensions:Localize 'BattleMap_Settings'}" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                <CheckBox Content="{extensions:Localize 'BattleMap_ShowLabels'}"
+                          IsChecked="{Binding HexConfiguration.ShowLabels}"
+                          Foreground="White"/>
+                <CheckBox Content="{extensions:Localize 'BattleMap_ShowHexOutlines'}"
+                          IsChecked="{Binding HexConfiguration.ShowOutline}"
+                          Foreground="White"/>
+            </StackPanel>
+
+            <Button Grid.Row="3" Content="{extensions:Localize 'EditMap_ExportMap'}" Command="{Binding ExportMapCommand}" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Bottom"/>
         </Grid>
     </Grid>
 </UserControl>
