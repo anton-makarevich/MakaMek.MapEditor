@@ -152,6 +152,8 @@ public class EditMapViewModel : BaseViewModel
         LoadTerrains();
     }
 
+    // IMPORTANT: When adding new Terrain subclasses, manually add them here.
+    // This list replaces reflection-based discovery for WASM compatibility.
     private static readonly IReadOnlyList<Terrain> KnownTerrains =
     [
         new ClearTerrain(),
