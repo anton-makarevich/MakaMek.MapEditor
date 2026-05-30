@@ -332,8 +332,8 @@ public class EditMapViewModelTests
     {
         // Arrange
         var pngBytes = new byte[] { 1, 2, 3 };
-        var width = 800;
-        var height = 600;
+        const int width = 800;
+        const int height = 600;
         var pdfBytes = new byte[] { 4, 5, 6 };
         _pdfExportService.GeneratePdfFromPngAsync(pngBytes, width, height).Returns(pdfBytes);
 
@@ -346,7 +346,7 @@ public class EditMapViewModelTests
             "map.pdf",
             pdfBytes,
             "pdf",
-            "PDF Files");
+            _localizationService.GetString("EditMap_PdfFilesFilter"));
     }
 
     [Fact]
@@ -354,8 +354,8 @@ public class EditMapViewModelTests
     {
         // Arrange
         var pngBytes = new byte[] { 1, 2, 3 };
-        var width = 800;
-        var height = 600;
+        const int width = 800;
+        const int height = 600;
         var exception = new InvalidOperationException("PDF generation failed");
         _pdfExportService.GeneratePdfFromPngAsync(pngBytes, width, height).Returns<Task<byte[]>>(_ => throw exception);
 
