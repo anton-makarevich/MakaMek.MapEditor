@@ -112,9 +112,11 @@ public partial class EditMapView : BaseView<EditMapViewModel>
 
     private void OnExportPdfClicked(object? sender, RoutedEventArgs e)
     {
+        if (double.IsNaN(MapCanvas.Width) || double.IsNaN(MapCanvas.Height))
+            return;
         var width = (int)MapCanvas.Width;
         var height = (int)MapCanvas.Height;
-        var pngBytes =  MapCanvas.RenderToPngBytes(width, height);
+        var pngBytes = MapCanvas.RenderToPngBytes(width, height);
         ViewModel?.ExportMapAsPdf(pngBytes, width, height).SafeFireAndForget();
     }
 
