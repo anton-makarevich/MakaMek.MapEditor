@@ -43,7 +43,10 @@
                           Foreground="White"/>
             </StackPanel>
 
-            <Button Grid.Row="3" Content="{extensions:Localize 'EditMap_ExportMap'}" Command="{Binding ExportMapCommand}" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Bottom"/>
+            <StackPanel Grid.Row="3" Margin="10" Spacing="10" VerticalAlignment="Bottom">
+                <Button Content="{extensions:Localize 'EditMap_ExportMap'}" Command="{Binding ExportMapCommand}" HorizontalAlignment="Stretch"/>
+                <Button Content="{extensions:Localize 'EditMap_ExportPdf'}" Click="OnExportPdfClicked" HorizontalAlignment="Stretch"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

@@ -1,6 +1,9 @@
 using System.ComponentModel;
+using AsyncAwaitBestPractices;
 using Avalonia;
+using Avalonia.Interactivity;
 using Sanet.MakaMek.Avalonia.Controls;
+using Sanet.MakaMek.Avalonia.Controls.Extensions;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MakaMek.MapEditor.ViewModels;
@@ -65,7 +68,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             ViewModel.Logger,
             ViewModel.AssetService,
             ViewModel.LocalizationService,
-            edges, ViewModel.HexConfiguration?.ToConfiguration(), waterBitmask, ViewModel.Scheduler);
+            edges, ViewModel.HexConfiguration.ToConfiguration(), waterBitmask, ViewModel.Scheduler);
 
         if (_hexControlsByCoords.TryGetValue(coords, out var oldControl))
             MapCanvas.Children.Remove(oldControl);
@@ -105,6 +108,14 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             return;
 
         ReplaceHexControl(coords, newBitmask);
+    }
+
+    private void OnExportPdfClicked(object? sender, RoutedEventArgs e)
+    {
+        var width = (int)MapCanvas.Width;
+        var height = (int)MapCanvas.Height;
+        var pngBytes =  MapCanvas.RenderToPngBytes(width, height);
+        ViewModel?.ExportMapAsPdf(pngBytes, width, height).SafeFireAndForget();
     }
 
     private void MapCanvas_OnContentClicked(object? sender, Point clickedPosition)

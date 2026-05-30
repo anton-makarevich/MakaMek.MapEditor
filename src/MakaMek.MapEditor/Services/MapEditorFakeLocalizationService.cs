@@ -30,6 +30,8 @@ public class MapEditorFakeLocalizationService : FakeLocalizationService
         _strings["EditMap_IncreaseWaterDepth"] = "▼ Increase Depth";
         _strings["EditMap_DecreaseWaterDepth"] = "▲ Decrease Depth";
         _strings["EditMap_ExportMapDialogTitle"] = "Export Map";
+        _strings["EditMap_ExportPdf"] = "Export PDF";
+        _strings["EditMap_ExportPdfDialogTitle"] = "Export Map as PDF";
 
         _strings["Window_Title"] = "MakaMek Map Editor";
     }
