@@ -290,7 +290,7 @@ public class EditMapViewModel : BaseViewModel
                 "map.pdf",
                 pdfBytes,
                 "pdf",
-                "PDF Files");
+                LocalizationService.GetString("EditMap_PdfFilesFilter"));
         }
         catch (Exception e)
         {

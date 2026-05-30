@@ -59,6 +59,7 @@ public class MapEditorFakeLocalizationServiceTests
     [InlineData("EditMap_ExportMapDialogTitle", "Export Map")]
     [InlineData("EditMap_ExportPdf", "Export PDF")]
     [InlineData("EditMap_ExportPdfDialogTitle", "Export Map as PDF")]
+    [InlineData("EditMap_PdfFilesFilter", "PDF Files")]
     public void GetString_EditMapView_ReturnsExpectedString(string key, string expected)
     {
         var localizationService = new MapEditorFakeLocalizationService();
