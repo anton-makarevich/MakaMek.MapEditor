@@ -311,7 +311,7 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public async Task ExportMapAsPdfAsync_ShouldCallGeneratePdfFromPngAsync()
+    public async Task ExportMapAsPdf_ShouldCallGeneratePdfFromPngAsync()
     {
         // Arrange
         var pngBytes = new byte[] { 1, 2, 3 };
@@ -328,7 +328,7 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public async Task ExportMapAsPdfAsync_ShouldSaveWithCorrectParameters()
+    public async Task ExportMapAsPdf_ShouldSaveWithCorrectParameters()
     {
         // Arrange
         var pngBytes = new byte[] { 1, 2, 3 };
@@ -350,7 +350,7 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public async Task ExportMapAsPdfAsync_WhenPdfGenerationFails_ShouldLogError()
+    public async Task ExportMapAsPdf_WhenPdfGenerationFails_ShouldLogError()
     {
         // Arrange
         var pngBytes = new byte[] { 1, 2, 3 };

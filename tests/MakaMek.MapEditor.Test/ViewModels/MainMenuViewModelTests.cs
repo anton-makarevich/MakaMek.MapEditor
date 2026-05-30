@@ -147,6 +147,7 @@ public class MainMenuViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             _fileService,
+            Substitute.For<IPdfExportService>(),
             _assetService, _localizationService, _editViewLogger, _bitmaskService, _scheduler);
 
         _fileService.OpenFile("Load Map").Returns(("",json));
@@ -169,6 +170,7 @@ public class MainMenuViewModelTests
         var map = new BattleMap(1,1);
         var editViewModel = Substitute.For<EditMapViewModel>(
             _fileService,
+            Substitute.For<IPdfExportService>(),
             _assetService, _localizationService, _editViewLogger, _bitmaskService, _scheduler);
 
         _fileService.OpenFile("Load Map").Returns(("",json));
