@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITerrainBitmaskService, TerrainBitmaskService>();
         services.AddSingleton<IImageService>(_ => new AvaloniaAssetImageService("avares://Sanet.MakaMek.MapEditor/Assets"));
         services.AddSingleton<IFileService, AvaloniaFileService>();
+        services.AddSingleton<IPdfExportService, PdfExportService>();
         services.AddSingleton<ILocalizationService, MapEditorFakeLocalizationService>();
         // Register terrain caching service with stream providers
         services.AddSingleton<ITerrainAssetService>(sp =>

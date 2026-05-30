@@ -20,6 +20,7 @@ namespace MakaMek.MapEditor.Test.ViewModels;
 public class EditMapViewModelTests
 {
     private readonly IFileService _fileService = Substitute.For<IFileService>();
+    private readonly IPdfExportService _pdfExportService = Substitute.For<IPdfExportService>();
     private readonly ITerrainAssetService _assetService = Substitute.For<ITerrainAssetService>();
     private readonly ILocalizationService _localizationService = Substitute.For<ILocalizationService>();
     private readonly EditMapViewModel _sut;
@@ -31,6 +32,7 @@ public class EditMapViewModelTests
     {
         _localizationService.GetString(Arg.Any<string>()).Returns(callInfo => callInfo.Arg<string>());
         _sut = new EditMapViewModel(_fileService,
+            _pdfExportService,
             _assetService,
             _localizationService,
             _logger,
@@ -216,7 +218,7 @@ public class EditMapViewModelTests
         await _sut.ExportMapCommand.ExecuteAsync();
 
         // Assert
-        await _fileService.DidNotReceive().SaveFile(
+        await _fileService.DidNotReceive().SaveJsonFile(
             Arg.Any<string>(),
             Arg.Any<string>(),
             Arg.Any<string>());
@@ -248,7 +250,7 @@ public class EditMapViewModelTests
         _sut.Initialize(map);
 
         string? savedContent = null;
-        await _fileService.SaveFile(
+        await _fileService.SaveJsonFile(
             Arg.Any<string>(),
             Arg.Any<string>(),
             Arg.Do<string>(content => savedContent = content));
@@ -279,7 +281,7 @@ public class EditMapViewModelTests
         await _sut.ExportMapCommand.ExecuteAsync();
 
         // Assert
-        await _fileService.Received(1).SaveFile(
+        await _fileService.Received(1).SaveJsonFile(
             _localizationService.GetString("EditMap_ExportMapDialogTitle"),
             "map.json",
             Arg.Any<string>());
@@ -295,7 +297,7 @@ public class EditMapViewModelTests
         _sut.Initialize(map);
 
         string? savedContent = null;
-        await _fileService.SaveFile(
+        await _fileService.SaveJsonFile(
             Arg.Any<string>(),
             Arg.Any<string>(),
             Arg.Do<string>(content => savedContent = content));
@@ -306,6 +308,67 @@ public class EditMapViewModelTests
         // Assert
         savedContent.ShouldNotBeNull();
         savedContent.ShouldContain("\n"); // Should contain newlines due to WriteIndented = true
+    }
+
+    [Fact]
+    public async Task ExportMapAsPdf_ShouldCallGeneratePdfFromPngAsync()
+    {
+        // Arrange
+        var pngBytes = new byte[] { 1, 2, 3 };
+        var width = 800;
+        var height = 600;
+        var pdfBytes = new byte[] { 4, 5, 6 };
+        _pdfExportService.GeneratePdfFromPngAsync(pngBytes, width, height).Returns(pdfBytes);
+
+        // Act
+        await _sut.ExportMapAsPdf(pngBytes, width, height);
+
+        // Assert
+        await _pdfExportService.Received(1).GeneratePdfFromPngAsync(pngBytes, width, height);
+    }
+
+    [Fact]
+    public async Task ExportMapAsPdf_ShouldSaveWithCorrectParameters()
+    {
+        // Arrange
+        var pngBytes = new byte[] { 1, 2, 3 };
+        const int width = 800;
+        const int height = 600;
+        var pdfBytes = new byte[] { 4, 5, 6 };
+        _pdfExportService.GeneratePdfFromPngAsync(pngBytes, width, height).Returns(pdfBytes);
+
+        // Act
+        await _sut.ExportMapAsPdf(pngBytes, width, height);
+
+        // Assert
+        await _fileService.Received(1).SaveBinaryFile(
+            _localizationService.GetString("EditMap_ExportPdfDialogTitle"),
+            "map.pdf",
+            pdfBytes,
+            "pdf",
+            _localizationService.GetString("EditMap_PdfFilesFilter"));
+    }
+
+    [Fact]
+    public async Task ExportMapAsPdf_WhenPdfGenerationFails_ShouldLogError()
+    {
+        // Arrange
+        var pngBytes = new byte[] { 1, 2, 3 };
+        const int width = 800;
+        const int height = 600;
+        var exception = new InvalidOperationException("PDF generation failed");
+        _pdfExportService.GeneratePdfFromPngAsync(pngBytes, width, height).Returns<Task<byte[]>>(_ => throw exception);
+
+        // Act
+        await _sut.ExportMapAsPdf(pngBytes, width, height);
+
+        // Assert
+        _logger.Received(1).Log(
+            LogLevel.Error,
+            Arg.Any<EventId>(),
+            Arg.Is<object>(o => o.ToString()!.Contains("Failed to export PDF")),
+            exception,
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]

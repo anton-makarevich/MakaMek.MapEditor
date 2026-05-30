@@ -25,6 +25,7 @@ public class EditMapViewModel : BaseViewModel
     }
 
     private readonly IFileService _fileService;
+    private readonly IPdfExportService _pdfExportService;
     public ITerrainAssetService AssetService { get; }
 
     public ITerrainBitmaskService TerrainBitmaskService { get; }
@@ -36,6 +37,7 @@ public class EditMapViewModel : BaseViewModel
     public HexRenderConfigurationViewModel HexConfiguration { get; }
 
     public EditMapViewModel(IFileService fileService,
+        IPdfExportService pdfExportService,
         ITerrainAssetService assetService,
         ILocalizationService localizationService,
         ILogger<EditMapViewModel> logger,
@@ -43,6 +45,7 @@ public class EditMapViewModel : BaseViewModel
         IScheduler? scheduler)
     {
         _fileService = fileService;
+        _pdfExportService = pdfExportService;
         AssetService = assetService;
         LocalizationService = localizationService;
         Logger = logger;
@@ -277,12 +280,30 @@ public class EditMapViewModel : BaseViewModel
         }
     }
 
+    public async Task ExportMapAsPdf(byte[] pngBytes, int width, int height)
+    {
+        try
+        {
+            var pdfBytes = await _pdfExportService.GeneratePdfFromPngAsync(pngBytes, width, height);
+            await _fileService.SaveBinaryFile(
+                LocalizationService.GetString("EditMap_ExportPdfDialogTitle"),
+                "map.pdf",
+                pdfBytes,
+                "pdf",
+                LocalizationService.GetString("EditMap_PdfFilesFilter"));
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "Failed to export PDF");
+        }
+    }
+
     public IAsyncCommand ExportMapCommand => field ??= new AsyncCommand(async () =>
     {
         if (Map == null) return;
         var data = Map.ToData();
-        var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
-        await _fileService.SaveFile(LocalizationService.GetString("EditMap_ExportMapDialogTitle"), "map.json", json);
+        var json = JsonSerializer.Serialize(data, options: new JsonSerializerOptions { WriteIndented = true });
+        await _fileService.SaveJsonFile(LocalizationService.GetString("EditMap_ExportMapDialogTitle"), "map.json", json);
     }, onException: ex => Logger.LogError(ex, "Failed to export map"));
 
     public ILocalizationService LocalizationService { get; }

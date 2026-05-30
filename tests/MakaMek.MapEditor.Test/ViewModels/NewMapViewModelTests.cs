@@ -36,6 +36,7 @@ public class NewMapViewModelTests
     private EditMapViewModel CreateEditMapViewModelSubstitute()
         =>
             Substitute.For<EditMapViewModel>(_fileService,
+                Substitute.For<IPdfExportService>(),
                 _assetService,
                 _localizationService,
                 _logger,
