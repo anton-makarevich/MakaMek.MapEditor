@@ -42,4 +42,8 @@
     <None Remove="Assets\terrain\lightwoods.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Maps\clear.json" />
+  </ItemGroup>
+
 </Project>
