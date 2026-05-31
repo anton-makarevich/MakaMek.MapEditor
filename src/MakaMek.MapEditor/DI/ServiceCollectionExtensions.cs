@@ -1,14 +1,15 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Assets.Services;
+using Sanet.MakaMek.Avalonia.Controls.Services;
 using Sanet.MakaMek.Core.Services;
-using Sanet.MakaMek.Core.Services.ResourceProviders;
 using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Services;
 using Sanet.MakaMek.MapEditor.Services;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Services;
 using Sanet.MakaMek.Services.Avalonia;
+using Sanet.MakaMek.Services.ResourceProviders;
 
 namespace Sanet.MakaMek.MapEditor.DI;
 
@@ -22,6 +23,10 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IFileService, AvaloniaFileService>();
         services.AddSingleton<IPdfExportService, PdfExportService>();
         services.AddSingleton<ILocalizationService, MapEditorFakeLocalizationService>();
+        services.AddSingleton<IMapPreviewRenderer, SkiaMapPreviewRenderer>();
+        services.AddSingleton<IDispatcherService, AvaloniaDispatcherService>();
+        services.AddSingleton<IMapResourceProvider, EmbeddedMapResourceProvider>();
+
         // Register terrain caching service with stream providers
         services.AddSingleton<ITerrainAssetService>(sp =>
         {
