@@ -27,6 +27,11 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IDispatcherService, AvaloniaDispatcherService>();
         services.AddSingleton<IMapResourceProvider, EmbeddedMapResourceProvider>();
 
+        services.AddSingleton<IMapResourceProvider>(sp =>
+            new EmbeddedMapResourceProvider(
+                sp.GetRequiredService<ILogger<EmbeddedMapResourceProvider>>(),
+                new AssemblyResourceStreamProvider("json", typeof(App).Assembly)));
+
         // Register terrain caching service with stream providers
         services.AddSingleton<ITerrainAssetService>(sp =>
         {
