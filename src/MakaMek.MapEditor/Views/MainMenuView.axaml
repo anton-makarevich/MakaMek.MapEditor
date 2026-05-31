@@ -8,7 +8,7 @@
              x:Class="Sanet.MakaMek.MapEditor.Views.MainMenuView"
              x:DataType="viewModels:MainMenuViewModel">
     <Grid RowDefinitions="*,Auto,*" ColumnDefinitions="*,Auto,*">
-        <TextBlock Grid.Row="1" Grid.Column="1" Text="{extensions:Localize 'MainMenu_Title'}" 
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="{extensions:Localize 'MainMenu_Title'}" 
                    FontSize="30" HorizontalAlignment="Center" FontWeight="Bold"/>
         
         <!-- Loading Section -->
