@@ -92,7 +92,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             if (hex.Coordinates.V > maxY) maxY = hex.Coordinates.V;
         }
         
-        MapCanvas.Width = maxX + HexCoordinatesPixelExtensions.HexWidth * 0.5;
+        MapCanvas.Width = maxX + HexCoordinatesPixelExtensions.HexWidth * 1.5;
         MapCanvas.Height = maxY + HexCoordinatesPixelExtensions.HexHeight * 1.5;
     }
 
