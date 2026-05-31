@@ -3,7 +3,6 @@ using AsyncAwaitBestPractices;
 using Avalonia;
 using Avalonia.Interactivity;
 using Sanet.MakaMek.Avalonia.Controls;
-using Sanet.MakaMek.Avalonia.Controls.Extensions;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MakaMek.MapEditor.ViewModels;
@@ -93,14 +92,13 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             if (hex.Coordinates.V > maxY) maxY = hex.Coordinates.V;
         }
         
-        MapCanvas.Width = maxX + HexCoordinatesPixelExtensions.HexWidth * 0.5;
+        MapCanvas.Width = maxX + HexCoordinatesPixelExtensions.HexWidth * 1.5;
         MapCanvas.Height = maxY + HexCoordinatesPixelExtensions.HexHeight * 1.5;
     }
 
     private void RefreshWaterBitmask(HexCoordinates coords)
     {
-        if (ViewModel?.Map == null) return;
-        var hex = ViewModel.Map.GetHex(coords);
+        var hex = ViewModel?.Map?.GetHex(coords);
         if (hex == null || !_hexControlsByCoords.TryGetValue(coords, out var oldControl)) return;
 
         var newBitmask = ComputeWaterBitmask(hex);
@@ -116,7 +114,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             return;
         var width = (int)MapCanvas.Width;
         var height = (int)MapCanvas.Height;
-        var pngBytes = MapCanvas.RenderToPngBytes(width, height);
+        var pngBytes = MapCanvas.ToPng();
         ViewModel?.ExportMapAsPdf(pngBytes, width, height).SafeFireAndForget();
     }
 
