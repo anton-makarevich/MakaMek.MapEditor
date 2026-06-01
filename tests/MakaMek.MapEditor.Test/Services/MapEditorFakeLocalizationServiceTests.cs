@@ -12,6 +12,7 @@ public class MapEditorFakeLocalizationServiceTests
     [InlineData("MainMenu_LoadMap", "Load Map")]
     [InlineData("MainMenu_LoadingTerrain", "Loading terrain data...")]
     [InlineData("MainMenu_ErrorLoadingTerrain", "Error loading terrain data")]
+    [InlineData("MainMenu_Retry", "Retry")]
     public void GetString_MainMenu_ReturnsExpectedString(string key, string expected)
     {
         var localizationService = new MapEditorFakeLocalizationService();
