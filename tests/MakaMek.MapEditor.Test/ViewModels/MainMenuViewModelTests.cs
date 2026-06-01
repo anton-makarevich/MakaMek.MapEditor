@@ -48,7 +48,6 @@ public class MainMenuViewModelTests
         _sut.AttachHandlers();
 
         tcs.SetResult([]);
-        await Task.Delay(100);
 
         await _assetService.Received(1).GetLoadedBiomes();
     }
@@ -57,10 +56,11 @@ public class MainMenuViewModelTests
     public async Task AttachHandlers_WhenBiomesAlreadyLoaded_ShouldNotStartPreloadingAgain()
     {
         var biomes = new[] { "biome1" };
-        _assetService.GetLoadedBiomes().Returns(biomes);
+        var tcs = new TaskCompletionSource<IEnumerable<string>>();
+        _assetService.GetLoadedBiomes().Returns(tcs.Task);
 
         _sut.AttachHandlers();
-        await Task.Delay(100);
+        tcs.SetResult(biomes);
 
         _sut.AttachHandlers();
 
@@ -71,11 +71,12 @@ public class MainMenuViewModelTests
     public async Task PreloadBiomes_WhenBiomesExist_ShouldNavigateToNewMapViewModel()
     {
         var biomes = new[] { "biome1", "biome2" };
-        _assetService.GetLoadedBiomes().Returns(biomes);
+        var tcs = new TaskCompletionSource<IEnumerable<string>>();
+        _assetService.GetLoadedBiomes().Returns(tcs.Task);
         _localizationService.GetString("Status_BiomesLoaded").Returns("{0} biomes loaded");
 
         _sut.AttachHandlers();
-        await Task.Delay(100);
+        tcs.SetResult(biomes);
 
         await _navigationService.Received(1).NavigateToViewModelAsync<NewMapViewModel>();
         _sut.BiomeLoadingStatus.ShouldContain("2 biomes loaded");
@@ -92,7 +93,6 @@ public class MainMenuViewModelTests
         _localizationService.GetString("Status_ErrorLoadingBiomes").Returns("Error loading biomes: {0}");
 
         _sut.AttachHandlers();
-        await Task.Delay(100);
 
         _sut.BiomeLoadingStatus.ShouldContain("No biomes found");
         _sut.HasError.ShouldBeTrue();
@@ -108,7 +108,6 @@ public class MainMenuViewModelTests
         _localizationService.GetString("Status_ErrorLoadingBiomes").Returns("Error loading biomes: {0}");
 
         _sut.AttachHandlers();
-        await Task.Delay(100);
 
         _sut.BiomeLoadingStatus.ShouldContain("Error loading biomes: Service unavailable");
         _sut.HasError.ShouldBeTrue();
@@ -124,7 +123,6 @@ public class MainMenuViewModelTests
         _localizationService.GetString("Status_ErrorLoadingBiomes").Returns("Error loading biomes: {0}");
 
         _sut.AttachHandlers();
-        await Task.Delay(100);
 
         _sut.HasError.ShouldBeTrue();
         _assetService.ClearReceivedCalls();
@@ -144,14 +142,12 @@ public class MainMenuViewModelTests
         _localizationService.GetString("Status_ErrorLoadingBiomes").Returns("Error loading biomes: {0}");
 
         _sut.AttachHandlers();
-        await Task.Delay(100);
 
         _sut.HasError.ShouldBeTrue();
 
         var biomes = new[] { "biome1" };
         _assetService.GetLoadedBiomes().Returns(biomes);
         await _sut.RetryLoadCommand.ExecuteAsync();
-        await Task.Delay(100);
 
         _sut.HasError.ShouldBeFalse();
         _sut.IsLoading.ShouldBeFalse();
