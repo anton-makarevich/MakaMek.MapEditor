@@ -1,10 +1,13 @@
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using Sanet.MakaMek.Assets.Services;
 using Sanet.MakaMek.Core.Services;
 using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Factories;
+using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Services;
 using Sanet.MakaMek.MapEditor.ViewModels;
+using Sanet.MakaMek.Presentation.ViewModels;
 using Sanet.MakaMek.Services;
 using Sanet.MVVM.Core.Services;
 using Shouldly;
@@ -63,6 +66,29 @@ public class NewMapViewModelTests
         await _sut.EditMapCommand.ExecuteAsync();
 
         _navigationService.DidNotReceive().GetViewModel<EditMapViewModel>();
+    }
+
+    [Fact]
+    public async Task EditMapCommand_WhenMapIsNotNull_ShouldInitializeEditViewModelAndNavigate()
+    {
+        var map = new BattleMap(3, 3);
+        var mapItem = new MapPreviewItem { Name = "Test", Map = map };
+        _sut.MapConfig.SelectMap(mapItem);
+
+        var editViewModel = new EditMapViewModel(
+            Substitute.For<IFileService>(),
+            Substitute.For<IPdfExportService>(),
+            Substitute.For<ITerrainAssetService>(),
+            _localizationService,
+            Substitute.For<ILogger<EditMapViewModel>>(),
+            Substitute.For<ITerrainBitmaskService>(),
+            null);
+        _navigationService.GetViewModel<EditMapViewModel>().Returns(editViewModel);
+
+        await _sut.EditMapCommand.ExecuteAsync();
+
+        editViewModel.Map.ShouldBe(map);
+        await _navigationService.Received(1).NavigateToViewModelAsync(editViewModel);
     }
 
     [Fact]
