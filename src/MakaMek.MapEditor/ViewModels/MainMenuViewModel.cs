@@ -1,4 +1,5 @@
 using AsyncAwaitBestPractices;
+using AsyncAwaitBestPractices.MVVM;
 using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Assets.Services;
 using Sanet.MakaMek.Localization;
@@ -13,6 +14,13 @@ public class MainMenuViewModel : BaseViewModel
     private readonly ILocalizationService _localizationService;
 
     private int _loadedBiomes;
+    
+    public MainMenuViewModel(ILogger<MainMenuViewModel> logger, ITerrainAssetService terrainAssetService, ILocalizationService localizationService)
+    {
+        _logger = logger;
+        _terrainAssetService = terrainAssetService;
+        _localizationService = localizationService;
+    }
     
     public string BiomeLoadingStatus
     {
@@ -32,12 +40,7 @@ public class MainMenuViewModel : BaseViewModel
         private set => SetProperty(ref field, value);
     }
 
-    public MainMenuViewModel(ILogger<MainMenuViewModel> logger, ITerrainAssetService terrainAssetService, ILocalizationService localizationService)
-    {
-        _logger = logger;
-        _terrainAssetService = terrainAssetService;
-        _localizationService = localizationService;
-    }
+    public IAsyncCommand RetryLoadCommand => field ??= new AsyncCommand(PreloadBiomes);
 
     public override void AttachHandlers()
     {
@@ -51,6 +54,7 @@ public class MainMenuViewModel : BaseViewModel
     {
         try
         {
+            HasError = false;
             IsLoading = true;
             var biomes = await _terrainAssetService.GetLoadedBiomes();
             _loadedBiomes = biomes.Count();

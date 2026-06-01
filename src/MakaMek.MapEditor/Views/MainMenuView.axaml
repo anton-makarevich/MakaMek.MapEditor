@@ -22,6 +22,7 @@
         <StackPanel Grid.Row="1" Grid.Column="1" Spacing="10" IsVisible="{Binding HasError}">
             <TextBlock Text="{extensions:Localize 'MainMenu_ErrorLoadingTerrain'}" FontSize="16" HorizontalAlignment="Center" Foreground="Red"/>
             <TextBlock Text="{Binding BiomeLoadingStatus}" FontSize="14" HorizontalAlignment="Center" Foreground="Red" TextWrapping="Wrap"/>
+            <Button Content="{extensions:Localize 'MainMenu_Retry'}" Command="{Binding RetryLoadCommand}" HorizontalAlignment="Center"/>
         </StackPanel>
     </Grid>
 </UserControl>

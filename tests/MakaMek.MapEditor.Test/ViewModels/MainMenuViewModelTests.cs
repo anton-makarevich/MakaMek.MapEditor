@@ -115,4 +115,46 @@ public class MainMenuViewModelTests
         _sut.IsLoading.ShouldBeFalse();
         await _navigationService.DidNotReceive().NavigateToViewModelAsync<NewMapViewModel>();
     }
+
+    [Fact]
+    public async Task RetryLoadCommand_WhenExecuted_ShouldCallGetLoadedBiomes()
+    {
+        _assetService.GetLoadedBiomes().Returns(Array.Empty<string>());
+        _localizationService.GetString("Status_NoBiomesFound").Returns("No biomes found");
+        _localizationService.GetString("Status_ErrorLoadingBiomes").Returns("Error loading biomes: {0}");
+
+        _sut.AttachHandlers();
+        await Task.Delay(100);
+
+        _sut.HasError.ShouldBeTrue();
+        _assetService.ClearReceivedCalls();
+
+        var biomes = new[] { "biome1" };
+        _assetService.GetLoadedBiomes().Returns(biomes);
+        await _sut.RetryLoadCommand.ExecuteAsync();
+
+        await _assetService.Received(1).GetLoadedBiomes();
+    }
+
+    [Fact]
+    public async Task RetryLoadCommand_WhenExecutedAfterError_ShouldClearErrorAndReload()
+    {
+        _assetService.GetLoadedBiomes().Returns(Array.Empty<string>());
+        _localizationService.GetString("Status_NoBiomesFound").Returns("No biomes found");
+        _localizationService.GetString("Status_ErrorLoadingBiomes").Returns("Error loading biomes: {0}");
+
+        _sut.AttachHandlers();
+        await Task.Delay(100);
+
+        _sut.HasError.ShouldBeTrue();
+
+        var biomes = new[] { "biome1" };
+        _assetService.GetLoadedBiomes().Returns(biomes);
+        await _sut.RetryLoadCommand.ExecuteAsync();
+        await Task.Delay(100);
+
+        _sut.HasError.ShouldBeFalse();
+        _sut.IsLoading.ShouldBeFalse();
+        await _navigationService.Received(1).NavigateToViewModelAsync<NewMapViewModel>();
+    }
 }
