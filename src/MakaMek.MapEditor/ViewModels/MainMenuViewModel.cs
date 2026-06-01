@@ -12,6 +12,8 @@ public class MainMenuViewModel : BaseViewModel
     private readonly ITerrainAssetService _terrainAssetService;
     private readonly ILocalizationService _localizationService;
 
+    private int _loadedBiomes;
+    
     public string BiomeLoadingStatus
     {
         get;
@@ -40,6 +42,8 @@ public class MainMenuViewModel : BaseViewModel
     public override void AttachHandlers()
     {
         base.AttachHandlers();
+        if (IsLoading || _loadedBiomes > 0)
+            return;
         PreloadBiomes().SafeFireAndForget();
     }
 
@@ -49,13 +53,13 @@ public class MainMenuViewModel : BaseViewModel
         {
             IsLoading = true;
             var biomes = await _terrainAssetService.GetLoadedBiomes();
-            var biomeCount = biomes.Count();
+            _loadedBiomes = biomes.Count();
 
-            BiomeLoadingStatus = biomeCount == 0
+            BiomeLoadingStatus = _loadedBiomes == 0
                 ? _localizationService.GetString("Status_NoBiomesFound")
-                : string.Format(_localizationService.GetString("Status_BiomesLoaded"), biomeCount);
+                : string.Format(_localizationService.GetString("Status_BiomesLoaded"), _loadedBiomes);
 
-            if (biomeCount == 0)
+            if (_loadedBiomes == 0)
                 throw new Exception(_localizationService.GetString("Status_NoBiomesFound"));
 
             await NavigationService.NavigateToViewModelAsync<NewMapViewModel>();

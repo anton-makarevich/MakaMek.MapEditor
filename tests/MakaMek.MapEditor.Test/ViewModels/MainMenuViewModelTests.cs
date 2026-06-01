@@ -39,6 +39,35 @@ public class MainMenuViewModelTests
     }
 
     [Fact]
+    public async Task AttachHandlers_WhenIsLoading_ShouldNotStartPreloadingAgain()
+    {
+        var tcs = new TaskCompletionSource<IEnumerable<string>>();
+        _assetService.GetLoadedBiomes().Returns(tcs.Task);
+
+        _sut.AttachHandlers();
+        _sut.AttachHandlers();
+
+        tcs.SetResult([]);
+        await Task.Delay(100);
+
+        await _assetService.Received(1).GetLoadedBiomes();
+    }
+
+    [Fact]
+    public async Task AttachHandlers_WhenBiomesAlreadyLoaded_ShouldNotStartPreloadingAgain()
+    {
+        var biomes = new[] { "biome1" };
+        _assetService.GetLoadedBiomes().Returns(biomes);
+
+        _sut.AttachHandlers();
+        await Task.Delay(100);
+
+        _sut.AttachHandlers();
+
+        await _assetService.Received(1).GetLoadedBiomes();
+    }
+
+    [Fact]
     public async Task PreloadBiomes_WhenBiomesExist_ShouldNavigateToNewMapViewModel()
     {
         var biomes = new[] { "biome1", "biome2" };
