@@ -11,6 +11,7 @@ public class MapEditorFakeLocalizationService : FakeLocalizationService
         _strings["MainMenu_LoadMap"] = "Load Map";
         _strings["MainMenu_LoadingTerrain"] = "Loading terrain data...";
         _strings["MainMenu_ErrorLoadingTerrain"] = "Error loading terrain data";
+        _strings["MainMenu_Retry"] = "Retry";
         _strings["Status_BiomesLoaded"] = "{0} biomes loaded";
         _strings["Status_NoBiomesFound"] = "No biomes found";
         _strings["Status_ErrorLoadingBiomes"] = "Error loading biomes: {0}";

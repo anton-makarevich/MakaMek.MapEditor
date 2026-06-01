@@ -7,12 +7,9 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sanet.MakaMek.MapEditor.Views.MainMenuView"
              x:DataType="viewModels:MainMenuViewModel">
-    <Grid RowDefinitions="*,Auto,Auto,*" ColumnDefinitions="*,Auto,*">
-        <StackPanel Grid.Row="1" Grid.Column="1" Spacing="20" IsVisible="{Binding CanShowMenu}">
-            <TextBlock Text="{extensions:Localize 'MainMenu_Title'}" FontSize="30" HorizontalAlignment="Center" FontWeight="Bold"/>
-            <Button Content="{extensions:Localize 'MainMenu_CreateNewMap'}" Command="{Binding CreateNewMapCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" FontSize="20"/>
-            <Button Content="{extensions:Localize 'MainMenu_LoadMap'}" Command="{Binding LoadMapCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" FontSize="20"/>
-        </StackPanel>
+    <Grid RowDefinitions="*,Auto,*" ColumnDefinitions="*,Auto,*">
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="{extensions:Localize 'MainMenu_Title'}" 
+                   FontSize="30" HorizontalAlignment="Center" FontWeight="Bold"/>
         
         <!-- Loading Section -->
         <StackPanel Grid.Row="1" Grid.Column="1" Spacing="10" IsVisible="{Binding IsLoading}">
@@ -25,6 +22,7 @@
         <StackPanel Grid.Row="1" Grid.Column="1" Spacing="10" IsVisible="{Binding HasError}">
             <TextBlock Text="{extensions:Localize 'MainMenu_ErrorLoadingTerrain'}" FontSize="16" HorizontalAlignment="Center" Foreground="Red"/>
             <TextBlock Text="{Binding BiomeLoadingStatus}" FontSize="14" HorizontalAlignment="Center" Foreground="Red" TextWrapping="Wrap"/>
+            <Button Content="{extensions:Localize 'MainMenu_Retry'}" Command="{Binding RetryLoadCommand}" HorizontalAlignment="Center"/>
         </StackPanel>
     </Grid>
 </UserControl>
