@@ -5,6 +5,7 @@
              xmlns:viewModels="clr-namespace:Sanet.MakaMek.MapEditor.ViewModels"
              xmlns:controls="clr-namespace:Sanet.MakaMek.Avalonia.Controls;assembly=Sanet.MakaMek.Avalonia.Controls"
              xmlns:extensions="clr-namespace:Sanet.MakaMek.Avalonia.Controls.Extensions;assembly=Sanet.MakaMek.Avalonia.Controls"
+             xmlns:ff="clr-namespace:Avalonia.Markup.Xaml.MarkupExtensions;assembly=Avalonia.Markup.Xaml"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sanet.MakaMek.MapEditor.Views.EditMapView"
              x:CompileBindings="True"
@@ -15,12 +16,15 @@
             <Setter Property="Foreground" Value="White"/>
         </Style>
     </UserControl.Styles>
-    <Grid ColumnDefinitions="*,200">
+    <Grid ColumnDefinitions="{ff:OnFormFactor Desktop='*,200', Mobile='*'}"
+          RowDefinitions="{ff:OnFormFactor Desktop='*', Mobile='*,Auto'}">
         <controls:HexMap
             ContentClicked="MapCanvas_OnContentClicked"
             x:Name="MapCanvas"/>
         
-        <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto,Auto" Background="#333333">
+        <Grid Grid.Column="{ff:OnFormFactor Desktop=1, Mobile=0}"
+              Grid.Row="{ff:OnFormFactor Desktop=0, Mobile=1}"
+              RowDefinitions="Auto,*,Auto,Auto" Background="#333333">
             <TextBlock Text="{extensions:Localize 'EditMap_Toolbox'}" FontSize="18" FontWeight="Bold" Margin="10" Foreground="White" HorizontalAlignment="Center"/>
 
             <ListBox Grid.Row="1" ItemsSource="{Binding AvailableTools}" SelectedItem="{Binding SelectedTool}" Background="Transparent">
