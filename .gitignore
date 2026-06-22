@@ -64,6 +64,13 @@ publish/
 
 # AI tools
 .qwen
+.ai
+.serena/memories
+opencode.json
+.agents/skills
+agent/skills
+data/skills
+skills-lock.json
 
 # NuGet-provided wwwroot files (copied during build)
 src/MakaMek.MapEditor.Browser/wwwroot/cacheStorage.js
