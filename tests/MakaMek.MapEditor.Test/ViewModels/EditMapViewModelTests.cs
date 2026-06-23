@@ -1234,16 +1234,16 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public void ToggleSettingsPanelCommand_ShouldToggleIsSettingsPanelVisible()
+    public async Task ToggleSettingsPanelCommand_ShouldToggleIsSettingsPanelVisible()
     {
         // Act
-        _sut.ToggleSettingsPanelCommand.ExecuteAsync();
+        await _sut.ToggleSettingsPanelCommand.ExecuteAsync();
 
         // Assert
         _sut.IsSettingsPanelVisible.ShouldBeFalse();
 
         // Act again
-        _sut.ToggleSettingsPanelCommand.ExecuteAsync();
+        await _sut.ToggleSettingsPanelCommand.ExecuteAsync();
 
         // Assert
         _sut.IsSettingsPanelVisible.ShouldBeTrue();
