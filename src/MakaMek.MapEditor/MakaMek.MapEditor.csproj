@@ -33,6 +33,10 @@
     <PackageReference Include="Sanet.MVVM.DI.Avalonia" Version="1.5.1203" />
     <PackageReference Include="Sanet.MVVM.Navigation.Avalonia" Version="1.5.1203" />
     <PackageReference Include="Sanet.MVVM.Views.Avalonia" Version="1.5.1203" />
+    <PackageReference Include="Splat" Version="20.0.0" />
+    <PackageReference Include="Splat.Builder" Version="20.0.0" />
+    <PackageReference Include="Splat.Core" Version="20.0.0" />
+    <PackageReference Include="Splat.Logging" Version="20.0.0" />
     <PackageReference Include="System.Reactive" Version="6.1.0" />
   </ItemGroup>
 
