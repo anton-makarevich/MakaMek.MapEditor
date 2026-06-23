@@ -6,10 +6,14 @@
              xmlns:controls="clr-namespace:Sanet.MakaMek.Avalonia.Controls;assembly=Sanet.MakaMek.Avalonia.Controls"
              xmlns:extensions="clr-namespace:Sanet.MakaMek.Avalonia.Controls.Extensions;assembly=Sanet.MakaMek.Avalonia.Controls"
              xmlns:ff="clr-namespace:Avalonia.Markup.Xaml.MarkupExtensions;assembly=Avalonia.Markup.Xaml"
+             xmlns:converters="clr-namespace:Sanet.MakaMek.MapEditor.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sanet.MakaMek.MapEditor.Views.EditMapView"
              x:CompileBindings="True"
              x:DataType="viewModels:EditMapViewModel">
+    <UserControl.Resources>
+        <converters:StringToImageConverter x:Key="StringToImageConverter"/>
+    </UserControl.Resources>
     <UserControl.Styles>
         <Style Selector="ListBoxItem:selected">
             <Setter Property="Background" Value="#005A9E"/>
@@ -49,7 +53,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Width="85" Margin="4" HorizontalAlignment="Center">
-                            <Image Source="{Binding ImagePath}" Width="64" Height="64" IsVisible="{Binding HasImagePath}" HorizontalAlignment="Center"/>
+                            <Image Source="{Binding ImagePath, Converter={StaticResource StringToImageConverter}}" Width="64" Height="64" IsVisible="{Binding HasImagePath}" HorizontalAlignment="Center"/>
                             <TextBlock Text="{Binding DisplayName}" Foreground="White" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MaxWidth="80"/>
                         </StackPanel>
                     </DataTemplate>
