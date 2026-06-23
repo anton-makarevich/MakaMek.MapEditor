@@ -8,5 +8,5 @@ public class ToolItem(string displayName, ToolType type, Terrain? terrain = null
     public ToolType Type { get; } = type;
     public Terrain? Terrain { get; } = terrain;
     public string? ImagePath { get; } = imagePath;
-    public bool HasImagePath => ImagePath is not null;
+    public bool HasImagePath => !string.IsNullOrWhiteSpace(ImagePath);
 }

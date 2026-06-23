@@ -201,7 +201,7 @@ public class EditMapViewModel : BaseViewModel
         {
             AvailableTerrains.Add(terrain);
             AvailableTools.Add(new ToolItem(terrain.Id.ToString(), ToolType.Terrain, terrain,
-                imagePath: $"{AssetBaseUri}/terrain/{terrain.Id.ToString().ToLower()}.png"));
+                imagePath: $"{AssetBaseUri}/terrain/{terrain.Id.ToString().ToLowerInvariant()}.png"));
         }
 
         SelectedTerrain = AvailableTerrains.FirstOrDefault();

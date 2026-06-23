@@ -14,7 +14,8 @@ public class StringToImageConverter : IValueConverter
         {
             try
             {
-                return new Bitmap(AssetLoader.Open(new Uri(path)));
+                using var stream = AssetLoader.Open(new Uri(path));
+                return new Bitmap(stream);
             }
             catch
             {
