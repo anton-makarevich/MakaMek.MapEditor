@@ -40,15 +40,23 @@
               RowDefinitions="Auto,*,Auto" Background="#333333">
             <TextBlock Text="{extensions:Localize 'EditMap_Toolbox'}" FontSize="18" FontWeight="Bold" Margin="10" Foreground="White" HorizontalAlignment="Center"/>
 
-            <ListBox Grid.Row="1" ItemsSource="{Binding AvailableTools}" SelectedItem="{Binding SelectedTool}" Background="Transparent">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <TextBlock Text="{Binding DisplayName}" Foreground="White"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <ListBox ItemsSource="{Binding AvailableTools}" SelectedItem="{Binding SelectedTool}" Background="Transparent">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Width="85" Margin="4" HorizontalAlignment="Center">
+                                <Image Source="{Binding ImagePath}" Width="64" Height="64" IsVisible="{Binding HasImagePath}" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding DisplayName}" Foreground="White" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MaxWidth="80"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
 
             <StackPanel Grid.Row="2" Spacing="10"
                         IsVisible="{Binding IsSettingsPanelVisible}">
