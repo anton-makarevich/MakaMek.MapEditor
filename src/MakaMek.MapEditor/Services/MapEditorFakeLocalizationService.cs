@@ -34,6 +34,7 @@ public class MapEditorFakeLocalizationService : FakeLocalizationService
         _strings["EditMap_ExportPdf"] = "Export PDF";
         _strings["EditMap_ExportPdfDialogTitle"] = "Export Map as PDF";
         _strings["EditMap_PdfFilesFilter"] = "PDF Files";
+        _strings["EditMap_Settings"] = "☰ Settings";
 
         _strings["Window_Title"] = "MakaMek Map Editor";
     }
