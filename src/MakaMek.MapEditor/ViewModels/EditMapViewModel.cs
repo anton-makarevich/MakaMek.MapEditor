@@ -307,4 +307,17 @@ public class EditMapViewModel : BaseViewModel
     }, onException: ex => Logger.LogError(ex, "Failed to export map"));
 
     public ILocalizationService LocalizationService { get; }
+
+    private bool _isSettingsPanelVisible = true;
+    public bool IsSettingsPanelVisible
+    {
+        get => _isSettingsPanelVisible;
+        set => SetProperty(ref _isSettingsPanelVisible, value);
+    }
+
+    public IAsyncCommand ToggleSettingsPanelCommand => field ??= new AsyncCommand(() =>
+    {
+        IsSettingsPanelVisible = !IsSettingsPanelVisible;
+        return Task.CompletedTask;
+    });
 }

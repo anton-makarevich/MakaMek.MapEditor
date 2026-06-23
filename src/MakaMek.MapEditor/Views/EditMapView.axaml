@@ -5,6 +5,7 @@
              xmlns:viewModels="clr-namespace:Sanet.MakaMek.MapEditor.ViewModels"
              xmlns:controls="clr-namespace:Sanet.MakaMek.Avalonia.Controls;assembly=Sanet.MakaMek.Avalonia.Controls"
              xmlns:extensions="clr-namespace:Sanet.MakaMek.Avalonia.Controls.Extensions;assembly=Sanet.MakaMek.Avalonia.Controls"
+             xmlns:ff="clr-namespace:Avalonia.Markup.Xaml.MarkupExtensions;assembly=Avalonia.Markup.Xaml"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sanet.MakaMek.MapEditor.Views.EditMapView"
              x:CompileBindings="True"
@@ -15,12 +16,28 @@
             <Setter Property="Foreground" Value="White"/>
         </Style>
     </UserControl.Styles>
-    <Grid ColumnDefinitions="*,200">
+    <Grid ColumnDefinitions="{ff:OnFormFactor Desktop='*,200', Mobile='*'}"
+          RowDefinitions="{ff:OnFormFactor Desktop='*', Mobile='*,Auto'}">
         <controls:HexMap
             ContentClicked="MapCanvas_OnContentClicked"
             x:Name="MapCanvas"/>
         
-        <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto,Auto" Background="#333333">
+        <!-- Floating toggle button (visible on mobile only) -->
+        <Button Grid.Column="0"
+                Grid.Row="0"
+                IsVisible="{ff:OnFormFactor Desktop=False, Mobile=True}"
+                Command="{Binding ToggleSettingsPanelCommand}"
+                Content="{extensions:Localize 'EditMap_Settings'}"
+                Background="#005A9E"
+                Foreground="White"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="10"
+                Padding="15,10"/>
+        
+        <Grid Grid.Column="{ff:OnFormFactor Desktop=1, Mobile=0}"
+              Grid.Row="{ff:OnFormFactor Desktop=0, Mobile=1}"
+              RowDefinitions="Auto,*,Auto" Background="#333333">
             <TextBlock Text="{extensions:Localize 'EditMap_Toolbox'}" FontSize="18" FontWeight="Bold" Margin="10" Foreground="White" HorizontalAlignment="Center"/>
 
             <ListBox Grid.Row="1" ItemsSource="{Binding AvailableTools}" SelectedItem="{Binding SelectedTool}" Background="Transparent">
@@ -32,20 +49,23 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            
-            <StackPanel Grid.Row="2" Margin="10" Spacing="10">
-                <TextBlock Text="{extensions:Localize 'BattleMap_Settings'}" FontSize="16" FontWeight="Bold" Foreground="White"/>
-                <CheckBox Content="{extensions:Localize 'BattleMap_ShowLabels'}"
-                          IsChecked="{Binding HexConfiguration.ShowLabels}"
-                          Foreground="White"/>
-                <CheckBox Content="{extensions:Localize 'BattleMap_ShowHexOutlines'}"
-                          IsChecked="{Binding HexConfiguration.ShowOutline}"
-                          Foreground="White"/>
-            </StackPanel>
 
-            <StackPanel Grid.Row="3" Margin="10" Spacing="10" VerticalAlignment="Bottom">
-                <Button Content="{extensions:Localize 'EditMap_ExportMap'}" Command="{Binding ExportMapCommand}" HorizontalAlignment="Stretch"/>
-                <Button Content="{extensions:Localize 'EditMap_ExportPdf'}" Click="OnExportPdfClicked" HorizontalAlignment="Stretch"/>
+            <StackPanel Grid.Row="2" Spacing="10"
+                        IsVisible="{Binding IsSettingsPanelVisible}">
+                <StackPanel Margin="10" Spacing="10">
+                    <TextBlock Text="{extensions:Localize 'BattleMap_Settings'}" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                    <CheckBox Content="{extensions:Localize 'BattleMap_ShowLabels'}"
+                              IsChecked="{Binding HexConfiguration.ShowLabels}"
+                              Foreground="White"/>
+                    <CheckBox Content="{extensions:Localize 'BattleMap_ShowHexOutlines'}"
+                              IsChecked="{Binding HexConfiguration.ShowOutline}"
+                              Foreground="White"/>
+                </StackPanel>
+
+                <StackPanel Margin="10" Spacing="10" VerticalAlignment="Bottom">
+                    <Button Content="{extensions:Localize 'EditMap_ExportMap'}" Command="{Binding ExportMapCommand}" HorizontalAlignment="Stretch"/>
+                    <Button Content="{extensions:Localize 'EditMap_ExportPdf'}" Click="OnExportPdfClicked" HorizontalAlignment="Stretch"/>
+                </StackPanel>
             </StackPanel>
         </Grid>
     </Grid>
