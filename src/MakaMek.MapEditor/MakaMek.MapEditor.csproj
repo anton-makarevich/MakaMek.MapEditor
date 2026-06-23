@@ -41,7 +41,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Assets\avalonia-logo.ico" />
     <AvaloniaResource Include="Assets\avalonia-logo.ico" />
     <AvaloniaResource Include="Assets\terrain\clear.png" />
     <AvaloniaResource Include="Assets\terrain\lightwoods.png" />
