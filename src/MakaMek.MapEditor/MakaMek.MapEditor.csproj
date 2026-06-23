@@ -20,10 +20,12 @@
     <PackageReference Include="Avalonia" Version="12.0.4" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.4" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.4" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.8" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.9" />
+    <PackageReference Include="ReactiveUI" Version="23.2.28" />
+    <PackageReference Include="ReactiveUI.Avalonia" Version="12.0.3" />
     <PackageReference Include="Sanet.MakaMek.Map" Version="0.58.8-preview" />
     <PackageReference Include="Sanet.MakaMek.Services" Version="0.58.8-preview" />
     <PackageReference Include="Sanet.MakaMek.Services.Avalonia" Version="0.58.8-preview" />
@@ -31,6 +33,10 @@
     <PackageReference Include="Sanet.MVVM.DI.Avalonia" Version="1.5.1203" />
     <PackageReference Include="Sanet.MVVM.Navigation.Avalonia" Version="1.5.1203" />
     <PackageReference Include="Sanet.MVVM.Views.Avalonia" Version="1.5.1203" />
+    <PackageReference Include="Splat" Version="20.0.0" />
+    <PackageReference Include="Splat.Builder" Version="20.0.0" />
+    <PackageReference Include="Splat.Core" Version="20.0.0" />
+    <PackageReference Include="Splat.Logging" Version="20.0.0" />
     <PackageReference Include="System.Reactive" Version="6.1.0" />
   </ItemGroup>
 

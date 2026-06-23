@@ -8,7 +8,7 @@ on:
 
 jobs:
   opencode:
-    timeout-minutes: 60
+    timeout-minutes: 30
     if: |
       (contains(github.event.comment.body, '/oc') ||
       contains(github.event.comment.body, '/opencode')) &&
@@ -29,6 +29,29 @@ jobs:
         with:
           fetch-depth: 1
           persist-credentials: false
+
+      - name: Install mise tools
+        uses: jdx/mise-action@v2
+
+      - name: Install skills
+        run: mise run install-skills
+
+      - name: Install Serena
+        run: mise run install-serena
+
+      - name: Configure Serena for OpenCode
+        run: |
+          cat > opencode.json << 'EOF'
+          {
+            "mcp": {
+              "serena": {
+                "type": "local",
+                "command": ["serena", "start-mcp-server", "--context=ide"],
+                "enabled": true
+              }
+            }
+          }
+          EOF
 
       - name: Run OpenCode
         uses: anomalyco/opencode/github@v1.15.10
