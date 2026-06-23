@@ -30,8 +30,8 @@
                 Content="{extensions:Localize 'EditMap_Settings'}"
                 Background="#005A9E"
                 Foreground="White"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Margin="10"
                 Padding="15,10"/>
         
