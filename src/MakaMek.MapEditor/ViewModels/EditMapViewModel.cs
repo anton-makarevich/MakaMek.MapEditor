@@ -181,20 +181,27 @@ public class EditMapViewModel : BaseViewModel
         new WaterTerrain()
     ];
 
+    private const string AssetBaseUri = "avares://Sanet.MakaMek.MapEditor/Assets";
+
     private void LoadTerrains()
     {
         AvailableTerrains.Clear();
         AvailableTools.Clear();
 
-        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_RaiseLevel"), ToolType.RaiseLevel));
-        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_LowerLevel"), ToolType.LowerLevel));
-        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_IncreaseWaterDepth"), ToolType.IncreaseWaterDepth));
-        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_DecreaseWaterDepth"), ToolType.DecreaseWaterDepth));
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_RaiseLevel"), ToolType.RaiseLevel,
+            imagePath: $"{AssetBaseUri}/tools/raise-level.png"));
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_LowerLevel"), ToolType.LowerLevel,
+            imagePath: $"{AssetBaseUri}/tools/lower-level.png"));
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_IncreaseWaterDepth"), ToolType.IncreaseWaterDepth,
+            imagePath: $"{AssetBaseUri}/tools/increase-depth.png"));
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_DecreaseWaterDepth"), ToolType.DecreaseWaterDepth,
+            imagePath: $"{AssetBaseUri}/tools/decrease-depth.png"));
 
         foreach (var terrain in KnownTerrains)
         {
             AvailableTerrains.Add(terrain);
-            AvailableTools.Add(new ToolItem(terrain.Id.ToString(), ToolType.Terrain, terrain));
+            AvailableTools.Add(new ToolItem(terrain.Id.ToString(), ToolType.Terrain, terrain,
+                imagePath: $"{AssetBaseUri}/terrain/{terrain.Id.ToString().ToLowerInvariant()}.png"));
         }
 
         SelectedTerrain = AvailableTerrains.FirstOrDefault();
