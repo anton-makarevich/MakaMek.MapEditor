@@ -44,10 +44,12 @@
               RowDefinitions="Auto,*,Auto" Background="#333333">
             <TextBlock Text="{extensions:Localize 'EditMap_Toolbox'}" FontSize="18" FontWeight="Bold" Margin="10" Foreground="White" HorizontalAlignment="Center"/>
 
-            <ListBox Grid.Row="1" ItemsSource="{Binding AvailableTools}" SelectedItem="{Binding SelectedTool}" Background="Transparent">
+            <ListBox Grid.Row="1" ItemsSource="{Binding AvailableTools}" SelectedItem="{Binding SelectedTool}" Background="Transparent"
+                     ScrollViewer.HorizontalScrollBarVisibility="{ff:OnFormFactor Desktop='Disabled', Mobile='Auto'}"
+                     ScrollViewer.VerticalScrollBarVisibility="{ff:OnFormFactor Desktop='Auto', Mobile='Disabled'}">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" />
+                        <WrapPanel Orientation="{ff:OnFormFactor Desktop='Horizontal', Mobile='Vertical'}" />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
