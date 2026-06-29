@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Sanet.MakaMek.Avalonia.Controls;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
+using Sanet.MakaMek.MapEditor.Models;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MVVM.Views.Avalonia;
 
@@ -132,6 +133,14 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             .FirstOrDefault(h => h.IsPointInside(clickedPosition));
 
         if (selectedHexControl == null || ViewModel == null) return;
+
+        if (ViewModel.ActiveEditMode == ToolType.Cursor)
+        {
+            ViewModel.HandleHexSelection(selectedHexControl.Hex);
+            HexInfoPopup.HorizontalOffset = clickedPosition.X;
+            HexInfoPopup.VerticalOffset = clickedPosition.Y;
+            return;
+        }
 
         var hadWater = selectedHexControl.Hex.HasTerrain(MakaMekTerrains.Water);
 
