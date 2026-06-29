@@ -25,9 +25,7 @@ public class HexViewModelTests
 
         var sut = new HexViewModel(hex);
 
-        sut.Coordinates.ShouldNotBeNullOrEmpty();
-        sut.Coordinates.ShouldContain("3");
-        sut.Coordinates.ShouldContain("7");
+        sut.Coordinates.ShouldBe(hex.Coordinates.ToString());
     }
 
     [Fact]
@@ -104,8 +102,7 @@ public class HexViewModelTests
         sut.UpdateFromHex(updatedHex);
 
         sut.Level.ShouldBe(3);
-        sut.Coordinates.ShouldContain("5");
-        sut.Coordinates.ShouldContain("9");
+        sut.Coordinates.ShouldBe(updatedHex.Coordinates.ToString());
         sut.TerrainTypes.ShouldContain("Water");
         sut.WaterDepth.ShouldBe(1);
         sut.IsWater.ShouldBeTrue();
