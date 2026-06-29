@@ -85,23 +85,16 @@ public class EditMapViewModel : BaseViewModel
         {
             if (field == value) return;
             SetProperty(ref field, value);
-            NotifyPropertyChanged(nameof(IsRaiseLevelActive));
-            NotifyPropertyChanged(nameof(IsLowerLevelActive));
-            NotifyPropertyChanged(nameof(IsIncreaseWaterDepthActive));
-            NotifyPropertyChanged(nameof(IsDecreaseWaterDepthActive));
             NotifyPropertyChanged(nameof(IsCursorActive));
             if (value != ToolType.Cursor)
             {
                 IsHexInfoVisible = false;
                 HexViewModel = null;
+                _currentHex = null;
             }
         }
     } = ToolType.Terrain;
 
-    public bool IsRaiseLevelActive => ActiveEditMode == ToolType.RaiseLevel;
-    public bool IsLowerLevelActive => ActiveEditMode == ToolType.LowerLevel;
-    public bool IsIncreaseWaterDepthActive => ActiveEditMode == ToolType.IncreaseWaterDepth;
-    public bool IsDecreaseWaterDepthActive => ActiveEditMode == ToolType.DecreaseWaterDepth;
     public bool IsCursorActive => ActiveEditMode == ToolType.Cursor;
 
     public HexViewModel? HexViewModel
@@ -131,63 +124,64 @@ public class EditMapViewModel : BaseViewModel
         }
     }
 
+    public Hex? _currentHex;
+    public event Action<Hex>? HexUpdated;
+
     public IAsyncCommand RaiseLevelCommand => field ??= new AsyncCommand(() =>
     {
-        if (AvailableTools.Count == 0)
-        {
-            ActiveEditMode = ToolType.RaiseLevel;
-            return Task.CompletedTask;
-        }
-        var raiseTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.RaiseLevel);
-        if (raiseTool != null)
-            SelectedTool = raiseTool;
-        else
-            ActiveEditMode = ToolType.RaiseLevel;
+        if (_currentHex == null) return Task.CompletedTask;
+        if (Map == null) return Task.CompletedTask;
+
+        var updatedHex = ReplaceHexWithNewLevel(_currentHex, _currentHex.Level + 1);
+        if (updatedHex == null) return Task.CompletedTask;
+
+        _currentHex = updatedHex;
+        HexViewModel?.UpdateFromHex(updatedHex);
+        HexUpdated?.Invoke(updatedHex);
         return Task.CompletedTask;
     });
 
     public IAsyncCommand LowerLevelCommand => field ??= new AsyncCommand(() =>
     {
-        if (AvailableTools.Count == 0)
-        {
-            ActiveEditMode = ToolType.LowerLevel;
-            return Task.CompletedTask;
-        }
-        var lowerTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.LowerLevel);
-        if (lowerTool != null)
-            SelectedTool = lowerTool;
-        else
-            ActiveEditMode = ToolType.LowerLevel;
+        if (_currentHex == null) return Task.CompletedTask;
+        if (Map == null) return Task.CompletedTask;
+
+        var updatedHex = ReplaceHexWithNewLevel(_currentHex, _currentHex.Level - 1);
+        if (updatedHex == null) return Task.CompletedTask;
+
+        _currentHex = updatedHex;
+        HexViewModel?.UpdateFromHex(updatedHex);
+        HexUpdated?.Invoke(updatedHex);
         return Task.CompletedTask;
     });
 
     public IAsyncCommand IncreaseWaterDepthCommand => field ??= new AsyncCommand(() =>
     {
-        if (AvailableTools.Count == 0)
-        {
-            ActiveEditMode = ToolType.IncreaseWaterDepth;
-            return Task.CompletedTask;
-        }
-        var incTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.IncreaseWaterDepth);
-        if (incTool != null)
-            SelectedTool = incTool;
-        else
-            ActiveEditMode = ToolType.IncreaseWaterDepth;
+        if (_currentHex == null) return Task.CompletedTask;
+        if (Map == null) return Task.CompletedTask;
+        if (!_currentHex.HasTerrain(MakaMekTerrains.Water)) return Task.CompletedTask;
+
+        var updatedHex = UpdateHexWithNewWaterDepth(_currentHex, -1);
+        if (updatedHex == null) return Task.CompletedTask;
+
+        _currentHex = updatedHex;
+        HexViewModel?.UpdateFromHex(updatedHex);
+        HexUpdated?.Invoke(updatedHex);
         return Task.CompletedTask;
     });
 
     public IAsyncCommand DecreaseWaterDepthCommand => field ??= new AsyncCommand(() =>
     {
-        if (AvailableTools.Count == 0)
-        {
-            ActiveEditMode = ToolType.DecreaseWaterDepth;
-            return Task.CompletedTask;
-        }
-        var decTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.DecreaseWaterDepth);
-        if (decTool != null)
-            SelectedTool = decTool;
-        else
-            ActiveEditMode = ToolType.DecreaseWaterDepth;
+        if (_currentHex == null) return Task.CompletedTask;
+        if (Map == null) return Task.CompletedTask;
+        if (!_currentHex.HasTerrain(MakaMekTerrains.Water)) return Task.CompletedTask;
+
+        var updatedHex = UpdateHexWithNewWaterDepth(_currentHex, 1);
+        if (updatedHex == null) return Task.CompletedTask;
+
+        _currentHex = updatedHex;
+        HexViewModel?.UpdateFromHex(updatedHex);
+        HexUpdated?.Invoke(updatedHex);
         return Task.CompletedTask;
     });
 
@@ -215,14 +209,6 @@ public class EditMapViewModel : BaseViewModel
         AvailableTerrains.Clear();
         AvailableTools.Clear();
 
-        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_RaiseLevel"), ToolType.RaiseLevel,
-            imagePath: $"{AssetBaseUri}/tools/raise-level.png"));
-        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_LowerLevel"), ToolType.LowerLevel,
-            imagePath: $"{AssetBaseUri}/tools/lower-level.png"));
-        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_IncreaseWaterDepth"), ToolType.IncreaseWaterDepth,
-            imagePath: $"{AssetBaseUri}/tools/increase-depth.png"));
-        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_DecreaseWaterDepth"), ToolType.DecreaseWaterDepth,
-            imagePath: $"{AssetBaseUri}/tools/decrease-depth.png"));
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_Cursor"), ToolType.Cursor,
             imagePath: $"{AssetBaseUri}/tools/cursor.png"));
 
@@ -240,8 +226,7 @@ public class EditMapViewModel : BaseViewModel
     /// <summary>
     /// Handles hex selection based on the current edit mode.
     /// In Terrain mode, replaces the hex's terrains and returns null.
-    /// In RaiseLevel/LowerLevel mode, creates a new immutable Hex with the changed level,
-    /// replaces it in the map, and returns the new Hex.
+    /// In Cursor mode, populates the hex info popup and tracks the current hex.
     /// </summary>
     public Hex? HandleHexSelection(Hex hex)
     {
@@ -252,23 +237,12 @@ public class EditMapViewModel : BaseViewModel
                 hex.ReplaceTerrains([SelectedTerrain]);
                 return null;
 
-            case ToolType.RaiseLevel:
-                return ReplaceHexWithNewLevel(hex, hex.Level + 1);
-
-            case ToolType.LowerLevel:
-                return ReplaceHexWithNewLevel(hex, hex.Level - 1);
-
-            case ToolType.IncreaseWaterDepth:
-                return UpdateHexWithNewWaterDepth(hex, -1);
-
-            case ToolType.DecreaseWaterDepth:
-                return UpdateHexWithNewWaterDepth(hex, 1);
-
             case ToolType.Cursor:
                 if (HexViewModel == null)
                     HexViewModel = new HexViewModel(hex);
                 else
                     HexViewModel.UpdateFromHex(hex);
+                _currentHex = hex;
                 IsHexInfoVisible = true;
                 return null;
 
@@ -369,6 +343,7 @@ public class EditMapViewModel : BaseViewModel
     {
         IsHexInfoVisible = false;
         HexViewModel = null;
+        _currentHex = null;
         return Task.CompletedTask;
     });
 }

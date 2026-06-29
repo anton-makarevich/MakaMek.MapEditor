@@ -27,6 +27,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         if (ViewModel != null)
         {
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+            ViewModel.HexUpdated += OnHexUpdated;
             RenderMap();
 
             // On mobile (SingleView e.g. Android/iOS/WASM), hide settings panel by default
@@ -35,6 +36,11 @@ public partial class EditMapView : BaseView<EditMapViewModel>
                 ViewModel.IsSettingsPanelVisible = false;
             }
         }
+    }
+
+    private void OnHexUpdated(Hex hex)
+    {
+        RefreshHex(hex);
     }
 
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -126,6 +132,30 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         ViewModel?.ExportMapAsPdf(pngBytes, width, height).SafeFireAndForget();
     }
 
+    private void RefreshHex(Hex hex)
+    {
+        if (ViewModel?.Map == null) return;
+        var coords = hex.Coordinates;
+        var hadWater = hex.HasTerrain(MakaMekTerrains.Water);
+
+        ReplaceHexControl(coords, ComputeWaterBitmask(hex));
+
+        if (hadWater != hex.HasTerrain(MakaMekTerrains.Water))
+        {
+            foreach (var neighborCoords in coords.GetAllNeighbours())
+            {
+                if (ViewModel.Map.IsOnMap(neighborCoords))
+                    RefreshWaterBitmask(neighborCoords);
+            }
+        }
+
+        foreach (var (neighborCoords, neighborEdges) in ViewModel.GetEdgeUpdatesForNeighbors(coords))
+        {
+            if (_hexControlsByCoords.TryGetValue(neighborCoords, out var neighborControl))
+                neighborControl.UpdateEdges(neighborEdges);
+        }
+    }
+
     private void MapCanvas_OnContentClicked(object? sender, Point clickedPosition)
     {
         if (ViewModel == null) return;
@@ -150,30 +180,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             return;
         }
 
-        var hadWater = selectedHexControl.Hex.HasTerrain(MakaMekTerrains.Water);
-
-        var newHex = ViewModel.HandleHexSelection(selectedHexControl.Hex);
-        var hex = newHex ?? selectedHexControl.Hex;
-        var coords = hex.Coordinates;
-
-        // Always replace the clicked hex (its terrain/level/depth changed)
-        ReplaceHexControl(coords, ComputeWaterBitmask(hex));
-
-        // Refresh neighbors' water bitmasks only when water was added or removed
-        if (hadWater != hex.HasTerrain(MakaMekTerrains.Water))
-        {
-            foreach (var neighborCoords in coords.GetAllNeighbours())
-            {
-                if (ViewModel.Map != null && ViewModel.Map.IsOnMap(neighborCoords))
-                    RefreshWaterBitmask(neighborCoords);
-            }
-        }
-
-        // Update edges on all on-map neighbors
-        foreach (var (neighborCoords, neighborEdges) in ViewModel.GetEdgeUpdatesForNeighbors(coords))
-        {
-            if (_hexControlsByCoords.TryGetValue(neighborCoords, out var neighborControl))
-                neighborControl.UpdateEdges(neighborEdges);
-        }
+        var hex = ViewModel.HandleHexSelection(selectedHexControl.Hex) ?? selectedHexControl.Hex;
+        RefreshHex(hex);
     }
 }

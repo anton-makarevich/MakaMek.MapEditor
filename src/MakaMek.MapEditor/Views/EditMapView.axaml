@@ -41,8 +41,20 @@
                             Background="Transparent" Foreground="White"
                             BorderThickness="0" FontSize="14" Cursor="Hand"/>
                 </Grid>
-                <TextBlock Text="{extensions:Localize 'EditMap_Elevation'}"
-                           Foreground="White" FontWeight="Bold"/>
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                    <TextBlock Text="{extensions:Localize 'EditMap_Elevation'}"
+                               Foreground="White" FontWeight="Bold"/>
+                    <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
+                            Command="{Binding RaiseLevelCommand}"
+                            ToolTip.Tip="{extensions:Localize 'EditMap_RaiseLevel'}"
+                            Background="Transparent" Foreground="White"
+                            BorderThickness="0" Cursor="Hand"/>
+                    <Button Grid.Column="2" Content="▼" FontSize="10" Padding="4,0"
+                            Command="{Binding LowerLevelCommand}"
+                            ToolTip.Tip="{extensions:Localize 'EditMap_LowerLevel'}"
+                            Background="Transparent" Foreground="White"
+                            BorderThickness="0" Cursor="Hand"/>
+                </Grid>
                 <TextBlock Text="{Binding HexViewModel.Level}"
                            Foreground="White" FontSize="12"/>
                 <TextBlock Text="{extensions:Localize 'EditMap_Terrains'}" Foreground="#AAAAAA" FontSize="12"/>
@@ -53,9 +65,21 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <TextBlock Text="{extensions:Localize 'EditMap_WaterDepth'}"
-                           Foreground="White" FontSize="12"
-                           IsVisible="{Binding HexViewModel.IsWater}"/>
+                <Grid ColumnDefinitions="*,Auto,Auto"
+                      IsVisible="{Binding HexViewModel.IsWater}">
+                    <TextBlock Text="{extensions:Localize 'EditMap_WaterDepth'}"
+                               Foreground="White" FontSize="12"/>
+                    <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
+                            Command="{Binding DecreaseWaterDepthCommand}"
+                            ToolTip.Tip="{extensions:Localize 'EditMap_DecreaseWaterDepth'}"
+                            Background="Transparent" Foreground="White"
+                            BorderThickness="0" Cursor="Hand"/>
+                    <Button Grid.Column="2" Content="▼" FontSize="10" Padding="4,0"
+                            Command="{Binding IncreaseWaterDepthCommand}"
+                            ToolTip.Tip="{extensions:Localize 'EditMap_IncreaseWaterDepth'}"
+                            Background="Transparent" Foreground="White"
+                            BorderThickness="0" Cursor="Hand"/>
+                </Grid>
                 <TextBlock Text="{Binding HexViewModel.WaterDepth}"
                            Foreground="White" FontSize="12"
                            IsVisible="{Binding HexViewModel.IsWater}"/>
