@@ -93,7 +93,7 @@ public class EditMapViewModel : BaseViewModel
             if (value != ToolType.Cursor)
             {
                 IsHexInfoVisible = false;
-                HexInfo = null;
+                HexViewModel = null;
             }
         }
     } = ToolType.Terrain;
@@ -104,17 +104,16 @@ public class EditMapViewModel : BaseViewModel
     public bool IsDecreaseWaterDepthActive => ActiveEditMode == ToolType.DecreaseWaterDepth;
     public bool IsCursorActive => ActiveEditMode == ToolType.Cursor;
 
-    public HexInfo? HexInfo
+    public HexViewModel? HexViewModel
     {
         get;
         private set => SetProperty(ref field, value);
     }
 
-    private bool _isHexInfoVisible;
     public bool IsHexInfoVisible
     {
-        get => _isHexInfoVisible;
-        set => SetProperty(ref _isHexInfoVisible, value);
+        get;
+        set => SetProperty(ref field, value);
     }
 
     private ToolItem? _selectedTool;
@@ -250,12 +249,10 @@ public class EditMapViewModel : BaseViewModel
                 return UpdateHexWithNewWaterDepth(hex, 1);
 
             case ToolType.Cursor:
-                HexInfo = new HexInfo
-                {
-                    Level = hex.Level,
-                    TerrainTypes = hex.GetTerrains().Select(t => t.Id.ToString()).ToList(),
-                    WaterDepth = (hex.GetTerrain(MakaMekTerrains.Water) as WaterTerrain)?.Height
-                };
+                if (HexViewModel == null)
+                    HexViewModel = new HexViewModel(hex);
+                else
+                    HexViewModel.UpdateFromHex(hex);
                 IsHexInfoVisible = true;
                 return null;
 

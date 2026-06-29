@@ -1312,7 +1312,7 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public void HandleHexSelection_InCursorMode_ShouldPopulateHexInfo()
+    public void HandleHexSelection_InCursorMode_ShouldPopulateHexViewModel()
     {
         // Arrange
         var hex = new Hex(new HexCoordinates(0, 0), level: 3);
@@ -1323,13 +1323,13 @@ public class EditMapViewModelTests
         _sut.HandleHexSelection(hex);
 
         // Assert
-        _sut.HexInfo.ShouldNotBeNull();
-        _sut.HexInfo.Level.ShouldBe(3);
-        _sut.HexInfo.TerrainTypes.ShouldContain("LightWoods");
+        _sut.HexViewModel.ShouldNotBeNull();
+        _sut.HexViewModel.Level.ShouldBe(3);
+        _sut.HexViewModel.TerrainTypes.ShouldContain("LightWoods");
     }
 
     [Fact]
-    public void HandleHexSelection_InCursorMode_ShouldPopulateHexInfoWithWaterDepth()
+    public void HandleHexSelection_InCursorMode_ShouldPopulateHexViewModelWithWaterDepth()
     {
         // Arrange
         var hex = new Hex(new HexCoordinates(0, 0));
@@ -1340,8 +1340,8 @@ public class EditMapViewModelTests
         _sut.HandleHexSelection(hex);
 
         // Assert
-        _sut.HexInfo.ShouldNotBeNull();
-        _sut.HexInfo.WaterDepth.ShouldBe(-2);
+        _sut.HexViewModel.ShouldNotBeNull();
+        _sut.HexViewModel.WaterDepth.ShouldBe(-2);
     }
 
     [Fact]
@@ -1360,7 +1360,7 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public void SelectingNonCursorTool_ShouldClearHexInfoAndVisibility()
+    public void SelectingNonCursorTool_ShouldClearHexViewModelAndVisibility()
     {
         // Arrange
         var map = new BattleMap(1, 1);
@@ -1370,7 +1370,7 @@ public class EditMapViewModelTests
         var hex = new Hex(new HexCoordinates(0, 0));
         hex.AddTerrain(new ClearTerrain());
         _sut.HandleHexSelection(hex);
-        _sut.HexInfo.ShouldNotBeNull();
+        _sut.HexViewModel.ShouldNotBeNull();
         _sut.IsHexInfoVisible.ShouldBeTrue();
 
         // Act
@@ -1378,7 +1378,7 @@ public class EditMapViewModelTests
         _sut.SelectedTool = raiseTool;
 
         // Assert
-        _sut.HexInfo.ShouldBeNull();
+        _sut.HexViewModel.ShouldBeNull();
         _sut.IsHexInfoVisible.ShouldBeFalse();
     }
 
@@ -1395,11 +1395,11 @@ public class EditMapViewModelTests
         _sut.HandleHexSelection(hex);
 
         // Assert
-        _sut.HexInfo.ShouldNotBeNull();
-        _sut.HexInfo.TerrainTypes.Count.ShouldBe(2);
-        _sut.HexInfo.TerrainTypes.ShouldContain("LightWoods");
-        _sut.HexInfo.TerrainTypes.ShouldContain("Water");
-        _sut.HexInfo.WaterDepth.ShouldBe(-1);
+        _sut.HexViewModel.ShouldNotBeNull();
+        _sut.HexViewModel.TerrainTypes.Count.ShouldBe(2);
+        _sut.HexViewModel.TerrainTypes.ShouldContain("LightWoods");
+        _sut.HexViewModel.TerrainTypes.ShouldContain("Water");
+        _sut.HexViewModel.WaterDepth.ShouldBe(-1);
     }
 
     [Fact]
