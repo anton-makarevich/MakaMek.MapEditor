@@ -1457,6 +1457,27 @@ public class EditMapViewModelTests
         _sut.IsHexInfoVisible.ShouldBeTrue();
     }
 
+    // --- CloseHexInfoCommand tests ---
+
+    [Fact]
+    public async Task CloseHexInfoCommand_ShouldHideHexInfoAndClearViewModel()
+    {
+        // Arrange - set up cursor mode with hex info visible
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new ClearTerrain());
+        _sut.SelectedTool = new ToolItem("Cursor", ToolType.Cursor);
+        _sut.HandleHexSelection(hex);
+        _sut.HexViewModel.ShouldNotBeNull();
+        _sut.IsHexInfoVisible.ShouldBeTrue();
+
+        // Act
+        await _sut.CloseHexInfoCommand.ExecuteAsync();
+
+        // Assert
+        _sut.IsHexInfoVisible.ShouldBeFalse();
+        _sut.HexViewModel.ShouldBeNull();
+    }
+
     // --- Tool-missing fallback tests (AvailableTools populated but tool absent) ---
     [Fact]
     public async Task RaiseLevelCommand_WhenToolsPopulatedButRaiseLevelMissing_ShouldSetActiveEditMode()

@@ -364,4 +364,11 @@ public class EditMapViewModel : BaseViewModel
         IsSettingsPanelVisible = !IsSettingsPanelVisible;
         return Task.CompletedTask;
     });
+
+    public IAsyncCommand CloseHexInfoCommand => field ??= new AsyncCommand(() =>
+    {
+        IsHexInfoVisible = false;
+        HexViewModel = null;
+        return Task.CompletedTask;
+    });
 }
