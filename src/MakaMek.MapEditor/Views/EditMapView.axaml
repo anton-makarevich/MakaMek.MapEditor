@@ -32,6 +32,15 @@
                 Padding="10" CornerRadius="4" MinWidth="150"
                 HorizontalAlignment="Left" VerticalAlignment="Top" ZIndex="100">
             <StackPanel Spacing="4">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Text="{Binding HexViewModel.Coordinates}"
+                               Foreground="White" FontWeight="Bold"/>
+                    <Button Grid.Column="1" Content="✕"
+                            Command="{Binding CloseHexInfoCommand}"
+                            ToolTip.Tip="{extensions:Localize 'EditMap_CloseHexInfo'}"
+                            Background="Transparent" Foreground="White"
+                            BorderThickness="0" FontSize="14" Cursor="Hand"/>
+                </Grid>
                 <TextBlock Text="{extensions:Localize 'EditMap_Elevation'}"
                            Foreground="White" FontWeight="Bold"/>
                 <TextBlock Text="{Binding HexViewModel.Level}"

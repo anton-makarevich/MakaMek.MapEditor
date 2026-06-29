@@ -63,6 +63,7 @@ public class MapEditorFakeLocalizationServiceTests
     [InlineData("EditMap_ExportPdfDialogTitle", "Export Map as PDF")]
     [InlineData("EditMap_PdfFilesFilter", "PDF Files")]
     [InlineData("EditMap_Settings", "☰ Settings")]
+    [InlineData("EditMap_CloseHexInfo", "Close")]
     [InlineData("EditMap_Elevation", "Elevation:")]
     [InlineData("EditMap_Terrains", "Terrains:")]
     [InlineData("EditMap_WaterDepth", "Water Depth:")]

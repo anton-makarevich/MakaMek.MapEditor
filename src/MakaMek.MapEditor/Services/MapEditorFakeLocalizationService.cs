@@ -39,6 +39,7 @@ public class MapEditorFakeLocalizationService : FakeLocalizationService
         _strings["EditMap_Terrains"] = "Terrains:";
         _strings["EditMap_WaterDepth"] = "Water Depth:";
         _strings["EditMap_Settings"] = "☰ Settings";
+        _strings["EditMap_CloseHexInfo"] = "Close";
 
         _strings["Window_Title"] = "MakaMek Map Editor";
     }

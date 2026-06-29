@@ -19,6 +19,16 @@ public class HexViewModelTests
     }
 
     [Fact]
+    public void Constructor_ShouldReadCoordinates()
+    {
+        var hex = new Hex(new HexCoordinates(3, 7));
+
+        var sut = new HexViewModel(hex);
+
+        sut.Coordinates.ShouldBe(hex.Coordinates.ToString());
+    }
+
+    [Fact]
     public void Constructor_ShouldReadTerrainTypes()
     {
         var hex = new Hex(new HexCoordinates(0, 0));
@@ -86,12 +96,13 @@ public class HexViewModelTests
         hex.AddTerrain(new ClearTerrain());
         var sut = new HexViewModel(hex);
 
-        var updatedHex = new Hex(new HexCoordinates(0, 0), level: 3);
+        var updatedHex = new Hex(new HexCoordinates(5, 9), level: 3);
         updatedHex.AddTerrain(new WaterTerrain(-1));
 
         sut.UpdateFromHex(updatedHex);
 
         sut.Level.ShouldBe(3);
+        sut.Coordinates.ShouldBe(updatedHex.Coordinates.ToString());
         sut.TerrainTypes.ShouldContain("Water");
         sut.WaterDepth.ShouldBe(1);
         sut.IsWater.ShouldBeTrue();
@@ -122,6 +133,7 @@ public class HexViewModelTests
         var sut = new HexViewModel(hex);
 
         var levelChanged = false;
+        var coordinatesChanged = false;
         var terrainChanged = false;
         var waterDepthChanged = false;
         var isWaterChanged = false;
@@ -130,17 +142,19 @@ public class HexViewModelTests
             switch (args.PropertyName)
             {
                 case nameof(HexViewModel.Level): levelChanged = true; break;
+                case nameof(HexViewModel.Coordinates): coordinatesChanged = true; break;
                 case nameof(HexViewModel.TerrainTypes): terrainChanged = true; break;
                 case nameof(HexViewModel.WaterDepth): waterDepthChanged = true; break;
                 case nameof(HexViewModel.IsWater): isWaterChanged = true; break;
             }
         };
 
-        var updatedHex = new Hex(new HexCoordinates(0, 0), level: 7);
+        var updatedHex = new Hex(new HexCoordinates(1, 2), level: 7);
         updatedHex.AddTerrain(new WaterTerrain(-3));
         sut.UpdateFromHex(updatedHex);
 
         levelChanged.ShouldBeTrue();
+        coordinatesChanged.ShouldBeTrue();
         terrainChanged.ShouldBeTrue();
         waterDepthChanged.ShouldBeTrue();
         isWaterChanged.ShouldBeTrue();
