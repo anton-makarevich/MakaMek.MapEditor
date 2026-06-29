@@ -32,9 +32,11 @@
                 Padding="10" CornerRadius="4" MinWidth="150"
                 HorizontalAlignment="Left" VerticalAlignment="Top" ZIndex="100">
             <StackPanel Spacing="4">
-                <TextBlock Text="{Binding HexViewModel.Level, StringFormat='Elevation: {0}'}"
+                <TextBlock Text="{extensions:Localize 'EditMap_Elevation'}"
                            Foreground="White" FontWeight="Bold"/>
-                <TextBlock Text="Terrains:" Foreground="#AAAAAA" FontSize="12"/>
+                <TextBlock Text="{Binding HexViewModel.Level}"
+                           Foreground="White" FontSize="12"/>
+                <TextBlock Text="{extensions:Localize 'EditMap_Terrains'}" Foreground="#AAAAAA" FontSize="12"/>
                 <ItemsControl ItemsSource="{Binding HexViewModel.TerrainTypes}" Margin="10,0,0,0">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="x:String">
@@ -42,7 +44,10 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <TextBlock Text="{Binding HexViewModel.WaterDepth, StringFormat='Water Depth: {0}'}"
+                <TextBlock Text="{extensions:Localize 'EditMap_WaterDepth'}"
+                           Foreground="White" FontSize="12"
+                           IsVisible="{Binding HexViewModel.IsWater}"/>
+                <TextBlock Text="{Binding HexViewModel.WaterDepth}"
                            Foreground="White" FontSize="12"
                            IsVisible="{Binding HexViewModel.IsWater}"/>
             </StackPanel>
