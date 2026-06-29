@@ -6,5 +6,6 @@ public enum ToolType
     RaiseLevel,
     LowerLevel,
     IncreaseWaterDepth,
-    DecreaseWaterDepth
+    DecreaseWaterDepth,
+    Cursor
 }

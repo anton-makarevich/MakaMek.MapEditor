@@ -57,11 +57,15 @@ public class MapEditorFakeLocalizationServiceTests
     [InlineData("EditMap_ExportMap", "Export Map")]
     [InlineData("EditMap_RaiseLevel", "▲ Raise Level")]
     [InlineData("EditMap_LowerLevel", "▼ Lower Level")]
+    [InlineData("EditMap_Cursor", "Cursor")]
     [InlineData("EditMap_ExportMapDialogTitle", "Export Map")]
     [InlineData("EditMap_ExportPdf", "Export PDF")]
     [InlineData("EditMap_ExportPdfDialogTitle", "Export Map as PDF")]
     [InlineData("EditMap_PdfFilesFilter", "PDF Files")]
     [InlineData("EditMap_Settings", "☰ Settings")]
+    [InlineData("EditMap_Elevation", "Elevation:")]
+    [InlineData("EditMap_Terrains", "Terrains:")]
+    [InlineData("EditMap_WaterDepth", "Water Depth:")]
     public void GetString_EditMapView_ReturnsExpectedString(string key, string expected)
     {
         var localizationService = new MapEditorFakeLocalizationService();

@@ -89,6 +89,12 @@ public class EditMapViewModel : BaseViewModel
             NotifyPropertyChanged(nameof(IsLowerLevelActive));
             NotifyPropertyChanged(nameof(IsIncreaseWaterDepthActive));
             NotifyPropertyChanged(nameof(IsDecreaseWaterDepthActive));
+            NotifyPropertyChanged(nameof(IsCursorActive));
+            if (value != ToolType.Cursor)
+            {
+                IsHexInfoVisible = false;
+                HexViewModel = null;
+            }
         }
     } = ToolType.Terrain;
 
@@ -96,6 +102,19 @@ public class EditMapViewModel : BaseViewModel
     public bool IsLowerLevelActive => ActiveEditMode == ToolType.LowerLevel;
     public bool IsIncreaseWaterDepthActive => ActiveEditMode == ToolType.IncreaseWaterDepth;
     public bool IsDecreaseWaterDepthActive => ActiveEditMode == ToolType.DecreaseWaterDepth;
+    public bool IsCursorActive => ActiveEditMode == ToolType.Cursor;
+
+    public HexViewModel? HexViewModel
+    {
+        get;
+        private set => SetProperty(ref field, value);
+    }
+
+    public bool IsHexInfoVisible
+    {
+        get;
+        set => SetProperty(ref field, value);
+    }
 
     private ToolItem? _selectedTool;
     public ToolItem? SelectedTool
@@ -116,12 +135,14 @@ public class EditMapViewModel : BaseViewModel
     {
         if (AvailableTools.Count == 0)
         {
-            ActiveEditMode = ActiveEditMode == ToolType.RaiseLevel ? ToolType.Terrain : ToolType.RaiseLevel;
+            ActiveEditMode = ToolType.RaiseLevel;
             return Task.CompletedTask;
         }
-        SelectedTool = ActiveEditMode == ToolType.RaiseLevel
-            ? AvailableTools.FirstOrDefault(t => t.Type == ToolType.Terrain && t.Terrain == SelectedTerrain)
-            : AvailableTools.FirstOrDefault(t => t.Type == ToolType.RaiseLevel);
+        var raiseTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.RaiseLevel);
+        if (raiseTool != null)
+            SelectedTool = raiseTool;
+        else
+            ActiveEditMode = ToolType.RaiseLevel;
         return Task.CompletedTask;
     });
 
@@ -129,12 +150,14 @@ public class EditMapViewModel : BaseViewModel
     {
         if (AvailableTools.Count == 0)
         {
-            ActiveEditMode = ActiveEditMode == ToolType.LowerLevel ? ToolType.Terrain : ToolType.LowerLevel;
+            ActiveEditMode = ToolType.LowerLevel;
             return Task.CompletedTask;
         }
-        SelectedTool = ActiveEditMode == ToolType.LowerLevel
-            ? AvailableTools.FirstOrDefault(t => t.Type == ToolType.Terrain && t.Terrain == SelectedTerrain)
-            : AvailableTools.FirstOrDefault(t => t.Type == ToolType.LowerLevel);
+        var lowerTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.LowerLevel);
+        if (lowerTool != null)
+            SelectedTool = lowerTool;
+        else
+            ActiveEditMode = ToolType.LowerLevel;
         return Task.CompletedTask;
     });
 
@@ -142,12 +165,14 @@ public class EditMapViewModel : BaseViewModel
     {
         if (AvailableTools.Count == 0)
         {
-            ActiveEditMode = ActiveEditMode == ToolType.IncreaseWaterDepth ? ToolType.Terrain : ToolType.IncreaseWaterDepth;
+            ActiveEditMode = ToolType.IncreaseWaterDepth;
             return Task.CompletedTask;
         }
-        SelectedTool = ActiveEditMode == ToolType.IncreaseWaterDepth
-            ? AvailableTools.FirstOrDefault(t => t.Type == ToolType.Terrain && t.Terrain == SelectedTerrain)
-            : AvailableTools.FirstOrDefault(t => t.Type == ToolType.IncreaseWaterDepth);
+        var incTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.IncreaseWaterDepth);
+        if (incTool != null)
+            SelectedTool = incTool;
+        else
+            ActiveEditMode = ToolType.IncreaseWaterDepth;
         return Task.CompletedTask;
     });
 
@@ -155,12 +180,14 @@ public class EditMapViewModel : BaseViewModel
     {
         if (AvailableTools.Count == 0)
         {
-            ActiveEditMode = ActiveEditMode == ToolType.DecreaseWaterDepth ? ToolType.Terrain : ToolType.DecreaseWaterDepth;
+            ActiveEditMode = ToolType.DecreaseWaterDepth;
             return Task.CompletedTask;
         }
-        SelectedTool = ActiveEditMode == ToolType.DecreaseWaterDepth
-            ? AvailableTools.FirstOrDefault(t => t.Type == ToolType.Terrain && t.Terrain == SelectedTerrain)
-            : AvailableTools.FirstOrDefault(t => t.Type == ToolType.DecreaseWaterDepth);
+        var decTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.DecreaseWaterDepth);
+        if (decTool != null)
+            SelectedTool = decTool;
+        else
+            ActiveEditMode = ToolType.DecreaseWaterDepth;
         return Task.CompletedTask;
     });
 
@@ -196,6 +223,8 @@ public class EditMapViewModel : BaseViewModel
             imagePath: $"{AssetBaseUri}/tools/increase-depth.png"));
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_DecreaseWaterDepth"), ToolType.DecreaseWaterDepth,
             imagePath: $"{AssetBaseUri}/tools/decrease-depth.png"));
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_Cursor"), ToolType.Cursor,
+            imagePath: $"{AssetBaseUri}/tools/cursor.png"));
 
         foreach (var terrain in KnownTerrains)
         {
@@ -234,6 +263,14 @@ public class EditMapViewModel : BaseViewModel
 
             case ToolType.DecreaseWaterDepth:
                 return UpdateHexWithNewWaterDepth(hex, 1);
+
+            case ToolType.Cursor:
+                if (HexViewModel == null)
+                    HexViewModel = new HexViewModel(hex);
+                else
+                    HexViewModel.UpdateFromHex(hex);
+                IsHexInfoVisible = true;
+                return null;
 
             default:
                 return null;

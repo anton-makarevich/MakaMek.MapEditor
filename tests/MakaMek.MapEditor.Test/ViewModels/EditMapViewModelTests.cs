@@ -416,7 +416,7 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public async Task RaiseLevelCommand_WhenAlreadyActive_ShouldRevertToTerrain()
+    public async Task RaiseLevelCommand_WhenAlreadyActive_ShouldStayInRaiseLevel()
     {
         // Arrange
         await _sut.RaiseLevelCommand.ExecuteAsync();
@@ -425,7 +425,7 @@ public class EditMapViewModelTests
         await _sut.RaiseLevelCommand.ExecuteAsync();
 
         // Assert
-        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
+        _sut.ActiveEditMode.ShouldBe(ToolType.RaiseLevel);
     }
 
     [Fact]
@@ -439,7 +439,7 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public async Task LowerLevelCommand_WhenAlreadyActive_ShouldRevertToTerrain()
+    public async Task LowerLevelCommand_WhenAlreadyActive_ShouldStayInLowerLevel()
     {
         // Arrange
         await _sut.LowerLevelCommand.ExecuteAsync();
@@ -448,7 +448,7 @@ public class EditMapViewModelTests
         await _sut.LowerLevelCommand.ExecuteAsync();
 
         // Assert
-        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
+        _sut.ActiveEditMode.ShouldBe(ToolType.LowerLevel);
     }
 
     [Fact]
@@ -461,9 +461,9 @@ public class EditMapViewModelTests
         await _sut.RaiseLevelCommand.ExecuteAsync();
         _sut.IsRaiseLevelActive.ShouldBeTrue();
 
-        // After deactivating
+        // Re-invoking keeps it active (explicit switching)
         await _sut.RaiseLevelCommand.ExecuteAsync();
-        _sut.IsRaiseLevelActive.ShouldBeFalse();
+        _sut.IsRaiseLevelActive.ShouldBeTrue();
     }
 
     [Fact]
@@ -476,9 +476,9 @@ public class EditMapViewModelTests
         await _sut.LowerLevelCommand.ExecuteAsync();
         _sut.IsLowerLevelActive.ShouldBeTrue();
 
-        // After deactivating
+        // Re-invoking keeps it active (explicit switching)
         await _sut.LowerLevelCommand.ExecuteAsync();
-        _sut.IsLowerLevelActive.ShouldBeFalse();
+        _sut.IsLowerLevelActive.ShouldBeTrue();
     }
 
     [Fact]
@@ -708,11 +708,12 @@ public class EditMapViewModelTests
 
         // Assert
         _sut.AvailableTools.ShouldNotBeEmpty();
-        _sut.AvailableTools.Count.ShouldBe(_sut.AvailableTerrains.Count + 4);
+        _sut.AvailableTools.Count.ShouldBe(_sut.AvailableTerrains.Count + 5);
         _sut.AvailableTools.Count(t => t.Type == ToolType.RaiseLevel).ShouldBe(1);
         _sut.AvailableTools.Count(t => t.Type == ToolType.LowerLevel).ShouldBe(1);
         _sut.AvailableTools.Count(t => t.Type == ToolType.IncreaseWaterDepth).ShouldBe(1);
         _sut.AvailableTools.Count(t => t.Type == ToolType.DecreaseWaterDepth).ShouldBe(1);
+        _sut.AvailableTools.Count(t => t.Type == ToolType.Cursor).ShouldBe(1);
     }
 
     [Fact]
@@ -783,7 +784,7 @@ public class EditMapViewModelTests
     }
     
     [Fact]
-    public async Task RaiseLevelCommand_WhenAlreadyActiveAndToolsPopulated_ShouldSelectTerrainTool()
+    public async Task RaiseLevelCommand_WhenAlreadyActiveAndToolsPopulated_ShouldStayInRaiseLevel()
     {
         // Arrange
         var map = new BattleMap(1, 1);
@@ -791,18 +792,17 @@ public class EditMapViewModelTests
         var raiseTool = _sut.AvailableTools.First(t => t.Type == ToolType.RaiseLevel);
         _sut.SelectedTool = raiseTool;
         _sut.ActiveEditMode.ShouldBe(ToolType.RaiseLevel);
-        var terrainTool = _sut.AvailableTools.First(t => t.Type == ToolType.Terrain);
 
         // Act
         await _sut.RaiseLevelCommand.ExecuteAsync();
 
         // Assert
-        _sut.SelectedTool.ShouldBe(terrainTool);
-        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
+        _sut.SelectedTool.ShouldBe(raiseTool);
+        _sut.ActiveEditMode.ShouldBe(ToolType.RaiseLevel);
     }
 
     [Fact]
-    public async Task LowerLevelCommand_WhenAlreadyActiveAndToolsPopulated_ShouldSelectTerrainTool()
+    public async Task LowerLevelCommand_WhenAlreadyActiveAndToolsPopulated_ShouldStayInLowerLevel()
     {
         // Arrange
         var map = new BattleMap(1, 1);
@@ -810,14 +810,13 @@ public class EditMapViewModelTests
         var lowerTool = _sut.AvailableTools.First(t => t.Type == ToolType.LowerLevel);
         _sut.SelectedTool = lowerTool;
         _sut.ActiveEditMode.ShouldBe(ToolType.LowerLevel);
-        var terrainTool = _sut.AvailableTools.First(t => t.Type == ToolType.Terrain);
 
         // Act
         await _sut.LowerLevelCommand.ExecuteAsync();
 
         // Assert
-        _sut.SelectedTool.ShouldBe(terrainTool);
-        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
+        _sut.SelectedTool.ShouldBe(lowerTool);
+        _sut.ActiveEditMode.ShouldBe(ToolType.LowerLevel);
     }
 
     // --- Water Depth Command Tests ---
@@ -832,7 +831,7 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public async Task IncreaseWaterDepthCommand_WhenAlreadyActive_ShouldRevertToTerrain()
+    public async Task IncreaseWaterDepthCommand_WhenAlreadyActive_ShouldStayInIncreaseWaterDepth()
     {
         // Arrange
         await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
@@ -841,11 +840,11 @@ public class EditMapViewModelTests
         await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
 
         // Assert
-        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
+        _sut.ActiveEditMode.ShouldBe(ToolType.IncreaseWaterDepth);
     }
 
     [Fact]
-    public async Task IncreaseWaterDepthCommand_WhenAlreadyActiveAndToolsPopulated_ShouldSelectTerrainTool()
+    public async Task IncreaseWaterDepthCommand_WhenAlreadyActiveAndToolsPopulated_ShouldStayInIncreaseWaterDepth()
     {
         // Arrange
         var map = new BattleMap(1, 1);
@@ -853,14 +852,13 @@ public class EditMapViewModelTests
         var increaseDepthTool = _sut.AvailableTools.First(t => t.Type == ToolType.IncreaseWaterDepth);
         _sut.SelectedTool = increaseDepthTool;
         _sut.ActiveEditMode.ShouldBe(ToolType.IncreaseWaterDepth);
-        var terrainTool = _sut.AvailableTools.First(t => t.Type == ToolType.Terrain);
 
         // Act
         await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
 
         // Assert
-        _sut.SelectedTool.ShouldBe(terrainTool);
-        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
+        _sut.SelectedTool.ShouldBe(increaseDepthTool);
+        _sut.ActiveEditMode.ShouldBe(ToolType.IncreaseWaterDepth);
     }
 
     [Fact]
@@ -873,9 +871,9 @@ public class EditMapViewModelTests
         await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
         _sut.IsIncreaseWaterDepthActive.ShouldBeTrue();
 
-        // After deactivating
+        // Re-invoking keeps it active (explicit switching)
         await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
-        _sut.IsIncreaseWaterDepthActive.ShouldBeFalse();
+        _sut.IsIncreaseWaterDepthActive.ShouldBeTrue();
     }
 
     [Fact]
@@ -889,7 +887,7 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public async Task DecreaseWaterDepthCommand_WhenAlreadyActive_ShouldRevertToTerrain()
+    public async Task DecreaseWaterDepthCommand_WhenAlreadyActive_ShouldStayInDecreaseWaterDepth()
     {
         // Arrange
         await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
@@ -898,11 +896,11 @@ public class EditMapViewModelTests
         await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
 
         // Assert
-        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
+        _sut.ActiveEditMode.ShouldBe(ToolType.DecreaseWaterDepth);
     }
 
     [Fact]
-    public async Task DecreaseWaterDepthCommand_WhenAlreadyActiveAndToolsPopulated_ShouldSelectTerrainTool()
+    public async Task DecreaseWaterDepthCommand_WhenAlreadyActiveAndToolsPopulated_ShouldStayInDecreaseWaterDepth()
     {
         // Arrange
         var map = new BattleMap(1, 1);
@@ -910,14 +908,13 @@ public class EditMapViewModelTests
         var decreaseDepthTool = _sut.AvailableTools.First(t => t.Type == ToolType.DecreaseWaterDepth);
         _sut.SelectedTool = decreaseDepthTool;
         _sut.ActiveEditMode.ShouldBe(ToolType.DecreaseWaterDepth);
-        var terrainTool = _sut.AvailableTools.First(t => t.Type == ToolType.Terrain);
 
         // Act
         await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
 
         // Assert
-        _sut.SelectedTool.ShouldBe(terrainTool);
-        _sut.ActiveEditMode.ShouldBe(ToolType.Terrain);
+        _sut.SelectedTool.ShouldBe(decreaseDepthTool);
+        _sut.ActiveEditMode.ShouldBe(ToolType.DecreaseWaterDepth);
     }
 
     [Fact]
@@ -930,9 +927,9 @@ public class EditMapViewModelTests
         await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
         _sut.IsDecreaseWaterDepthActive.ShouldBeTrue();
 
-        // After deactivating
+        // Re-invoking keeps it active (explicit switching)
         await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
-        _sut.IsDecreaseWaterDepthActive.ShouldBeFalse();
+        _sut.IsDecreaseWaterDepthActive.ShouldBeTrue();
     }
 
     [Fact]
@@ -1267,5 +1264,254 @@ public class EditMapViewModelTests
 
         // Assert
         propertyChangedRaised.ShouldBeTrue();
+    }
+
+    // --- Cursor Mode Tests ---
+
+    [Fact]
+    public void AvailableTools_ShouldContainCursorTool()
+    {
+        // Arrange
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+
+        // Assert
+        _sut.AvailableTools.Any(t => t.Type == ToolType.Cursor).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void SelectedCursorTool_ShouldSetActiveEditModeToCursor()
+    {
+        // Arrange
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var cursorTool = _sut.AvailableTools.First(t => t.Type == ToolType.Cursor);
+
+        // Act
+        _sut.SelectedTool = cursorTool;
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.Cursor);
+        _sut.IsCursorActive.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void HandleHexSelection_InCursorMode_ShouldNotMutateHex()
+    {
+        // Arrange
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new ClearTerrain());
+        _sut.SelectedTool = new ToolItem("Cursor", ToolType.Cursor);
+
+        // Act
+        var result = _sut.HandleHexSelection(hex);
+
+        // Assert
+        result.ShouldBeNull();
+        hex.GetTerrains().ShouldContain(t => t is ClearTerrain);
+    }
+
+    [Fact]
+    public void HandleHexSelection_InCursorMode_ShouldPopulateHexViewModel()
+    {
+        // Arrange
+        var hex = new Hex(new HexCoordinates(0, 0), level: 3);
+        hex.AddTerrain(new LightWoodsTerrain());
+        _sut.SelectedTool = new ToolItem("Cursor", ToolType.Cursor);
+
+        // Act
+        _sut.HandleHexSelection(hex);
+
+        // Assert
+        _sut.HexViewModel.ShouldNotBeNull();
+        _sut.HexViewModel.Level.ShouldBe(3);
+        _sut.HexViewModel.TerrainTypes.ShouldContain("LightWoods");
+    }
+
+    [Fact]
+    public void HandleHexSelection_InCursorMode_ShouldPopulateHexViewModelWithWaterDepth()
+    {
+        // Arrange
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new WaterTerrain(-2));
+        _sut.SelectedTool = new ToolItem("Cursor", ToolType.Cursor);
+
+        // Act
+        _sut.HandleHexSelection(hex);
+
+        // Assert
+        _sut.HexViewModel.ShouldNotBeNull();
+        _sut.HexViewModel.WaterDepth.ShouldBe(2);
+        _sut.HexViewModel.IsWater.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void HandleHexSelection_InCursorMode_ShouldSetIsHexInfoVisible()
+    {
+        // Arrange
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new ClearTerrain());
+        _sut.SelectedTool = new ToolItem("Cursor", ToolType.Cursor);
+
+        // Act
+        _sut.HandleHexSelection(hex);
+
+        // Assert
+        _sut.IsHexInfoVisible.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void SelectingNonCursorTool_ShouldClearHexViewModelAndVisibility()
+    {
+        // Arrange
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var cursorTool = _sut.AvailableTools.First(t => t.Type == ToolType.Cursor);
+        _sut.SelectedTool = cursorTool;
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new ClearTerrain());
+        _sut.HandleHexSelection(hex);
+        _sut.HexViewModel.ShouldNotBeNull();
+        _sut.IsHexInfoVisible.ShouldBeTrue();
+
+        // Act
+        var raiseTool = _sut.AvailableTools.First(t => t.Type == ToolType.RaiseLevel);
+        _sut.SelectedTool = raiseTool;
+
+        // Assert
+        _sut.HexViewModel.ShouldBeNull();
+        _sut.IsHexInfoVisible.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HandleHexSelection_InCursorMode_ShouldPopulateMultipleTerrainTypes()
+    {
+        // Arrange
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new LightWoodsTerrain());
+        hex.AddTerrain(new WaterTerrain(-1));
+        _sut.SelectedTool = new ToolItem("Cursor", ToolType.Cursor);
+
+        // Act
+        _sut.HandleHexSelection(hex);
+
+        // Assert
+        _sut.HexViewModel.ShouldNotBeNull();
+        _sut.HexViewModel.TerrainTypes.Count.ShouldBe(2);
+        _sut.HexViewModel.TerrainTypes.ShouldContain("LightWoods");
+        _sut.HexViewModel.TerrainTypes.ShouldContain("Water");
+        _sut.HexViewModel.WaterDepth.ShouldBe(1);
+    }
+
+    [Fact]
+    public void ActiveEditMode_WhenSetToCursor_ShouldNotifyIsCursorActive()
+    {
+        // Arrange
+        var propertyChangedRaised = false;
+        _sut.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(EditMapViewModel.IsCursorActive))
+                propertyChangedRaised = true;
+        };
+
+        // Act
+        _sut.SelectedTool = new ToolItem("Cursor", ToolType.Cursor);
+
+        // Assert
+        propertyChangedRaised.ShouldBeTrue();
+        _sut.IsCursorActive.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsCursorActive_ShouldBeFalseByDefault()
+    {
+        _sut.IsCursorActive.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HandleHexSelection_InCursorMode_WhenHexViewModelExists_ShouldUpdateExistingViewModel()
+    {
+        // Arrange
+        var hex1 = new Hex(new HexCoordinates(0, 0), level: 2);
+        hex1.AddTerrain(new LightWoodsTerrain());
+        var hex2 = new Hex(new HexCoordinates(1, 1), level: 5);
+        hex2.AddTerrain(new WaterTerrain(-3));
+        hex2.AddTerrain(new HeavyWoodsTerrain());
+        _sut.SelectedTool = new ToolItem("Cursor", ToolType.Cursor);
+
+        // First call creates the HexViewModel
+        _sut.HandleHexSelection(hex1);
+        var initialViewModel = _sut.HexViewModel;
+        initialViewModel.ShouldNotBeNull();
+        initialViewModel.Level.ShouldBe(2);
+
+        // Act - second call hits the else branch (line 255)
+        _sut.HandleHexSelection(hex2);
+
+        // Assert - same ViewModel instance, updated values
+        _sut.HexViewModel.ShouldBe(initialViewModel);
+        initialViewModel.Level.ShouldBe(5);
+        initialViewModel.TerrainTypes.ShouldContain("Water");
+        initialViewModel.TerrainTypes.ShouldContain("HeavyWoods");
+        initialViewModel.WaterDepth.ShouldBe(3);
+        _sut.IsHexInfoVisible.ShouldBeTrue();
+    }
+
+    // --- Tool-missing fallback tests (AvailableTools populated but tool absent) ---
+    [Fact]
+    public async Task RaiseLevelCommand_WhenToolsPopulatedButRaiseLevelMissing_ShouldSetActiveEditMode()
+    {
+        // Arrange - AvailableTools has items but not RaiseLevel
+        _sut.AvailableTools.Add(new ToolItem("Cursor", ToolType.Cursor));
+        _sut.AvailableTools.Count.ShouldBeGreaterThan(0);
+
+        // Act
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+
+        // Assert - falls back to setting ActiveEditMode directly
+        _sut.ActiveEditMode.ShouldBe(ToolType.RaiseLevel);
+        _sut.SelectedTool.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task LowerLevelCommand_WhenToolsPopulatedButLowerLevelMissing_ShouldSetActiveEditMode()
+    {
+        // Arrange
+        _sut.AvailableTools.Add(new ToolItem("Cursor", ToolType.Cursor));
+
+        // Act
+        await _sut.LowerLevelCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.LowerLevel);
+        _sut.SelectedTool.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task IncreaseWaterDepthCommand_WhenToolsPopulatedButIncDepthMissing_ShouldSetActiveEditMode()
+    {
+        // Arrange
+        _sut.AvailableTools.Add(new ToolItem("Cursor", ToolType.Cursor));
+
+        // Act
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.IncreaseWaterDepth);
+        _sut.SelectedTool.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task DecreaseWaterDepthCommand_WhenToolsPopulatedButDecDepthMissing_ShouldSetActiveEditMode()
+    {
+        // Arrange
+        _sut.AvailableTools.Add(new ToolItem("Cursor", ToolType.Cursor));
+
+        // Act
+        await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.DecreaseWaterDepth);
+        _sut.SelectedTool.ShouldBeNull();
     }
 }
