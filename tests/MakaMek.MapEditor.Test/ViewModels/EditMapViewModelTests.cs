@@ -1456,4 +1456,62 @@ public class EditMapViewModelTests
         initialViewModel.WaterDepth.ShouldBe(3);
         _sut.IsHexInfoVisible.ShouldBeTrue();
     }
+
+    // --- Tool-missing fallback tests (AvailableTools populated but tool absent) ---
+    [Fact]
+    public async Task RaiseLevelCommand_WhenToolsPopulatedButRaiseLevelMissing_ShouldSetActiveEditMode()
+    {
+        // Arrange - AvailableTools has items but not RaiseLevel
+        _sut.AvailableTools.Add(new ToolItem("Cursor", ToolType.Cursor));
+        _sut.AvailableTools.Count.ShouldBeGreaterThan(0);
+
+        // Act
+        await _sut.RaiseLevelCommand.ExecuteAsync();
+
+        // Assert - falls back to setting ActiveEditMode directly
+        _sut.ActiveEditMode.ShouldBe(ToolType.RaiseLevel);
+        _sut.SelectedTool.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task LowerLevelCommand_WhenToolsPopulatedButLowerLevelMissing_ShouldSetActiveEditMode()
+    {
+        // Arrange
+        _sut.AvailableTools.Add(new ToolItem("Cursor", ToolType.Cursor));
+
+        // Act
+        await _sut.LowerLevelCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.LowerLevel);
+        _sut.SelectedTool.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task IncreaseWaterDepthCommand_WhenToolsPopulatedButIncDepthMissing_ShouldSetActiveEditMode()
+    {
+        // Arrange
+        _sut.AvailableTools.Add(new ToolItem("Cursor", ToolType.Cursor));
+
+        // Act
+        await _sut.IncreaseWaterDepthCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.IncreaseWaterDepth);
+        _sut.SelectedTool.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task DecreaseWaterDepthCommand_WhenToolsPopulatedButDecDepthMissing_ShouldSetActiveEditMode()
+    {
+        // Arrange
+        _sut.AvailableTools.Add(new ToolItem("Cursor", ToolType.Cursor));
+
+        // Act
+        await _sut.DecreaseWaterDepthCommand.ExecuteAsync();
+
+        // Assert
+        _sut.ActiveEditMode.ShouldBe(ToolType.DecreaseWaterDepth);
+        _sut.SelectedTool.ShouldBeNull();
+    }
 }

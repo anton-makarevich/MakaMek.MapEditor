@@ -138,7 +138,11 @@ public class EditMapViewModel : BaseViewModel
             ActiveEditMode = ToolType.RaiseLevel;
             return Task.CompletedTask;
         }
-        SelectedTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.RaiseLevel);
+        var raiseTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.RaiseLevel);
+        if (raiseTool != null)
+            SelectedTool = raiseTool;
+        else
+            ActiveEditMode = ToolType.RaiseLevel;
         return Task.CompletedTask;
     });
 
@@ -149,7 +153,11 @@ public class EditMapViewModel : BaseViewModel
             ActiveEditMode = ToolType.LowerLevel;
             return Task.CompletedTask;
         }
-        SelectedTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.LowerLevel);
+        var lowerTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.LowerLevel);
+        if (lowerTool != null)
+            SelectedTool = lowerTool;
+        else
+            ActiveEditMode = ToolType.LowerLevel;
         return Task.CompletedTask;
     });
 
@@ -160,7 +168,11 @@ public class EditMapViewModel : BaseViewModel
             ActiveEditMode = ToolType.IncreaseWaterDepth;
             return Task.CompletedTask;
         }
-        SelectedTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.IncreaseWaterDepth);
+        var incTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.IncreaseWaterDepth);
+        if (incTool != null)
+            SelectedTool = incTool;
+        else
+            ActiveEditMode = ToolType.IncreaseWaterDepth;
         return Task.CompletedTask;
     });
 
@@ -171,7 +183,11 @@ public class EditMapViewModel : BaseViewModel
             ActiveEditMode = ToolType.DecreaseWaterDepth;
             return Task.CompletedTask;
         }
-        SelectedTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.DecreaseWaterDepth);
+        var decTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.DecreaseWaterDepth);
+        if (decTool != null)
+            SelectedTool = decTool;
+        else
+            ActiveEditMode = ToolType.DecreaseWaterDepth;
         return Task.CompletedTask;
     });
 
