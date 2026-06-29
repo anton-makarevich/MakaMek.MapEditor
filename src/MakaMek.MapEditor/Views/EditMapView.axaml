@@ -26,27 +26,26 @@
             ContentClicked="MapCanvas_OnContentClicked"
             x:Name="MapCanvas"/>
 
-        <Popup IsOpen="{Binding IsHexInfoVisible}"
-               PlacementTarget="{Binding ElementName=MapCanvas}"
-               Placement="Bottom"
-               x:Name="HexInfoPopup">
-            <Border Background="#333333" BorderBrush="#555555" BorderThickness="1" Padding="10" CornerRadius="4" MinWidth="150">
-                <StackPanel Spacing="4">
-                    <TextBlock Text="{Binding HexViewModel.Level, StringFormat='Elevation: {0}'}"
-                               Foreground="White" FontWeight="Bold"/>
-                    <TextBlock Text="Terrains:" Foreground="#AAAAAA" FontSize="12"/>
-                    <ItemsControl ItemsSource="{Binding HexViewModel.TerrainTypes}" Margin="10,0,0,0">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="x:String">
-                                <TextBlock Text="{Binding }" Foreground="White" FontSize="12"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <TextBlock Text="{Binding HexViewModel.WaterDepth, StringFormat='Water Depth: {0}'}"
-                               Foreground="White" FontSize="12"/>
-                </StackPanel>
-            </Border>
-        </Popup>
+        <Border IsVisible="{Binding IsHexInfoVisible}"
+                x:Name="HexInfoOverlay"
+                Background="#333333" BorderBrush="#555555" BorderThickness="1"
+                Padding="10" CornerRadius="4" MinWidth="150"
+                HorizontalAlignment="Left" VerticalAlignment="Top" ZIndex="100">
+            <StackPanel Spacing="4">
+                <TextBlock Text="{Binding HexViewModel.Level, StringFormat='Elevation: {0}'}"
+                           Foreground="White" FontWeight="Bold"/>
+                <TextBlock Text="Terrains:" Foreground="#AAAAAA" FontSize="12"/>
+                <ItemsControl ItemsSource="{Binding HexViewModel.TerrainTypes}" Margin="10,0,0,0">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <TextBlock Text="{Binding }" Foreground="White" FontSize="12"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock Text="{Binding HexViewModel.WaterDepth, StringFormat='Water Depth: {0}'}"
+                           Foreground="White" FontSize="12"/>
+            </StackPanel>
+        </Border>
         
         <!-- Floating toggle button (visible on mobile only) -->
         <Button Grid.Column="0"
