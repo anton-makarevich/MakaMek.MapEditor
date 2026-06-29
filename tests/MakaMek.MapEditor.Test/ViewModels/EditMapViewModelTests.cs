@@ -1427,4 +1427,33 @@ public class EditMapViewModelTests
     {
         _sut.IsCursorActive.ShouldBeFalse();
     }
+
+    [Fact]
+    public void HandleHexSelection_InCursorMode_WhenHexViewModelExists_ShouldUpdateExistingViewModel()
+    {
+        // Arrange
+        var hex1 = new Hex(new HexCoordinates(0, 0), level: 2);
+        hex1.AddTerrain(new LightWoodsTerrain());
+        var hex2 = new Hex(new HexCoordinates(1, 1), level: 5);
+        hex2.AddTerrain(new WaterTerrain(-3));
+        hex2.AddTerrain(new HeavyWoodsTerrain());
+        _sut.SelectedTool = new ToolItem("Cursor", ToolType.Cursor);
+
+        // First call creates the HexViewModel
+        _sut.HandleHexSelection(hex1);
+        var initialViewModel = _sut.HexViewModel;
+        initialViewModel.ShouldNotBeNull();
+        initialViewModel.Level.ShouldBe(2);
+
+        // Act - second call hits the else branch (line 255)
+        _sut.HandleHexSelection(hex2);
+
+        // Assert - same ViewModel instance, updated values
+        _sut.HexViewModel.ShouldBe(initialViewModel);
+        initialViewModel.Level.ShouldBe(5);
+        initialViewModel.TerrainTypes.ShouldContain("Water");
+        initialViewModel.TerrainTypes.ShouldContain("HeavyWoods");
+        initialViewModel.WaterDepth.ShouldBe(3);
+        _sut.IsHexInfoVisible.ShouldBeTrue();
+    }
 }
