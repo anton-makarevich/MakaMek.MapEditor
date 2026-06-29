@@ -1341,7 +1341,8 @@ public class EditMapViewModelTests
 
         // Assert
         _sut.HexViewModel.ShouldNotBeNull();
-        _sut.HexViewModel.WaterDepth.ShouldBe(-2);
+        _sut.HexViewModel.WaterDepth.ShouldBe(2);
+        _sut.HexViewModel.IsWater.ShouldBeTrue();
     }
 
     [Fact]
@@ -1399,7 +1400,7 @@ public class EditMapViewModelTests
         _sut.HexViewModel.TerrainTypes.Count.ShouldBe(2);
         _sut.HexViewModel.TerrainTypes.ShouldContain("LightWoods");
         _sut.HexViewModel.TerrainTypes.ShouldContain("Water");
-        _sut.HexViewModel.WaterDepth.ShouldBe(-1);
+        _sut.HexViewModel.WaterDepth.ShouldBe(1);
     }
 
     [Fact]

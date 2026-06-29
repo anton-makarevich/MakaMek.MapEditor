@@ -43,7 +43,8 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <TextBlock Text="{Binding HexViewModel.WaterDepth, StringFormat='Water Depth: {0}'}"
-                           Foreground="White" FontSize="12"/>
+                           Foreground="White" FontSize="12"
+                           IsVisible="{Binding HexViewModel.IsWater}"/>
             </StackPanel>
         </Border>
         
