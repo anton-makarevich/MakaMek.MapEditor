@@ -136,17 +136,13 @@ public partial class EditMapView : BaseView<EditMapViewModel>
     {
         if (ViewModel?.Map == null) return;
         var coords = hex.Coordinates;
-        var hadWater = hex.HasTerrain(MakaMekTerrains.Water);
 
         ReplaceHexControl(coords, ComputeWaterBitmask(hex));
 
-        if (hadWater != hex.HasTerrain(MakaMekTerrains.Water))
+        foreach (var neighborCoords in coords.GetAllNeighbours())
         {
-            foreach (var neighborCoords in coords.GetAllNeighbours())
-            {
-                if (ViewModel.Map.IsOnMap(neighborCoords))
-                    RefreshWaterBitmask(neighborCoords);
-            }
+            if (ViewModel.Map.IsOnMap(neighborCoords))
+                RefreshWaterBitmask(neighborCoords);
         }
 
         foreach (var (neighborCoords, neighborEdges) in ViewModel.GetEdgeUpdatesForNeighbors(coords))

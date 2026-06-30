@@ -124,7 +124,7 @@ public class EditMapViewModel : BaseViewModel
         }
     }
 
-    public Hex? _currentHex;
+    private Hex? _currentHex;
     public event Action<Hex>? HexUpdated;
 
     public IAsyncCommand RaiseLevelCommand => field ??= new AsyncCommand(() =>
