@@ -42,13 +42,7 @@
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\avalonia-logo.ico" />
-    <AvaloniaResource Include="Assets\terrain\clear.png" />
-    <AvaloniaResource Include="Assets\terrain\lightwoods.png" />
-    <AvaloniaResource Include="Assets\terrain\heavywoods.png" />
-    <AvaloniaResource Include="Assets\terrain\rough.png" />
-    <AvaloniaResource Include="Assets\terrain\water.png" />
-    <AvaloniaResource Include="Assets\terrain\road.png" />
-    <AvaloniaResource Include="Assets\terrain\rubble.png" />
+    <AvaloniaResource Include="Assets\terrain\*" />
     <AvaloniaResource Include="Assets\tools\*" />
   </ItemGroup>
 
