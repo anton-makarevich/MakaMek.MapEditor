@@ -1043,5 +1043,9 @@ public class EditMapViewModelTests
 
         _sut.IsHexInfoVisible.ShouldBeFalse();
         _sut.HexViewModel.ShouldBeNull();
+
+        _sut.HandleHexSelection(hex);
+        _sut.HexViewModel.ShouldNotBeNull();
+        _sut.IsHexInfoVisible.ShouldBeTrue();
     }
 }
