@@ -42,8 +42,15 @@
                             BorderThickness="0" FontSize="14" Cursor="Hand"/>
                 </Grid>
                 <Grid ColumnDefinitions="*,Auto,Auto">
-                    <TextBlock Text="{extensions:Localize 'EditMap_Elevation'}"
-                               Foreground="White" FontWeight="Bold"/>
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        Spacing="5">
+                        <TextBlock Text="{extensions:Localize 'EditMap_Elevation'}"
+                                                       Foreground="White" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding HexViewModel.Level}"
+                                                   Foreground="White" FontSize="12"/>
+                    </StackPanel>
+                    
                     <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
                             Command="{Binding RaiseLevelCommand}"
                             ToolTip.Tip="{extensions:Localize 'EditMap_RaiseLevel'}"
@@ -55,8 +62,7 @@
                             Background="Transparent" Foreground="White"
                             BorderThickness="0" Cursor="Hand"/>
                 </Grid>
-                <TextBlock Text="{Binding HexViewModel.Level}"
-                           Foreground="White" FontSize="12"/>
+                
                 <TextBlock Text="{extensions:Localize 'EditMap_Terrains'}" Foreground="#AAAAAA" FontSize="12"/>
                 <ItemsControl ItemsSource="{Binding HexViewModel.TerrainTypes}" Margin="10,0,0,0">
                     <ItemsControl.ItemTemplate>
