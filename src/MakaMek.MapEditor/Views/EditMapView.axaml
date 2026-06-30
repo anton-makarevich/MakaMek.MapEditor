@@ -73,8 +73,12 @@
                 </ItemsControl>
                 <Grid ColumnDefinitions="*,Auto,Auto"
                       IsVisible="{Binding HexViewModel.IsWater}">
-                    <TextBlock Text="{extensions:Localize 'EditMap_WaterDepth'}"
-                               Foreground="White" FontSize="12"/>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <TextBlock Text="{extensions:Localize 'EditMap_WaterDepth'}"
+                                   Foreground="White" FontSize="12"/>
+                        <TextBlock Text="{Binding HexViewModel.WaterDepth}"
+                                   Foreground="White" FontSize="12"/>
+                    </StackPanel>
                     <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
                             Command="{Binding DecreaseWaterDepthCommand}"
                             ToolTip.Tip="{extensions:Localize 'EditMap_DecreaseWaterDepth'}"
@@ -86,9 +90,6 @@
                             Background="Transparent" Foreground="White"
                             BorderThickness="0" Cursor="Hand"/>
                 </Grid>
-                <TextBlock Text="{Binding HexViewModel.WaterDepth}"
-                           Foreground="White" FontSize="12"
-                           IsVisible="{Binding HexViewModel.IsWater}"/>
             </StackPanel>
         </Border>
         
