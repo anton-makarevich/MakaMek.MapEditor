@@ -6,41 +6,41 @@ public class MapEditorFakeLocalizationService : FakeLocalizationService
 {
     public MapEditorFakeLocalizationService()
     {
-        _strings["MainMenu_Title"] = "MakaMek Map Editor";
-        _strings["MainMenu_CreateNewMap"] = "Create New Map";
-        _strings["MainMenu_LoadMap"] = "Load Map";
-        _strings["MainMenu_LoadingTerrain"] = "Loading terrain data...";
-        _strings["MainMenu_ErrorLoadingTerrain"] = "Error loading terrain data";
-        _strings["MainMenu_Retry"] = "Retry";
-        _strings["Status_BiomesLoaded"] = "{0} biomes loaded";
-        _strings["Status_NoBiomesFound"] = "No biomes found";
-        _strings["Status_ErrorLoadingBiomes"] = "Error loading biomes: {0}";
+        Strings["MainMenu_Title"] = "MakaMek Map Editor";
+        Strings["MainMenu_CreateNewMap"] = "Create New Map";
+        Strings["MainMenu_LoadMap"] = "Load Map";
+        Strings["MainMenu_LoadingTerrain"] = "Loading terrain data...";
+        Strings["MainMenu_ErrorLoadingTerrain"] = "Error loading terrain data";
+        Strings["MainMenu_Retry"] = "Retry";
+        Strings["Status_BiomesLoaded"] = "{0} biomes loaded";
+        Strings["Status_NoBiomesFound"] = "No biomes found";
+        Strings["Status_ErrorLoadingBiomes"] = "Error loading biomes: {0}";
 
-        _strings["NewMap_Title"] = "New Map Configuration";
-        _strings["NewMap_Width"] = "Width:";
-        _strings["NewMap_Height"] = "Height:";
-        _strings["NewMap_PreGenerateTerrain"] = "Pre-generate Terrain";
-        _strings["NewMap_ForestCoverage"] = "Forest Coverage %";
-        _strings["NewMap_LightWoods"] = "Light Woods %";
-        _strings["NewMap_CreateMap"] = "Create Map";
+        Strings["NewMap_Title"] = "New Map Configuration";
+        Strings["NewMap_Width"] = "Width:";
+        Strings["NewMap_Height"] = "Height:";
+        Strings["NewMap_PreGenerateTerrain"] = "Pre-generate Terrain";
+        Strings["NewMap_ForestCoverage"] = "Forest Coverage %";
+        Strings["NewMap_LightWoods"] = "Light Woods %";
+        Strings["NewMap_CreateMap"] = "Create Map";
 
-        _strings["EditMap_Toolbox"] = "Toolbox";
-        _strings["EditMap_ExportMap"] = "Export Map";
-        _strings["EditMap_RaiseLevel"] = "▲ Raise Level";
-        _strings["EditMap_LowerLevel"] = "▼ Lower Level";
-        _strings["EditMap_IncreaseWaterDepth"] = "▼ Increase Depth";
-        _strings["EditMap_DecreaseWaterDepth"] = "▲ Decrease Depth";
-        _strings["EditMap_ExportMapDialogTitle"] = "Export Map";
-        _strings["EditMap_ExportPdf"] = "Export PDF";
-        _strings["EditMap_ExportPdfDialogTitle"] = "Export Map as PDF";
-        _strings["EditMap_PdfFilesFilter"] = "PDF Files";
-        _strings["EditMap_Cursor"] = "Cursor";
-        _strings["EditMap_Elevation"] = "Elevation:";
-        _strings["EditMap_Terrains"] = "Terrains:";
-        _strings["EditMap_WaterDepth"] = "Water Depth:";
-        _strings["EditMap_Settings"] = "☰ Settings";
-        _strings["EditMap_CloseHexInfo"] = "Close";
+        Strings["EditMap_Toolbox"] = "Toolbox";
+        Strings["EditMap_ExportMap"] = "Export Map";
+        Strings["EditMap_RaiseLevel"] = "▲ Raise Level";
+        Strings["EditMap_LowerLevel"] = "▼ Lower Level";
+        Strings["EditMap_IncreaseWaterDepth"] = "▼ Increase Depth";
+        Strings["EditMap_DecreaseWaterDepth"] = "▲ Decrease Depth";
+        Strings["EditMap_ExportMapDialogTitle"] = "Export Map";
+        Strings["EditMap_ExportPdf"] = "Export PDF";
+        Strings["EditMap_ExportPdfDialogTitle"] = "Export Map as PDF";
+        Strings["EditMap_PdfFilesFilter"] = "PDF Files";
+        Strings["EditMap_Cursor"] = "Cursor";
+        Strings["EditMap_Elevation"] = "Elevation:";
+        Strings["EditMap_Terrains"] = "Terrains:";
+        Strings["EditMap_WaterDepth"] = "Water Depth:";
+        Strings["EditMap_Settings"] = "☰ Settings";
+        Strings["EditMap_CloseHexInfo"] = "Close";
 
-        _strings["Window_Title"] = "MakaMek Map Editor";
+        Strings["Window_Title"] = "MakaMek Map Editor";
     }
 }
