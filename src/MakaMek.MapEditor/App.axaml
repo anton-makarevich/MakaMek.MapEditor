@@ -7,10 +7,14 @@
     <Application.Resources>
         <ResourceDictionary>
             <di:ServiceCollection x:Key="ServiceCollection"/>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://Sanet.MakaMek.Avalonia.Controls/Styles/Resources.axaml"/>
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
              
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://Sanet.MakaMek.Avalonia.Controls/Styles/Theme.axaml"/>
     </Application.Styles>
 </Application>

@@ -9,20 +9,20 @@
              x:DataType="viewModels:MainMenuViewModel">
     <Grid RowDefinitions="*,Auto,*" ColumnDefinitions="*,Auto,*">
         <TextBlock Grid.Row="0" Grid.Column="1" Text="{extensions:Localize 'MainMenu_Title'}" 
-                   FontSize="30" HorizontalAlignment="Center" FontWeight="Bold"/>
+                   Classes="h1" HorizontalAlignment="Center"/>
         
         <!-- Loading Section -->
         <StackPanel Grid.Row="1" Grid.Column="1" Spacing="10" IsVisible="{Binding IsLoading}">
-            <TextBlock Text="{extensions:Localize 'MainMenu_LoadingTerrain'}" FontSize="16" HorizontalAlignment="Center"/>
+            <TextBlock Text="{extensions:Localize 'MainMenu_LoadingTerrain'}" Classes="h4" HorizontalAlignment="Center"/>
             <ProgressBar IsIndeterminate="True" Height="20" Width="200"/>
-            <TextBlock Text="{Binding BiomeLoadingStatus}" FontSize="14" HorizontalAlignment="Center" Foreground="Gray"/>
+            <TextBlock Text="{Binding BiomeLoadingStatus}" Classes="body" HorizontalAlignment="Center" Foreground="{StaticResource TextLightBrush}"/>
         </StackPanel>
             
         <!-- Error Section -->
         <StackPanel Grid.Row="1" Grid.Column="1" Spacing="10" IsVisible="{Binding HasError}">
-            <TextBlock Text="{extensions:Localize 'MainMenu_ErrorLoadingTerrain'}" FontSize="16" HorizontalAlignment="Center" Foreground="Red"/>
-            <TextBlock Text="{Binding BiomeLoadingStatus}" FontSize="14" HorizontalAlignment="Center" Foreground="Red" TextWrapping="Wrap"/>
-            <Button Content="{extensions:Localize 'MainMenu_Retry'}" Command="{Binding RetryLoadCommand}" HorizontalAlignment="Center"/>
+            <TextBlock Text="{extensions:Localize 'MainMenu_ErrorLoadingTerrain'}" Classes="h4" HorizontalAlignment="Center" Foreground="{StaticResource ErrorBrush}"/>
+            <TextBlock Text="{Binding BiomeLoadingStatus}" Classes="body" HorizontalAlignment="Center" Foreground="{StaticResource ErrorBrush}" TextWrapping="Wrap"/>
+            <Button Classes="primary" Content="{extensions:Localize 'MainMenu_Retry'}" Command="{Binding RetryLoadCommand}" HorizontalAlignment="Center"/>
         </StackPanel>
     </Grid>
 </UserControl>

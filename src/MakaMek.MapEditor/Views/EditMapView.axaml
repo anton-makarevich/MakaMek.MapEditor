@@ -16,8 +16,7 @@
     </UserControl.Resources>
     <UserControl.Styles>
         <Style Selector="ListBoxItem:selected">
-            <Setter Property="Background" Value="#005A9E"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
         </Style>
     </UserControl.Styles>
     <Grid ColumnDefinitions="{ff:OnFormFactor Desktop='*,200', Mobile='*'}"
@@ -28,46 +27,44 @@
 
         <Border IsVisible="{Binding IsHexInfoVisible}"
                 x:Name="HexInfoOverlay"
-                Background="#333333" BorderBrush="#555555" BorderThickness="1"
+                Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
                 Padding="10" CornerRadius="4" MinWidth="150"
                 HorizontalAlignment="Left" VerticalAlignment="Top" ZIndex="100">
             <StackPanel Spacing="4">
                 <Grid ColumnDefinitions="*,Auto">
                     <TextBlock Text="{Binding HexViewModel.Coordinates}"
-                               Foreground="White" FontWeight="Bold"/>
+                               Classes="h4" Foreground="{StaticResource TextLightBrush}"/>
                     <Button Grid.Column="1" Content="✕"
                             Command="{Binding CloseHexInfoCommand}"
                             ToolTip.Tip="{extensions:Localize 'EditMap_CloseHexInfo'}"
-                            Background="Transparent" Foreground="White"
-                            BorderThickness="0" FontSize="14" Cursor="Hand"/>
+                            Classes="cardAction" Foreground="{StaticResource TextLightBrush}"
+                            FontSize="14"/>
                 </Grid>
                 <Grid ColumnDefinitions="*,Auto,Auto">
                     <StackPanel 
                         Orientation="Horizontal"
                         Spacing="5">
                         <TextBlock Text="{extensions:Localize 'EditMap_Elevation'}"
-                                                       Foreground="White" FontWeight="Bold"/>
+                                   Classes="bodyLarge" FontWeight="Bold" Foreground="{StaticResource TextLightBrush}"/>
                         <TextBlock Text="{Binding HexViewModel.Level}"
-                                                   Foreground="White" FontSize="12"/>
+                                   Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
                     </StackPanel>
                     
                     <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
                             Command="{Binding RaiseLevelCommand}"
                             ToolTip.Tip="{extensions:Localize 'EditMap_RaiseLevel'}"
-                            Background="Transparent" Foreground="White"
-                            BorderThickness="0" Cursor="Hand"/>
+                            Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
                     <Button Grid.Column="2" Content="▼" FontSize="10" Padding="4,0"
                             Command="{Binding LowerLevelCommand}"
                             ToolTip.Tip="{extensions:Localize 'EditMap_LowerLevel'}"
-                            Background="Transparent" Foreground="White"
-                            BorderThickness="0" Cursor="Hand"/>
+                            Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
                 </Grid>
                 
-                <TextBlock Text="{extensions:Localize 'EditMap_Terrains'}" Foreground="#AAAAAA" FontSize="12"/>
+                <TextBlock Text="{extensions:Localize 'EditMap_Terrains'}" Foreground="{StaticResource TextLightBrush}" Classes="bodySmall"/>
                 <ItemsControl ItemsSource="{Binding HexViewModel.TerrainTypes}" Margin="10,0,0,0">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="x:String">
-                            <TextBlock Text="{Binding }" Foreground="White" FontSize="12"/>
+                            <TextBlock Text="{Binding }" Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -75,20 +72,18 @@
                       IsVisible="{Binding HexViewModel.IsWater}">
                     <StackPanel Orientation="Horizontal" Spacing="5">
                         <TextBlock Text="{extensions:Localize 'EditMap_WaterDepth'}"
-                                   Foreground="White" FontSize="12"/>
+                                   Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
                         <TextBlock Text="{Binding HexViewModel.WaterDepth}"
-                                   Foreground="White" FontSize="12"/>
+                                   Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
                     </StackPanel>
                     <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
                             Command="{Binding DecreaseWaterDepthCommand}"
                             ToolTip.Tip="{extensions:Localize 'EditMap_DecreaseWaterDepth'}"
-                            Background="Transparent" Foreground="White"
-                            BorderThickness="0" Cursor="Hand"/>
+                            Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
                     <Button Grid.Column="2" Content="▼" FontSize="10" Padding="4,0"
                             Command="{Binding IncreaseWaterDepthCommand}"
                             ToolTip.Tip="{extensions:Localize 'EditMap_IncreaseWaterDepth'}"
-                            Background="Transparent" Foreground="White"
-                            BorderThickness="0" Cursor="Hand"/>
+                            Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
                 </Grid>
             </StackPanel>
         </Border>
@@ -99,8 +94,8 @@
                 IsVisible="{ff:OnFormFactor Desktop=False, Mobile=True}"
                 Command="{Binding ToggleSettingsPanelCommand}"
                 Content="{extensions:Localize 'EditMap_Settings'}"
-                Background="#005A9E"
-                Foreground="White"
+                Classes="primary"
+                Background="{StaticResource AccentBrush}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Margin="10"
@@ -108,8 +103,8 @@
         
         <Grid Grid.Column="{ff:OnFormFactor Desktop=1, Mobile=0}"
               Grid.Row="{ff:OnFormFactor Desktop=0, Mobile=1}"
-              RowDefinitions="Auto,*,Auto" Background="#333333">
-            <TextBlock Text="{extensions:Localize 'EditMap_Toolbox'}" FontSize="18" FontWeight="Bold" Margin="10" Foreground="White" HorizontalAlignment="Center"/>
+              RowDefinitions="Auto,*,Auto" Background="{StaticResource SurfaceBrush}">
+            <TextBlock Text="{extensions:Localize 'EditMap_Toolbox'}" Classes="h3" Margin="10" Foreground="{StaticResource TextLightBrush}" HorizontalAlignment="Center"/>
 
             <ListBox Grid.Row="1" ItemsSource="{Binding AvailableTools}" SelectedItem="{Binding SelectedTool}" Background="Transparent"
                      ScrollViewer.HorizontalScrollBarVisibility="{ff:OnFormFactor Desktop='Disabled', Mobile='Auto'}"
@@ -123,7 +118,7 @@
                     <DataTemplate>
                         <StackPanel Width="85" Margin="4" HorizontalAlignment="Center">
                             <Image Source="{Binding ImagePath, Converter={StaticResource StringToImageConverter}}" Width="64" Height="64" IsVisible="{Binding HasImagePath}" HorizontalAlignment="Center"/>
-                            <TextBlock Text="{Binding DisplayName}" Foreground="White" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MaxWidth="80"/>
+                            <TextBlock Text="{Binding DisplayName}" Foreground="{StaticResource TextLightBrush}" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MaxWidth="80"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -132,18 +127,18 @@
             <StackPanel Grid.Row="2" Spacing="10"
                         IsVisible="{Binding IsSettingsPanelVisible}">
                 <StackPanel Margin="10" Spacing="10">
-                    <TextBlock Text="{extensions:Localize 'BattleMap_Settings'}" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="{extensions:Localize 'BattleMap_Settings'}" Classes="h4" Foreground="{StaticResource TextLightBrush}"/>
                     <CheckBox Content="{extensions:Localize 'BattleMap_ShowLabels'}"
                               IsChecked="{Binding HexConfiguration.ShowLabels}"
-                              Foreground="White"/>
+                              Foreground="{StaticResource TextLightBrush}"/>
                     <CheckBox Content="{extensions:Localize 'BattleMap_ShowHexOutlines'}"
                               IsChecked="{Binding HexConfiguration.ShowOutline}"
-                              Foreground="White"/>
+                              Foreground="{StaticResource TextLightBrush}"/>
                 </StackPanel>
 
                 <StackPanel Margin="10" Spacing="10" VerticalAlignment="Bottom">
-                    <Button Content="{extensions:Localize 'EditMap_ExportMap'}" Command="{Binding ExportMapCommand}" HorizontalAlignment="Stretch"/>
-                    <Button Content="{extensions:Localize 'EditMap_ExportPdf'}" Click="OnExportPdfClicked" HorizontalAlignment="Stretch"/>
+                    <Button Content="{extensions:Localize 'EditMap_ExportMap'}" Command="{Binding ExportMapCommand}" Classes="secondary" HorizontalAlignment="Stretch"/>
+                    <Button Content="{extensions:Localize 'EditMap_ExportPdf'}" Click="OnExportPdfClicked" Classes="secondary" HorizontalAlignment="Stretch"/>
                 </StackPanel>
             </StackPanel>
         </Grid>
