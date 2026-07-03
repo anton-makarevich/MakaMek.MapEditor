@@ -12,7 +12,7 @@
     <Grid RowDefinitions="*,Auto" Margin="20">
         <fragments:MapConfigFragment DataContext="{Binding MapConfig}" />
         
-        <Button Grid.Row="1" Content="{extensions:Localize 'NewMap_CreateMap'}" 
+        <Button Grid.Row="1" Classes="primary main-menu" Content="{extensions:Localize 'NewMap_CreateMap'}" 
                 Command="{Binding EditMapCommand}" 
                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
                 Margin="0,20,0,0"/>

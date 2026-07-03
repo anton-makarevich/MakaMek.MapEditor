@@ -1,0 +1,76 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:templatedControls="clr-namespace:Sanet.MakaMek.Avalonia.Controls.TemplatedControls;assembly=Sanet.MakaMek.Avalonia.Controls"
+             xmlns:extensions="clr-namespace:Sanet.MakaMek.Avalonia.Controls.Extensions;assembly=Sanet.MakaMek.Avalonia.Controls"
+             x:Class="Sanet.MakaMek.MapEditor.Controls.HexInfoOverlay"
+             x:CompileBindings="False"
+             Background="{StaticResource SurfaceBrush}"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top"
+             ZIndex="100"
+             MinWidth="150">
+    <Grid RowDefinitions="Auto,*">
+    <Border Grid.Row="0"
+            ClipToBounds="True"
+            Background="{StaticResource SecondaryBrush}"
+            CornerRadius="8,8,0,0"
+            Height="40">
+        <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="{Binding HexViewModel.Coordinates}"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       FontWeight="Bold"
+                       Foreground="{StaticResource HighlightLightBrush}"/>
+            <templatedControls:ActionButton
+                Grid.Column="1"
+                Command="{Binding CloseHexInfoCommand}"
+                IconData="{StaticResource CloseIcon}"
+                Background="Transparent"/>
+        </Grid>
+    </Border>
+    <StackPanel Grid.Row="1" Spacing="4" Margin="10">
+        <Grid ColumnDefinitions="*,Auto,Auto">
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <TextBlock Text="{extensions:Localize 'EditMap_Elevation'}"
+                           Classes="bodyLarge" FontWeight="Bold" Foreground="{StaticResource TextLightBrush}"/>
+                <TextBlock Text="{Binding HexViewModel.Level}"
+                           Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
+            </StackPanel>
+            <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
+                    Command="{Binding RaiseLevelCommand}"
+                    ToolTip.Tip="{extensions:Localize 'EditMap_RaiseLevel'}"
+                    Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
+            <Button Grid.Column="2" Content="▼" FontSize="10" Padding="4,0"
+                    Command="{Binding LowerLevelCommand}"
+                    ToolTip.Tip="{extensions:Localize 'EditMap_LowerLevel'}"
+                    Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
+        </Grid>
+
+        <TextBlock Text="{extensions:Localize 'EditMap_Terrains'}" Foreground="{StaticResource TextLightBrush}" Classes="bodySmall"/>
+        <ItemsControl ItemsSource="{Binding HexViewModel.TerrainTypes}" Margin="10,0,0,0">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                    <TextBlock Text="{Binding }" Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Grid ColumnDefinitions="*,Auto,Auto"
+              IsVisible="{Binding HexViewModel.IsWater}">
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <TextBlock Text="{extensions:Localize 'EditMap_WaterDepth'}"
+                           Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
+                <TextBlock Text="{Binding HexViewModel.WaterDepth}"
+                           Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
+            </StackPanel>
+            <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
+                    Command="{Binding DecreaseWaterDepthCommand}"
+                    ToolTip.Tip="{extensions:Localize 'EditMap_DecreaseWaterDepth'}"
+                    Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
+            <Button Grid.Column="2" Content="▼" FontSize="10" Padding="4,0"
+                    Command="{Binding IncreaseWaterDepthCommand}"
+                    ToolTip.Tip="{extensions:Localize 'EditMap_IncreaseWaterDepth'}"
+                    Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
+        </Grid>
+    </StackPanel>
+    </Grid>
+</UserControl>
