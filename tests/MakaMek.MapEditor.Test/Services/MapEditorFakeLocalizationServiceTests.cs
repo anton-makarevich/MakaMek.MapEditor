@@ -53,7 +53,6 @@ public class MapEditorFakeLocalizationServiceTests
     }
 
     [Theory]
-    [InlineData("EditMap_Toolbox", "Toolbox")]
     [InlineData("EditMap_ExportMap", "Export Map")]
     [InlineData("EditMap_RaiseLevel", "▲ Raise Level")]
     [InlineData("EditMap_LowerLevel", "▼ Lower Level")]

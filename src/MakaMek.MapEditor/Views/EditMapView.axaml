@@ -21,7 +21,7 @@
             <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
         </Style>
     </UserControl.Styles>
-    <Grid ColumnDefinitions="{ff:OnFormFactor Desktop='*,200', Mobile='*'}"
+    <Grid ColumnDefinitions="{ff:OnFormFactor Desktop='*,95', Mobile='*'}"
           RowDefinitions="{ff:OnFormFactor Desktop='*', Mobile='*,Auto'}">
         <controls:HexMap
             ContentClicked="MapCanvas_OnContentClicked"
@@ -30,11 +30,13 @@
         <ctrl:HexInfoOverlay x:Name="HexInfoOverlay"
                                IsVisible="{Binding IsHexInfoVisible}"
                                Margin="10"/>
+
+        <ctrl:SettingsPanel x:Name="SettingsPanelControl"
+                             IsVisible="{Binding IsSettingsPanelVisible}"/>
         
-        <!-- Floating toggle button (visible on mobile only) -->
+        <!-- Floating settings toggle button -->
         <Button Grid.Column="0"
                 Grid.Row="0"
-                IsVisible="{ff:OnFormFactor Desktop=False, Mobile=True}"
                 Command="{Binding ToggleSettingsPanelCommand}"
                 Content="{extensions:Localize 'EditMap_Settings'}"
                 Classes="primary"
@@ -46,15 +48,13 @@
         
         <Grid Grid.Column="{ff:OnFormFactor Desktop=1, Mobile=0}"
               Grid.Row="{ff:OnFormFactor Desktop=0, Mobile=1}"
-              RowDefinitions="Auto,*,Auto" Background="{StaticResource SurfaceBrush}">
-            <TextBlock Text="{extensions:Localize 'EditMap_Toolbox'}" Classes="h3" Margin="10" Foreground="{StaticResource TextLightBrush}" HorizontalAlignment="Center"/>
-
-            <ListBox Grid.Row="1" ItemsSource="{Binding AvailableTools}" SelectedItem="{Binding SelectedTool}" Background="Transparent"
+              Background="{StaticResource SurfaceBrush}">
+            <ListBox ItemsSource="{Binding AvailableTools}" SelectedItem="{Binding SelectedTool}" Background="Transparent"
                      ScrollViewer.HorizontalScrollBarVisibility="{ff:OnFormFactor Desktop='Disabled', Mobile='Auto'}"
                      ScrollViewer.VerticalScrollBarVisibility="{ff:OnFormFactor Desktop='Auto', Mobile='Disabled'}">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="{ff:OnFormFactor Desktop='Horizontal', Mobile='Vertical'}" />
+                        <WrapPanel Orientation="{ff:OnFormFactor Desktop='Vertical', Mobile='Horizontal'}" />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
@@ -66,9 +66,6 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
-            <ctrl:SettingsPanel Grid.Row="2" x:Name="SettingsPanelControl"
-                                 IsVisible="{Binding IsSettingsPanelVisible}"/>
         </Grid>
     </Grid>
 </UserControl>

@@ -326,7 +326,7 @@ public class EditMapViewModel : BaseViewModel
 
     public ILocalizationService LocalizationService { get; }
 
-    private bool _isSettingsPanelVisible = true;
+    private bool _isSettingsPanelVisible;
     public bool IsSettingsPanelVisible
     {
         get => _isSettingsPanelVisible;
@@ -336,6 +336,12 @@ public class EditMapViewModel : BaseViewModel
     public IAsyncCommand ToggleSettingsPanelCommand => field ??= new AsyncCommand(() =>
     {
         IsSettingsPanelVisible = !IsSettingsPanelVisible;
+        return Task.CompletedTask;
+    });
+
+    public IAsyncCommand CloseSettingsPanelCommand => field ??= new AsyncCommand(() =>
+    {
+        IsSettingsPanelVisible = false;
         return Task.CompletedTask;
     });
 

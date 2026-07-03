@@ -836,9 +836,9 @@ public class EditMapViewModelTests
 
     // --- Settings Panel Visibility Tests ---
     [Fact]
-    public void IsSettingsPanelVisible_DefaultValue_ShouldBeTrue()
+    public void IsSettingsPanelVisible_DefaultValue_ShouldBeFalse()
     {
-        _sut.IsSettingsPanelVisible.ShouldBeTrue();
+        _sut.IsSettingsPanelVisible.ShouldBeFalse();
     }
 
     [Fact]
@@ -846,11 +846,11 @@ public class EditMapViewModelTests
     {
         await _sut.ToggleSettingsPanelCommand.ExecuteAsync();
 
-        _sut.IsSettingsPanelVisible.ShouldBeFalse();
+        _sut.IsSettingsPanelVisible.ShouldBeTrue();
 
         await _sut.ToggleSettingsPanelCommand.ExecuteAsync();
 
-        _sut.IsSettingsPanelVisible.ShouldBeTrue();
+        _sut.IsSettingsPanelVisible.ShouldBeFalse();
     }
 
     [Fact]
@@ -863,7 +863,7 @@ public class EditMapViewModelTests
                 propertyChangedRaised = true;
         };
 
-        _sut.IsSettingsPanelVisible = false;
+        _sut.IsSettingsPanelVisible = true;
 
         propertyChangedRaised.ShouldBeTrue();
     }
