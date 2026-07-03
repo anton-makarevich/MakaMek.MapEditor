@@ -3,7 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:Sanet.MakaMek.MapEditor.ViewModels"
-             xmlns:controls="clr-namespace:Sanet.MakaMek.Avalonia.Controls;assembly=Sanet.MakaMek.Avalonia.Controls"
+              xmlns:controls="clr-namespace:Sanet.MakaMek.Avalonia.Controls;assembly=Sanet.MakaMek.Avalonia.Controls"
+              xmlns:templatedControls="clr-namespace:Sanet.MakaMek.Avalonia.Controls.TemplatedControls;assembly=Sanet.MakaMek.Avalonia.Controls"
              xmlns:extensions="clr-namespace:Sanet.MakaMek.Avalonia.Controls.Extensions;assembly=Sanet.MakaMek.Avalonia.Controls"
              xmlns:ff="clr-namespace:Avalonia.Markup.Xaml.MarkupExtensions;assembly=Avalonia.Markup.Xaml"
              xmlns:converters="clr-namespace:Sanet.MakaMek.MapEditor.Converters"
@@ -25,22 +26,31 @@
             ContentClicked="MapCanvas_OnContentClicked"
             x:Name="MapCanvas"/>
 
-        <Border IsVisible="{Binding IsHexInfoVisible}"
-                x:Name="HexInfoOverlay"
-                Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
-                Padding="10" CornerRadius="4" MinWidth="150"
-                HorizontalAlignment="Left" VerticalAlignment="Top" ZIndex="100">
-            <StackPanel Spacing="4">
-                <Grid ColumnDefinitions="*,Auto">
+        <Grid IsVisible="{Binding IsHexInfoVisible}"
+              x:Name="HexInfoOverlay"
+              Background="{StaticResource BackgroundBrush}"
+              RowDefinitions="Auto,*"
+              HorizontalAlignment="Left" 
+              VerticalAlignment="Top" 
+              ZIndex="100"
+              MinWidth="150"
+              Margin="10">
+                <Grid Grid.Row="0"
+                      Background="{StaticResource SecondaryBrush}"
+                      Height="40" ColumnDefinitions="*,Auto">
                     <TextBlock Text="{Binding HexViewModel.Coordinates}"
-                               Classes="h4" Foreground="{StaticResource TextLightBrush}"/>
-                    <Button Grid.Column="1" Content="✕"
-                            Command="{Binding CloseHexInfoCommand}"
-                            ToolTip.Tip="{extensions:Localize 'EditMap_CloseHexInfo'}"
-                            Classes="cardAction" Foreground="{StaticResource TextLightBrush}"
-                            FontSize="14"/>
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource HighlightLightBrush}"/>
+                    <templatedControls:ActionButton
+                        Grid.Column="1"
+                        Command="{Binding CloseHexInfoCommand}"
+                        IconData="{StaticResource CloseIcon}"
+                        Background="Transparent"/>
                 </Grid>
-                <Grid ColumnDefinitions="*,Auto,Auto">
+                <StackPanel Grid.Row="1" Spacing="4">
+                    <Grid ColumnDefinitions="*,Auto,Auto">
                     <StackPanel 
                         Orientation="Horizontal"
                         Spacing="5">
@@ -85,8 +95,8 @@
                             ToolTip.Tip="{extensions:Localize 'EditMap_IncreaseWaterDepth'}"
                             Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
                 </Grid>
-            </StackPanel>
-        </Border>
+                </StackPanel>
+            </Grid>
         
         <!-- Floating toggle button (visible on mobile only) -->
         <Button Grid.Column="0"
