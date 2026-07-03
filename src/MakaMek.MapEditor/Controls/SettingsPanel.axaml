@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:extensions="clr-namespace:Sanet.MakaMek.Avalonia.Controls.Extensions;assembly=Sanet.MakaMek.Avalonia.Controls"
+             x:Class="Sanet.MakaMek.MapEditor.Controls.SettingsPanel"
+             x:CompileBindings="False">
+    <StackPanel Spacing="10">
+        <StackPanel Margin="10" Spacing="10">
+            <TextBlock Text="{extensions:Localize 'BattleMap_Settings'}" Classes="h4" Foreground="{StaticResource TextLightBrush}"/>
+            <CheckBox Content="{extensions:Localize 'BattleMap_ShowLabels'}"
+                      IsChecked="{Binding HexConfiguration.ShowLabels}"
+                      Foreground="{StaticResource TextLightBrush}"/>
+            <CheckBox Content="{extensions:Localize 'BattleMap_ShowHexOutlines'}"
+                      IsChecked="{Binding HexConfiguration.ShowOutline}"
+                      Foreground="{StaticResource TextLightBrush}"/>
+        </StackPanel>
+
+        <StackPanel Margin="10" Spacing="10" VerticalAlignment="Bottom">
+            <Button Content="{extensions:Localize 'EditMap_ExportMap'}" Command="{Binding ExportMapCommand}" Classes="secondary" HorizontalAlignment="Stretch"/>
+            <Button x:Name="ExportPdfButton" Content="{extensions:Localize 'EditMap_ExportPdf'}" Classes="secondary" HorizontalAlignment="Stretch"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

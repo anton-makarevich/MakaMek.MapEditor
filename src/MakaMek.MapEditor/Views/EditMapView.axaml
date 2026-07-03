@@ -7,8 +7,9 @@
               xmlns:templatedControls="clr-namespace:Sanet.MakaMek.Avalonia.Controls.TemplatedControls;assembly=Sanet.MakaMek.Avalonia.Controls"
              xmlns:extensions="clr-namespace:Sanet.MakaMek.Avalonia.Controls.Extensions;assembly=Sanet.MakaMek.Avalonia.Controls"
              xmlns:ff="clr-namespace:Avalonia.Markup.Xaml.MarkupExtensions;assembly=Avalonia.Markup.Xaml"
-             xmlns:converters="clr-namespace:Sanet.MakaMek.MapEditor.Converters"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+               xmlns:converters="clr-namespace:Sanet.MakaMek.MapEditor.Converters"
+              xmlns:ctrl="clr-namespace:Sanet.MakaMek.MapEditor.Controls"
+              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sanet.MakaMek.MapEditor.Views.EditMapView"
              x:CompileBindings="True"
              x:DataType="viewModels:EditMapViewModel">
@@ -26,81 +27,9 @@
             ContentClicked="MapCanvas_OnContentClicked"
             x:Name="MapCanvas"/>
 
-        <Grid IsVisible="{Binding IsHexInfoVisible}"
-              x:Name="HexInfoOverlay"
-              Background="{StaticResource SurfaceBrush}"
-              RowDefinitions="Auto,*"
-              HorizontalAlignment="Left" 
-              VerticalAlignment="Top" 
-              ZIndex="100"
-              MinWidth="150"
-              Margin="10">
-            <Border Grid.Row="0"
-                    ClipToBounds="True"
-                    Background="{StaticResource SecondaryBrush}"
-                    CornerRadius="8,8,0,0"
-                    Height="40">
-                <Grid ColumnDefinitions="*,Auto">
-                    <TextBlock Text="{Binding HexViewModel.Coordinates}"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                               FontWeight="Bold"
-                               Foreground="{StaticResource HighlightLightBrush}"/>
-                    <templatedControls:ActionButton
-                        Grid.Column="1"
-                        Command="{Binding CloseHexInfoCommand}"
-                        IconData="{StaticResource CloseIcon}"
-                        Background="Transparent"/>
-                </Grid>
-            </Border>
-                <StackPanel Grid.Row="1" Spacing="4" Margin="10">
-                    <Grid ColumnDefinitions="*,Auto,Auto">
-                    <StackPanel 
-                        Orientation="Horizontal"
-                        Spacing="5">
-                        <TextBlock Text="{extensions:Localize 'EditMap_Elevation'}"
-                                   Classes="bodyLarge" FontWeight="Bold" Foreground="{StaticResource TextLightBrush}"/>
-                        <TextBlock Text="{Binding HexViewModel.Level}"
-                                   Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
-                    </StackPanel>
-                    
-                    <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
-                            Command="{Binding RaiseLevelCommand}"
-                            ToolTip.Tip="{extensions:Localize 'EditMap_RaiseLevel'}"
-                            Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
-                    <Button Grid.Column="2" Content="▼" FontSize="10" Padding="4,0"
-                            Command="{Binding LowerLevelCommand}"
-                            ToolTip.Tip="{extensions:Localize 'EditMap_LowerLevel'}"
-                            Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
-                </Grid>
-                
-                <TextBlock Text="{extensions:Localize 'EditMap_Terrains'}" Foreground="{StaticResource TextLightBrush}" Classes="bodySmall"/>
-                <ItemsControl ItemsSource="{Binding HexViewModel.TerrainTypes}" Margin="10,0,0,0">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="x:String">
-                            <TextBlock Text="{Binding }" Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-                <Grid ColumnDefinitions="*,Auto,Auto"
-                      IsVisible="{Binding HexViewModel.IsWater}">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <TextBlock Text="{extensions:Localize 'EditMap_WaterDepth'}"
-                                   Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
-                        <TextBlock Text="{Binding HexViewModel.WaterDepth}"
-                                   Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
-                    </StackPanel>
-                    <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
-                            Command="{Binding DecreaseWaterDepthCommand}"
-                            ToolTip.Tip="{extensions:Localize 'EditMap_DecreaseWaterDepth'}"
-                            Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
-                    <Button Grid.Column="2" Content="▼" FontSize="10" Padding="4,0"
-                            Command="{Binding IncreaseWaterDepthCommand}"
-                            ToolTip.Tip="{extensions:Localize 'EditMap_IncreaseWaterDepth'}"
-                            Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
-                </Grid>
-                </StackPanel>
-        </Grid>
+        <ctrl:HexInfoOverlay x:Name="HexInfoOverlay"
+                               IsVisible="{Binding IsHexInfoVisible}"
+                               Margin="10"/>
         
         <!-- Floating toggle button (visible on mobile only) -->
         <Button Grid.Column="0"
@@ -138,23 +67,8 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <StackPanel Grid.Row="2" Spacing="10"
-                        IsVisible="{Binding IsSettingsPanelVisible}">
-                <StackPanel Margin="10" Spacing="10">
-                    <TextBlock Text="{extensions:Localize 'BattleMap_Settings'}" Classes="h4" Foreground="{StaticResource TextLightBrush}"/>
-                    <CheckBox Content="{extensions:Localize 'BattleMap_ShowLabels'}"
-                              IsChecked="{Binding HexConfiguration.ShowLabels}"
-                              Foreground="{StaticResource TextLightBrush}"/>
-                    <CheckBox Content="{extensions:Localize 'BattleMap_ShowHexOutlines'}"
-                              IsChecked="{Binding HexConfiguration.ShowOutline}"
-                              Foreground="{StaticResource TextLightBrush}"/>
-                </StackPanel>
-
-                <StackPanel Margin="10" Spacing="10" VerticalAlignment="Bottom">
-                    <Button Content="{extensions:Localize 'EditMap_ExportMap'}" Command="{Binding ExportMapCommand}" Classes="secondary" HorizontalAlignment="Stretch"/>
-                    <Button Content="{extensions:Localize 'EditMap_ExportPdf'}" Click="OnExportPdfClicked" Classes="secondary" HorizontalAlignment="Stretch"/>
-                </StackPanel>
-            </StackPanel>
+            <ctrl:SettingsPanel Grid.Row="2" x:Name="SettingsPanelControl"
+                                 IsVisible="{Binding IsSettingsPanelVisible}"/>
         </Grid>
     </Grid>
 </UserControl>

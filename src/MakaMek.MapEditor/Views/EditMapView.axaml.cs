@@ -28,6 +28,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         {
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             ViewModel.HexUpdated += OnHexUpdated;
+            SettingsPanelControl.ExportPdfClicked += OnExportPdfClicked;
             RenderMap();
 
             // On mobile (SingleView e.g. Android/iOS/WASM), hide settings panel by default
