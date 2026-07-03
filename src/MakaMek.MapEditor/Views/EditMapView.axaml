@@ -28,16 +28,19 @@
 
         <Grid IsVisible="{Binding IsHexInfoVisible}"
               x:Name="HexInfoOverlay"
-              Background="{StaticResource BackgroundBrush}"
+              Background="{StaticResource SurfaceBrush}"
               RowDefinitions="Auto,*"
               HorizontalAlignment="Left" 
               VerticalAlignment="Top" 
               ZIndex="100"
               MinWidth="150"
               Margin="10">
-                <Grid Grid.Row="0"
-                      Background="{StaticResource SecondaryBrush}"
-                      Height="40" ColumnDefinitions="*,Auto">
+            <Border Grid.Row="0"
+                    ClipToBounds="True"
+                    Background="{StaticResource SecondaryBrush}"
+                    CornerRadius="8,8,0,0"
+                    Height="40">
+                <Grid ColumnDefinitions="*,Auto">
                     <TextBlock Text="{Binding HexViewModel.Coordinates}"
                                VerticalAlignment="Center"
                                HorizontalAlignment="Center"
@@ -49,7 +52,8 @@
                         IconData="{StaticResource CloseIcon}"
                         Background="Transparent"/>
                 </Grid>
-                <StackPanel Grid.Row="1" Spacing="4">
+            </Border>
+                <StackPanel Grid.Row="1" Spacing="4" Margin="10">
                     <Grid ColumnDefinitions="*,Auto,Auto">
                     <StackPanel 
                         Orientation="Horizontal"
@@ -96,7 +100,7 @@
                             Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
                 </Grid>
                 </StackPanel>
-            </Grid>
+        </Grid>
         
         <!-- Floating toggle button (visible on mobile only) -->
         <Button Grid.Column="0"
