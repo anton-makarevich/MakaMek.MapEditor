@@ -62,7 +62,7 @@ public class MapEditorFakeLocalizationServiceTests
     [InlineData("EditMap_ExportPdfDialogTitle", "Export Map as PDF")]
     [InlineData("EditMap_PdfFilesFilter", "PDF Files")]
     [InlineData("EditMap_Settings", "☰ Settings")]
-    [InlineData("EditMap_CloseEditMap", "Close")]
+    [InlineData("EditMap_CloseEditMap", "Exit Editor")]
     [InlineData("EditMap_CloseConfirmTitle", "Close Map")]
     [InlineData("EditMap_CloseConfirmMessage", "Are you sure you want to close this map? Any unsaved changes will be lost.")]
     [InlineData("EditMap_CloseHexInfo", "Close")]

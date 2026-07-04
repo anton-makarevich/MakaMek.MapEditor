@@ -38,7 +38,7 @@ public class MapEditorFakeLocalizationService : FakeLocalizationService
         Strings["EditMap_Terrains"] = "Terrains:";
         Strings["EditMap_WaterDepth"] = "Water Depth:";
         Strings["EditMap_Settings"] = "☰ Settings";
-        Strings["EditMap_CloseEditMap"] = "Close";
+        Strings["EditMap_CloseEditMap"] = "Exit Editor";
         Strings["EditMap_CloseConfirmTitle"] = "Close Map";
         Strings["EditMap_CloseConfirmMessage"] = "Are you sure you want to close this map? Any unsaved changes will be lost.";
         Strings["EditMap_CloseHexInfo"] = "Close";

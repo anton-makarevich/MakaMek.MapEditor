@@ -1077,6 +1077,7 @@ public class EditMapViewModelTests
         await _sut.CloseEditMapCommand.ExecuteAsync();
 
         await _navigationService.Received(1).NavigateBackAsync();
+        _sut.IsMenuVisible.ShouldBeFalse();
     }
 
     [Fact]

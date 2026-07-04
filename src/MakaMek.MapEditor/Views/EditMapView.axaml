@@ -39,6 +39,8 @@
                                          Grid.Row="0"
                                          Command="{Binding ToggleMenuCommand}"
                                          IconData="{StaticResource MapSettingsIcon}"
+                                         ToolTip.Tip="{extensions:Localize EditMap_Settings}"
+                                         AutomationProperties.Name="{extensions:Localize EditMap_Settings}"
                                          HorizontalAlignment="Left"
                                          VerticalAlignment="Top"
                                          Margin="10"/>
