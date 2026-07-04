@@ -1,22 +1,48 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:templatedControls="clr-namespace:Sanet.MakaMek.Avalonia.Controls.TemplatedControls;assembly=Sanet.MakaMek.Avalonia.Controls"
              xmlns:extensions="clr-namespace:Sanet.MakaMek.Avalonia.Controls.Extensions;assembly=Sanet.MakaMek.Avalonia.Controls"
              x:Class="Sanet.MakaMek.MapEditor.Controls.SettingsPanel"
-             x:CompileBindings="False">
-    <StackPanel Spacing="10">
-        <StackPanel Margin="10" Spacing="10">
-            <TextBlock Text="{extensions:Localize 'BattleMap_Settings'}" Classes="h4" Foreground="{StaticResource TextLightBrush}"/>
-            <CheckBox Content="{extensions:Localize 'BattleMap_ShowLabels'}"
-                      IsChecked="{Binding HexConfiguration.ShowLabels}"
-                      Foreground="{StaticResource TextLightBrush}"/>
-            <CheckBox Content="{extensions:Localize 'BattleMap_ShowHexOutlines'}"
-                      IsChecked="{Binding HexConfiguration.ShowOutline}"
-                      Foreground="{StaticResource TextLightBrush}"/>
-        </StackPanel>
-
-        <StackPanel Margin="10" Spacing="10" VerticalAlignment="Bottom">
-            <Button Content="{extensions:Localize 'EditMap_ExportMap'}" Command="{Binding ExportMapCommand}" Classes="secondary" HorizontalAlignment="Stretch"/>
-            <Button x:Name="ExportPdfButton" Content="{extensions:Localize 'EditMap_ExportPdf'}" Classes="secondary" HorizontalAlignment="Stretch"/>
-        </StackPanel>
-    </StackPanel>
+             x:CompileBindings="False"
+             ZIndex="200">
+    <Grid>
+        <Rectangle Fill="#80000000" IsHitTestVisible="True"/>
+        <Border Background="{StaticResource SurfaceBrush}"
+                CornerRadius="8"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                MinWidth="250">
+            <Grid RowDefinitions="Auto,*">
+                <Border Background="{StaticResource SecondaryBrush}"
+                        CornerRadius="8,8,0,0"
+                        Height="40">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="{extensions:Localize 'BattleMap_Settings'}"
+                                   Classes="h4"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource HighlightLightBrush}"/>
+                        <templatedControls:ActionButton
+                            Grid.Column="1"
+                            Command="{Binding CloseMenuCommand}"
+                            IconData="{StaticResource CloseIcon}"
+                            Background="Transparent"/>
+                    </Grid>
+                </Border>
+                <StackPanel Grid.Row="1" Spacing="10" Margin="10">
+                    <StackPanel Spacing="10">
+                        <CheckBox Content="{extensions:Localize 'BattleMap_ShowLabels'}"
+                                  IsChecked="{Binding HexConfiguration.ShowLabels}"
+                                  Foreground="{StaticResource TextLightBrush}"/>
+                        <CheckBox Content="{extensions:Localize 'BattleMap_ShowHexOutlines'}"
+                                  IsChecked="{Binding HexConfiguration.ShowOutline}"
+                                  Foreground="{StaticResource TextLightBrush}"/>
+                    </StackPanel>
+                    <Button Content="{extensions:Localize 'EditMap_ExportMap'}" Command="{Binding ExportMapCommand}" Classes="secondary" HorizontalAlignment="Stretch"/>
+                    <Button x:Name="ExportPdfButton" Content="{extensions:Localize 'EditMap_ExportPdf'}" Classes="secondary" HorizontalAlignment="Stretch"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
 </UserControl>

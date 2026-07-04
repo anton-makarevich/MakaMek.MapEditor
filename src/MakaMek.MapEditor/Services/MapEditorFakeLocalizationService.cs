@@ -24,7 +24,6 @@ public class MapEditorFakeLocalizationService : FakeLocalizationService
         Strings["NewMap_LightWoods"] = "Light Woods %";
         Strings["NewMap_CreateMap"] = "Create Map";
 
-        Strings["EditMap_Toolbox"] = "Toolbox";
         Strings["EditMap_ExportMap"] = "Export Map";
         Strings["EditMap_RaiseLevel"] = "▲ Raise Level";
         Strings["EditMap_LowerLevel"] = "▼ Lower Level";

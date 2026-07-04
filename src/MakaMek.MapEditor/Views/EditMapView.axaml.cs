@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using AsyncAwaitBestPractices;
 using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Sanet.MakaMek.Avalonia.Controls;
 using Sanet.MakaMek.Map.Models;
@@ -31,11 +30,6 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             SettingsPanelControl.ExportPdfClicked += OnExportPdfClicked;
             RenderMap();
 
-            // On mobile (SingleView e.g. Android/iOS/WASM), hide settings panel by default
-            if (Application.Current?.ApplicationLifetime is ISingleViewApplicationLifetime)
-            {
-                ViewModel.IsSettingsPanelVisible = false;
-            }
         }
     }
 
