@@ -42,7 +42,7 @@ public class MapEditorFakeLocalizationServiceTests
     [InlineData("NewMap_PreGenerateTerrain", "Pre-generate Terrain")]
     [InlineData("NewMap_ForestCoverage", "Forest Coverage %")]
     [InlineData("NewMap_LightWoods", "Light Woods %")]
-    [InlineData("NewMap_CreateMap", "Create Map")]
+    [InlineData("NewMap_CreateMap", "Edit map")]
     public void GetString_NewMapView_ReturnsExpectedString(string key, string expected)
     {
         var localizationService = new MapEditorFakeLocalizationService();
@@ -53,15 +53,18 @@ public class MapEditorFakeLocalizationServiceTests
     }
 
     [Theory]
-    [InlineData("EditMap_ExportMap", "Export Map")]
+    [InlineData("EditMap_ExportMap", "Save Map")]
     [InlineData("EditMap_RaiseLevel", "▲ Raise Level")]
     [InlineData("EditMap_LowerLevel", "▼ Lower Level")]
     [InlineData("EditMap_Cursor", "Cursor")]
-    [InlineData("EditMap_ExportMapDialogTitle", "Export Map")]
+    [InlineData("EditMap_ExportMapDialogTitle", "Save Map")]
     [InlineData("EditMap_ExportPdf", "Export PDF")]
     [InlineData("EditMap_ExportPdfDialogTitle", "Export Map as PDF")]
     [InlineData("EditMap_PdfFilesFilter", "PDF Files")]
     [InlineData("EditMap_Settings", "☰ Settings")]
+    [InlineData("EditMap_CloseEditMap", "Close")]
+    [InlineData("EditMap_CloseConfirmTitle", "Close Map")]
+    [InlineData("EditMap_CloseConfirmMessage", "Are you sure you want to close this map? Any unsaved changes will be lost.")]
     [InlineData("EditMap_CloseHexInfo", "Close")]
     [InlineData("EditMap_Elevation", "Elevation:")]
     [InlineData("EditMap_Terrains", "Terrains:")]

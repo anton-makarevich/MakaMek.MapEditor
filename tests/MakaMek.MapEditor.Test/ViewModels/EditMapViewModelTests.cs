@@ -12,6 +12,8 @@ using Sanet.MakaMek.Map.Services;
 using Sanet.MakaMek.MapEditor.Models;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Services;
+using Sanet.MVVM.Core.Models;
+using Sanet.MVVM.Core.Services;
 using Shouldly;
 using Xunit;
 
@@ -27,6 +29,7 @@ public class EditMapViewModelTests
     private readonly ILogger<EditMapViewModel> _logger = Substitute.For<ILogger<EditMapViewModel>>();
     private readonly ITerrainBitmaskService _bitmaskService = Substitute.For<ITerrainBitmaskService>();
     private readonly IScheduler  _scheduler = ImmediateScheduler.Instance;
+    private readonly INavigationService _navigationService = Substitute.For<INavigationService>();
 
     public EditMapViewModelTests()
     {
@@ -38,6 +41,7 @@ public class EditMapViewModelTests
             _logger,
             _bitmaskService,
             _scheduler);
+        _sut.SetNavigationService(_navigationService);
     }
 
     private static BattleMapData CreateTestBattleMapData(int q = 0, int r = 0)
@@ -1057,5 +1061,37 @@ public class EditMapViewModelTests
         _sut.HandleHexSelection(hex);
         _sut.HexViewModel.ShouldNotBeNull();
         _sut.IsHexInfoVisible.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task CloseEditMapCommand_WhenConfirmed_ShouldNavigateToRoot()
+    {
+        var yesAction = new UiAction { Title = "Dialog_Yes" };
+        var noAction = new UiAction { Title = "Dialog_No" };
+        _navigationService.AskForActionAsync(
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<UiAction>(),
+            Arg.Any<UiAction>()).Returns(yesAction);
+
+        await _sut.CloseEditMapCommand.ExecuteAsync();
+
+        await _navigationService.Received(1).NavigateToRootAsync();
+    }
+
+    [Fact]
+    public async Task CloseEditMapCommand_WhenDeclined_ShouldNotNavigateToRoot()
+    {
+        var yesAction = new UiAction { Title = "Dialog_Yes" };
+        var noAction = new UiAction { Title = "Dialog_No" };
+        _navigationService.AskForActionAsync(
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<UiAction>(),
+            Arg.Any<UiAction>()).Returns(noAction);
+
+        await _sut.CloseEditMapCommand.ExecuteAsync();
+
+        await _navigationService.DidNotReceive().NavigateToRootAsync();
     }
 }
