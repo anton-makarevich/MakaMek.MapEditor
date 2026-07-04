@@ -12,6 +12,7 @@ using Sanet.MakaMek.Map.Services;
 using Sanet.MakaMek.MapEditor.Models;
 using Sanet.MakaMek.MapEditor.ViewModels.Wrappers;
 using Sanet.MakaMek.Services;
+using Sanet.MVVM.Core.Models;
 using Sanet.MVVM.Core.ViewModels;
 
 namespace Sanet.MakaMek.MapEditor.ViewModels;
@@ -344,6 +345,24 @@ public class EditMapViewModel : BaseViewModel
         IsMenuVisible = false;
         return Task.CompletedTask;
     });
+
+    public IAsyncCommand CloseEditMapCommand => field ??= new AsyncCommand(async () =>
+    {
+        var yesAction = new UiAction { Title = LocalizationService.GetString("Dialog_Yes") };
+        var noAction = new UiAction { Title = LocalizationService.GetString("Dialog_No") };
+
+        var selectedAction = await NavigationService.AskForActionAsync(
+            LocalizationService.GetString("EditMap_CloseConfirmTitle"),
+            LocalizationService.GetString("EditMap_CloseConfirmMessage"),
+            yesAction,
+            noAction);
+
+        if (selectedAction != yesAction)
+            return;
+
+        IsMenuVisible = false;
+        await NavigationService.NavigateBackAsync();
+    }, onException: ex => Logger.LogError(ex, "Failed to close map"));
 
     public IAsyncCommand CloseHexInfoCommand => field ??= new AsyncCommand(() =>
     {

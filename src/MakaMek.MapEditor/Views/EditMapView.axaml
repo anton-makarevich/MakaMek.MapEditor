@@ -35,16 +35,15 @@
                              IsVisible="{Binding IsMenuVisible}"/>
         
         <!-- Floating settings toggle button -->
-        <Button Grid.Column="0"
-                Grid.Row="0"
-                Command="{Binding ToggleMenuCommand}"
-                Content="{extensions:Localize 'EditMap_Settings'}"
-                Classes="primary"
-                Background="{StaticResource AccentBrush}"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Margin="10"
-                Padding="15,10"/>
+        <templatedControls:ActionButton Grid.Column="0"
+                                         Grid.Row="0"
+                                         Command="{Binding ToggleMenuCommand}"
+                                         IconData="{StaticResource MapSettingsIcon}"
+                                         ToolTip.Tip="{extensions:Localize EditMap_Settings}"
+                                         AutomationProperties.Name="{extensions:Localize EditMap_Settings}"
+                                         HorizontalAlignment="Left"
+                                         VerticalAlignment="Top"
+                                         Margin="10"/>
         
         <Grid Grid.Column="{ff:OnFormFactor Desktop=1, Mobile=0}"
               Grid.Row="{ff:OnFormFactor Desktop=0, Mobile=1}"
