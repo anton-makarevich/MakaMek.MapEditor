@@ -1064,7 +1064,7 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public async Task CloseEditMapCommand_WhenConfirmed_ShouldNavigateToRoot()
+    public async Task CloseEditMapCommand_WhenConfirmed_ShouldNavigateToNewMap()
     {
         var yesAction = new UiAction { Title = "Dialog_Yes" };
         var noAction = new UiAction { Title = "Dialog_No" };
@@ -1076,11 +1076,11 @@ public class EditMapViewModelTests
 
         await _sut.CloseEditMapCommand.ExecuteAsync();
 
-        await _navigationService.Received(1).NavigateToRootAsync();
+        await _navigationService.Received(1).NavigateToViewModelAsync<NewMapViewModel>();
     }
 
     [Fact]
-    public async Task CloseEditMapCommand_WhenDeclined_ShouldNotNavigateToRoot()
+    public async Task CloseEditMapCommand_WhenDeclined_ShouldNotNavigateToNewMap()
     {
         var yesAction = new UiAction { Title = "Dialog_Yes" };
         var noAction = new UiAction { Title = "Dialog_No" };
@@ -1092,6 +1092,6 @@ public class EditMapViewModelTests
 
         await _sut.CloseEditMapCommand.ExecuteAsync();
 
-        await _navigationService.DidNotReceive().NavigateToRootAsync();
+        await _navigationService.DidNotReceive().NavigateToViewModelAsync<NewMapViewModel>();
     }
 }
