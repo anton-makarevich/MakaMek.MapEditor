@@ -25,7 +25,7 @@
                                    Foreground="{StaticResource HighlightLightBrush}"/>
                         <templatedControls:ActionButton
                             Grid.Column="1"
-                            Command="{Binding CloseSettingsPanelCommand}"
+                            Command="{Binding CloseMenuCommand}"
                             IconData="{StaticResource CloseIcon}"
                             Background="Transparent"/>
                     </Grid>

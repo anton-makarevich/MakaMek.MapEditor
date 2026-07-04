@@ -326,22 +326,22 @@ public class EditMapViewModel : BaseViewModel
 
     public ILocalizationService LocalizationService { get; }
 
-    private bool _isSettingsPanelVisible;
-    public bool IsSettingsPanelVisible
+    private bool _isMenuVisible;
+    public bool IsMenuVisible
     {
-        get => _isSettingsPanelVisible;
-        set => SetProperty(ref _isSettingsPanelVisible, value);
+        get => _isMenuVisible;
+        set => SetProperty(ref _isMenuVisible, value);
     }
 
-    public IAsyncCommand ToggleSettingsPanelCommand => field ??= new AsyncCommand(() =>
+    public IAsyncCommand ToggleMenuCommand => field ??= new AsyncCommand(() =>
     {
-        IsSettingsPanelVisible = !IsSettingsPanelVisible;
+        IsMenuVisible = !IsMenuVisible;
         return Task.CompletedTask;
     });
 
-    public IAsyncCommand CloseSettingsPanelCommand => field ??= new AsyncCommand(() =>
+    public IAsyncCommand CloseMenuCommand => field ??= new AsyncCommand(() =>
     {
-        IsSettingsPanelVisible = false;
+        IsMenuVisible = false;
         return Task.CompletedTask;
     });
 

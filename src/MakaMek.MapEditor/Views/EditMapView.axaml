@@ -32,12 +32,12 @@
                                Margin="10"/>
 
         <ctrl:SettingsPanel x:Name="SettingsPanelControl"
-                             IsVisible="{Binding IsSettingsPanelVisible}"/>
+                             IsVisible="{Binding IsMenuVisible}"/>
         
         <!-- Floating settings toggle button -->
         <Button Grid.Column="0"
                 Grid.Row="0"
-                Command="{Binding ToggleSettingsPanelCommand}"
+                Command="{Binding ToggleMenuCommand}"
                 Content="{extensions:Localize 'EditMap_Settings'}"
                 Classes="primary"
                 Background="{StaticResource AccentBrush}"

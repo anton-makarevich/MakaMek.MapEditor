@@ -834,38 +834,48 @@ public class EditMapViewModelTests
         propertyChangedRaised.ShouldBeFalse();
     }
 
-    // --- Settings Panel Visibility Tests ---
+    // --- Menu Visibility Tests ---
     [Fact]
-    public void IsSettingsPanelVisible_DefaultValue_ShouldBeFalse()
+    public void IsMenuVisible_DefaultValue_ShouldBeFalse()
     {
-        _sut.IsSettingsPanelVisible.ShouldBeFalse();
+        _sut.IsMenuVisible.ShouldBeFalse();
     }
 
     [Fact]
-    public async Task ToggleSettingsPanelCommand_ShouldToggleIsSettingsPanelVisible()
+    public async Task ToggleMenuCommand_ShouldToggleIsMenuVisible()
     {
-        await _sut.ToggleSettingsPanelCommand.ExecuteAsync();
+        await _sut.ToggleMenuCommand.ExecuteAsync();
 
-        _sut.IsSettingsPanelVisible.ShouldBeTrue();
+        _sut.IsMenuVisible.ShouldBeTrue();
 
-        await _sut.ToggleSettingsPanelCommand.ExecuteAsync();
+        await _sut.ToggleMenuCommand.ExecuteAsync();
 
-        _sut.IsSettingsPanelVisible.ShouldBeFalse();
+        _sut.IsMenuVisible.ShouldBeFalse();
     }
 
     [Fact]
-    public void IsSettingsPanelVisible_WhenSet_ShouldNotifyPropertyChanged()
+    public void IsMenuVisible_WhenSet_ShouldNotifyPropertyChanged()
     {
         var propertyChangedRaised = false;
         _sut.PropertyChanged += (_, args) =>
         {
-            if (args.PropertyName == nameof(EditMapViewModel.IsSettingsPanelVisible))
+            if (args.PropertyName == nameof(EditMapViewModel.IsMenuVisible))
                 propertyChangedRaised = true;
         };
 
-        _sut.IsSettingsPanelVisible = true;
+        _sut.IsMenuVisible = true;
 
         propertyChangedRaised.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task CloseMenuCommand_ShouldSetIsMenuVisibleToFalse()
+    {
+        _sut.IsMenuVisible = true;
+
+        await _sut.CloseMenuCommand.ExecuteAsync();
+
+        _sut.IsMenuVisible.ShouldBeFalse();
     }
 
     // --- Cursor Mode Tests ---
