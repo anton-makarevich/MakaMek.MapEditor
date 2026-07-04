@@ -45,10 +45,4 @@ public class NewMapViewModel : BaseViewModel
             await NavigationService.NavigateToViewModelAsync(editViewModel);
         }
     });
-
-    public override void DetachHandlers()
-    {
-        base.DetachHandlers();
-        MapConfig.Dispose();
-    }
 }

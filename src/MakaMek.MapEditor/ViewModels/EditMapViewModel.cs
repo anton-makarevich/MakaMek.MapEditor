@@ -361,7 +361,7 @@ public class EditMapViewModel : BaseViewModel
             return;
 
         IsMenuVisible = false;
-        await NavigationService.NavigateToViewModelAsync<NewMapViewModel>();
+        await NavigationService.NavigateBackAsync();
     }, onException: ex => Logger.LogError(ex, "Failed to close map"));
 
     public IAsyncCommand CloseHexInfoCommand => field ??= new AsyncCommand(() =>
