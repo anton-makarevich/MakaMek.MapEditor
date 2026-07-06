@@ -1,4 +1,5 @@
 using System.Reactive.Concurrency;
+using ReactiveUI.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Core.Services;
@@ -22,6 +23,6 @@ public static class IosServices
             );
         });
         services.AddSingleton<IFileCachingService, FileSystemCachingService>();
-        services.AddSingleton<IScheduler>(TaskPoolScheduler.Default);
+        services.AddSingleton<IScheduler>(AvaloniaScheduler.Instance);
     }
 }
