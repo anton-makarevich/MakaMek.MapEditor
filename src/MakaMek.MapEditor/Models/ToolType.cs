@@ -3,5 +3,9 @@ namespace Sanet.MakaMek.MapEditor.Models;
 public enum ToolType
 {
     Terrain,
-    Cursor
+    Cursor,
+    RaiseLevel,
+    LowerLevel,
+    IncreaseWaterDepth,
+    DecreaseWaterDepth
 }

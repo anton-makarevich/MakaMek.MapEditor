@@ -220,6 +220,11 @@ public class EditMapViewModel : BaseViewModel
                 imagePath: $"{AssetBaseUri}/terrain/{terrain.Id.ToString().ToLowerInvariant()}.png"));
         }
 
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_RaiseLevel"), ToolType.RaiseLevel));
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_LowerLevel"), ToolType.LowerLevel));
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_IncreaseWaterDepth"), ToolType.IncreaseWaterDepth));
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_DecreaseWaterDepth"), ToolType.DecreaseWaterDepth));
+
         SelectedTerrain = AvailableTerrains.FirstOrDefault();
         SelectedTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.Terrain && t.Terrain == SelectedTerrain);
     }
@@ -246,6 +251,18 @@ public class EditMapViewModel : BaseViewModel
                 _currentHex = hex;
                 IsHexInfoVisible = true;
                 return null;
+
+            case ToolType.RaiseLevel:
+                return ReplaceHexWithNewLevel(hex, hex.Level + 1);
+
+            case ToolType.LowerLevel:
+                return ReplaceHexWithNewLevel(hex, hex.Level - 1);
+
+            case ToolType.IncreaseWaterDepth:
+                return UpdateHexWithNewWaterDepth(hex, -1);
+
+            case ToolType.DecreaseWaterDepth:
+                return UpdateHexWithNewWaterDepth(hex, 1);
 
             default:
                 return null;
