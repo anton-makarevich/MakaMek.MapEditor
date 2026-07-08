@@ -17,14 +17,14 @@ jobs:
       - name: Get version from current branch
         id: current-version
         run: |
-          version=$(grep '<VersionPrefix>' Directory.Build.props | sed 's/.*<VersionPrefix>\(.*\)<\/VersionPrefix>.*/\1/')
+          version=$(grep '<Version>' Directory.Build.props | sed 's/.*<Version>\(.*\)<\/Version>.*/\1/')
           echo "Current version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - name: Get version from main branch
         id: main-version
         run: |
-          version=$(git show origin/main:Directory.Build.props | grep '<VersionPrefix>' | sed 's/.*<VersionPrefix>\(.*\)<\/VersionPrefix>.*/\1/')
+          version=$(git show origin/main:Directory.Build.props | grep '<Version>' | sed 's/.*<Version>\(.*\)<\/Version>.*/\1/')
           echo "Main version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
@@ -35,7 +35,7 @@ jobs:
           echo "Current: $current"
           echo "Main:    $main"
           if [ "$current" = "$main" ]; then
-            echo "::error::VersionPrefix ($current) must be bumped before merging into main."
+            echo "::error::Version ($current) must be bumped before merging into main."
             exit 1
           fi
           echo "Version differs — check passed."
