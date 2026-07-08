@@ -58,7 +58,7 @@ public class MapEditorFakeLocalizationServiceTests
     [InlineData("EditMap_LowerLevel", "▼ Lower Level")]
     [InlineData("EditMap_IncreaseWaterDepth", "▼ Increase Depth")]
     [InlineData("EditMap_DecreaseWaterDepth", "▲ Decrease Depth")]
-    [InlineData("EditMap_Cursor", "Cursor")]
+    [InlineData("EditMap_Cursor", "Select")]
     [InlineData("EditMap_ExportMapDialogTitle", "Save Map")]
     [InlineData("EditMap_ExportPdf", "Export PDF")]
     [InlineData("EditMap_ExportPdfDialogTitle", "Export Map as PDF")]
