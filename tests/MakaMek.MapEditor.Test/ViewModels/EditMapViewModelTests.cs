@@ -422,8 +422,12 @@ public class EditMapViewModelTests
         _sut.Initialize(map);
 
         _sut.AvailableTools.ShouldNotBeEmpty();
-        _sut.AvailableTools.Count.ShouldBe(_sut.AvailableTerrains.Count + 1);
+        _sut.AvailableTools.Count.ShouldBe(_sut.AvailableTerrains.Count + 1 + 4);
         _sut.AvailableTools.Count(t => t.Type == ToolType.Cursor).ShouldBe(1);
+        _sut.AvailableTools.Count(t => t.Type == ToolType.RaiseLevel).ShouldBe(1);
+        _sut.AvailableTools.Count(t => t.Type == ToolType.LowerLevel).ShouldBe(1);
+        _sut.AvailableTools.Count(t => t.Type == ToolType.IncreaseWaterDepth).ShouldBe(1);
+        _sut.AvailableTools.Count(t => t.Type == ToolType.DecreaseWaterDepth).ShouldBe(1);
     }
 
     [Fact]
@@ -976,6 +980,322 @@ public class EditMapViewModelTests
 
         _sut.HexViewModel.ShouldBeNull();
         _sut.IsHexInfoVisible.ShouldBeFalse();
+    }
+
+    // --- Level/Depth Tool Mode Tests ---
+    [Fact]
+    public void SelectingRaiseLevelTool_ShouldSetActiveEditModeToRaiseLevel()
+    {
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var tool = _sut.AvailableTools.First(t => t.Type == ToolType.RaiseLevel);
+
+        _sut.SelectedTool = tool;
+
+        _sut.ActiveEditMode.ShouldBe(ToolType.RaiseLevel);
+    }
+
+    [Fact]
+    public void SelectingLowerLevelTool_ShouldSetActiveEditModeToLowerLevel()
+    {
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var tool = _sut.AvailableTools.First(t => t.Type == ToolType.LowerLevel);
+
+        _sut.SelectedTool = tool;
+
+        _sut.ActiveEditMode.ShouldBe(ToolType.LowerLevel);
+    }
+
+    [Fact]
+    public void SelectingIncreaseWaterDepthTool_ShouldSetActiveEditModeToIncreaseWaterDepth()
+    {
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var tool = _sut.AvailableTools.First(t => t.Type == ToolType.IncreaseWaterDepth);
+
+        _sut.SelectedTool = tool;
+
+        _sut.ActiveEditMode.ShouldBe(ToolType.IncreaseWaterDepth);
+    }
+
+    [Fact]
+    public void SelectingDecreaseWaterDepthTool_ShouldSetActiveEditModeToDecreaseWaterDepth()
+    {
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var tool = _sut.AvailableTools.First(t => t.Type == ToolType.DecreaseWaterDepth);
+
+        _sut.SelectedTool = tool;
+
+        _sut.ActiveEditMode.ShouldBe(ToolType.DecreaseWaterDepth);
+    }
+
+    [Fact]
+    public void HandleHexSelection_RaiseLevelTool_ShouldIncreaseLevel()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1), level: 2);
+        hex.AddTerrain(new ClearTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.RaiseLevel);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.Level.ShouldBe(3);
+        result.Coordinates.ShouldBe(new HexCoordinates(1, 1));
+        var mapHex = map.GetHex(new HexCoordinates(1, 1));
+        mapHex.ShouldNotBeNull();
+        mapHex.Level.ShouldBe(3);
+    }
+
+    [Fact]
+    public void HandleHexSelection_RaiseLevelTool_ShouldPreserveTerrains()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1), level: 0);
+        hex.AddTerrain(new LightWoodsTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.RaiseLevel);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.GetTerrains().ShouldContain(t => t is LightWoodsTerrain);
+    }
+
+    [Fact]
+    public void HandleHexSelection_LowerLevelTool_ShouldDecreaseLevel()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1), level: 2);
+        hex.AddTerrain(new ClearTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.LowerLevel);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.Level.ShouldBe(1);
+        var mapHex = map.GetHex(new HexCoordinates(1, 1));
+        mapHex.ShouldNotBeNull();
+        mapHex.Level.ShouldBe(1);
+    }
+
+    [Fact]
+    public void HandleHexSelection_LowerLevelTool_WhenLevelIsZero_ShouldCreateNegativeLevel()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1), level: 0);
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.LowerLevel);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.Level.ShouldBe(-1);
+    }
+
+    [Fact]
+    public void HandleHexSelection_IncreaseWaterDepthTool_ShouldIncreaseDepth()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.IncreaseWaterDepth);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        var waterTerrain = result.GetTerrain(MakaMekTerrains.Water) as WaterTerrain;
+        waterTerrain.ShouldNotBeNull();
+        waterTerrain.Height.ShouldBe(-1);
+    }
+
+    [Fact]
+    public void HandleHexSelection_DecreaseWaterDepthTool_ShouldDecreaseDepth()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(-1));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.DecreaseWaterDepth);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        var waterTerrain = result.GetTerrain(MakaMekTerrains.Water) as WaterTerrain;
+        waterTerrain.ShouldNotBeNull();
+        waterTerrain.Height.ShouldBe(0);
+    }
+
+    [Fact]
+    public void HandleHexSelection_IncreaseWaterDepthTool_ShouldPreserveNonWaterTerrains()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        hex.AddTerrain(new LightWoodsTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.IncreaseWaterDepth);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.GetTerrains().ShouldContain(t => t is LightWoodsTerrain);
+        result.GetTerrains().ShouldContain(t => t is WaterTerrain);
+    }
+
+    [Fact]
+    public void HandleHexSelection_IncreaseWaterDepthTool_WhenHexHasNoWater_ShouldNotModifyHex()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new ClearTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.IncreaseWaterDepth);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Water).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HandleHexSelection_DecreaseWaterDepthTool_WhenHexHasNoWater_ShouldNotModifyHex()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new ClearTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.DecreaseWaterDepth);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Water).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HandleHexSelection_IncreaseWaterDepthTool_WhenDepthAlreadyNegative_ShouldDecreaseFurther()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(-2));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.IncreaseWaterDepth);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        var waterTerrain = result.GetTerrain(MakaMekTerrains.Water) as WaterTerrain;
+        waterTerrain.ShouldNotBeNull();
+        waterTerrain.Height.ShouldBe(-3);
+    }
+
+    [Fact]
+    public void HandleHexSelection_DecreaseWaterDepthTool_WhenDepthIsZero_ShouldNotBecomePositive()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.DecreaseWaterDepth);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        var waterTerrain = result.GetTerrain(MakaMekTerrains.Water) as WaterTerrain;
+        waterTerrain.ShouldNotBeNull();
+        waterTerrain.Height.ShouldBe(0);
+    }
+
+    [Fact]
+    public void HandleHexSelection_LevelTool_ShouldNotOpenHexInfo()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1), level: 2);
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.RaiseLevel);
+
+        _sut.HandleHexSelection(hex);
+
+        _sut.IsHexInfoVisible.ShouldBeFalse();
+        _sut.HexViewModel.ShouldBeNull();
+    }
+
+    [Fact]
+    public void HandleHexSelection_WaterDepthTool_ShouldNotOpenHexInfo()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.IncreaseWaterDepth);
+
+        _sut.HandleHexSelection(hex);
+
+        _sut.IsHexInfoVisible.ShouldBeFalse();
+        _sut.HexViewModel.ShouldBeNull();
+    }
+
+    [Fact]
+    public void HandleHexSelection_RaiseLevelTool_WhenMapIsNull_ShouldReturnNull()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        _sut.SelectedTool = new ToolItem("Raise", ToolType.RaiseLevel);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldBeNull();
+    }
+
+    [Fact]
+    public void HandleHexSelection_LowerLevelTool_WhenMapIsNull_ShouldReturnNull()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        _sut.SelectedTool = new ToolItem("Lower", ToolType.LowerLevel);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldBeNull();
+    }
+
+    [Fact]
+    public void HandleHexSelection_IncreaseWaterDepthTool_WhenMapIsNull_ShouldReturnNull()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        _sut.SelectedTool = new ToolItem("IncreaseDepth", ToolType.IncreaseWaterDepth);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldBeNull();
+    }
+
+    [Fact]
+    public void HandleHexSelection_DecreaseWaterDepthTool_WhenMapIsNull_ShouldReturnNull()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        _sut.SelectedTool = new ToolItem("DecreaseDepth", ToolType.DecreaseWaterDepth);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldBeNull();
     }
 
     [Fact]
