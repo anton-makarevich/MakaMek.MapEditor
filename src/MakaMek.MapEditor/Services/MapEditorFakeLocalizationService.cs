@@ -33,7 +33,7 @@ public class MapEditorFakeLocalizationService : FakeLocalizationService
         Strings["EditMap_ExportPdf"] = "Export PDF";
         Strings["EditMap_ExportPdfDialogTitle"] = "Export Map as PDF";
         Strings["EditMap_PdfFilesFilter"] = "PDF Files";
-        Strings["EditMap_Cursor"] = "Cursor";
+        Strings["EditMap_Cursor"] = "Select";
         Strings["EditMap_Elevation"] = "Elevation:";
         Strings["EditMap_Terrains"] = "Terrains:";
         Strings["EditMap_WaterDepth"] = "Water Depth:";
