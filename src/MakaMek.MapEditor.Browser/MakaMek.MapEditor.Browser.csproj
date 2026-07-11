@@ -23,8 +23,8 @@
     <TrimmerRootDescriptor Include="TrimmerRoots.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Browser" Version="12.0.5" />
-    <PackageReference Include="Sanet.MakaMek.Services.Avalonia.Browser" Version="0.60.7-preview" />
+    <PackageReference Include="Avalonia.Browser" Version="12.1.0" />
+    <PackageReference Include="Sanet.MakaMek.Services.Avalonia.Browser" Version="0.61.7-preview" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MakaMek.MapEditor\MakaMek.MapEditor.csproj" />
