@@ -2,7 +2,7 @@ using System.ComponentModel;
 using AsyncAwaitBestPractices;
 using Avalonia;
 using Avalonia.Interactivity;
-using Sanet.MakaMek.Avalonia.Controls;
+using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MakaMek.MapEditor.Models;
@@ -13,8 +13,8 @@ namespace Sanet.MakaMek.MapEditor.Views;
 
 public partial class EditMapView : BaseView<EditMapViewModel>
 {
-    private readonly Dictionary<HexCoordinates, HexControl> _hexControlsByCoords = new();
-    
+    private readonly Dictionary<HexCoordinates, HexRenderData> _hexRenderData = new();
+
     public EditMapView()
     {
         InitializeComponent();
@@ -29,7 +29,6 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             ViewModel.HexUpdated += OnHexUpdated;
             SettingsPanelControl.ExportPdfClicked += OnExportPdfClicked;
             RenderMap();
-
         }
     }
 
@@ -49,10 +48,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             if (ViewModel?.HexConfiguration != null)
             {
                 var config = ViewModel.HexConfiguration.ToConfiguration();
-                foreach (var hexControl in MapCanvas.Children.OfType<HexControl>())
-                {
-                    hexControl.UpdateRenderConfiguration(config);
-                }
+                MapCanvas.UpdateHexConfiguration(config);
             }
         }
     }
@@ -65,30 +61,32 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         return bitmaskService.ComputeCanonicalBitmask(ViewModel.Map, hex.Coordinates, MakaMekTerrains.Water);
     }
 
-    private void ReplaceHexControl(HexCoordinates coords, CanonicalBitmaskResult? waterBitmask)
+    private HexRenderData BuildHexRenderData(Hex hex)
     {
-        if (ViewModel?.Map == null) return;
-        var hex = ViewModel.Map.GetHex(coords);
-        if (hex == null) return;
+        var edges = ViewModel?.Map?.GetHexEdges(hex.Coordinates) ?? [];
+        var waterBitmask = ComputeWaterBitmask(hex);
+        return new HexRenderData(hex, edges, waterBitmask, null);
+    }
 
-        var edges = ViewModel.Map.GetHexEdges(coords);
-        var newControl = new HexControl(hex,
+    private void PushHexData()
+    {
+        if (ViewModel?.Map == null 
+            || ViewModel.Scheduler == null) return;
+
+        var config = ViewModel.HexConfiguration.ToConfiguration();
+        MapCanvas.SetHexData(
+            _hexRenderData.Values,
+            config,
             ViewModel.Logger,
             ViewModel.AssetService,
             ViewModel.LocalizationService,
-            edges, ViewModel.HexConfiguration.ToConfiguration(), waterBitmask, null, ViewModel.Scheduler);
-
-        if (_hexControlsByCoords.TryGetValue(coords, out var oldControl))
-            MapCanvas.Children.Remove(oldControl);
-
-        MapCanvas.Children.Add(newControl);
-        _hexControlsByCoords[coords] = newControl;
+            ViewModel.Scheduler);
     }
 
     private void RenderMap()
     {
         MapCanvas.Children.Clear();
-        _hexControlsByCoords.Clear();
+        _hexRenderData.Clear();
         if (ViewModel?.Map == null) return;
 
         double maxX = 0;
@@ -96,25 +94,15 @@ public partial class EditMapView : BaseView<EditMapViewModel>
 
         foreach (var hex in ViewModel.Map.GetHexes())
         {
-            ReplaceHexControl(hex.Coordinates, ComputeWaterBitmask(hex));
+            _hexRenderData[hex.Coordinates] = BuildHexRenderData(hex);
             if (hex.Coordinates.H > maxX) maxX = hex.Coordinates.H;
             if (hex.Coordinates.V > maxY) maxY = hex.Coordinates.V;
         }
-        
+
         MapCanvas.Width = maxX + HexCoordinatesPixelExtensions.HexWidth * 1.5;
         MapCanvas.Height = maxY + HexCoordinatesPixelExtensions.HexHeight * 1.5;
-    }
 
-    private void RefreshWaterBitmask(HexCoordinates coords)
-    {
-        var hex = ViewModel?.Map?.GetHex(coords);
-        if (hex == null || !_hexControlsByCoords.TryGetValue(coords, out var oldControl)) return;
-
-        var newBitmask = ComputeWaterBitmask(hex);
-        if (EqualityComparer<CanonicalBitmaskResult?>.Default.Equals(oldControl.WaterBitmask, newBitmask))
-            return;
-
-        ReplaceHexControl(coords, newBitmask);
+        PushHexData();
     }
 
     private void OnExportPdfClicked(object? sender, RoutedEventArgs e)
@@ -132,30 +120,39 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         if (ViewModel?.Map == null) return;
         var coords = hex.Coordinates;
 
-        ReplaceHexControl(coords, ComputeWaterBitmask(hex));
+        _hexRenderData[coords] = BuildHexRenderData(hex);
 
         foreach (var neighborCoords in coords.GetAllNeighbours())
         {
-            if (ViewModel.Map.IsOnMap(neighborCoords))
-                RefreshWaterBitmask(neighborCoords);
+            if (!ViewModel.Map.IsOnMap(neighborCoords)) continue;
+            var neighborHex = ViewModel.Map.GetHex(neighborCoords);
+            if (neighborHex == null) continue;
+
+            var newBitmask = ComputeWaterBitmask(neighborHex);
+            var existing = _hexRenderData[neighborCoords];
+            if (EqualityComparer<CanonicalBitmaskResult?>.Default.Equals(existing.WaterBitmask, newBitmask))
+                continue;
+
+            _hexRenderData[neighborCoords] = BuildHexRenderData(neighborHex);
         }
 
         foreach (var (neighborCoords, neighborEdges) in ViewModel.GetEdgeUpdatesForNeighbors(coords))
         {
-            if (_hexControlsByCoords.TryGetValue(neighborCoords, out var neighborControl))
-                neighborControl.UpdateEdges(neighborEdges);
+            if (!_hexRenderData.TryGetValue(neighborCoords, out var neighborData)) continue;
+            _hexRenderData[neighborCoords] = neighborData with { Edges = neighborEdges };
         }
+
+        PushHexData();
     }
 
     private void MapCanvas_OnContentClicked(object? sender, Point clickedPosition)
     {
-        if (ViewModel == null) return;
+        if (ViewModel?.Map == null) return;
 
-        var selectedHexControl = MapCanvas.Children
-            .OfType<HexControl>()
-            .FirstOrDefault(h => h.IsPointInside(clickedPosition));
+        var coords = HexCoordinatesPixelExtensions.FromPixel(clickedPosition.X, clickedPosition.Y);
+        var hex = ViewModel.Map.GetHex(coords);
 
-        if (selectedHexControl == null)
+        if (hex == null)
         {
             if (ViewModel.ActiveEditMode == ToolType.Cursor)
                 ViewModel.IsHexInfoVisible = false;
@@ -164,14 +161,14 @@ public partial class EditMapView : BaseView<EditMapViewModel>
 
         if (ViewModel.ActiveEditMode == ToolType.Cursor)
         {
-            ViewModel.HandleHexSelection(selectedHexControl.Hex);
+            ViewModel.HandleHexSelection(hex);
             var pointInView = MapCanvas.TranslatePoint(clickedPosition, this);
             if (pointInView.HasValue)
                 HexInfoOverlay.Margin = new Thickness(pointInView.Value.X + 10, pointInView.Value.Y + 10, 0, 0);
             return;
         }
 
-        var hex = ViewModel.HandleHexSelection(selectedHexControl.Hex) ?? selectedHexControl.Hex;
-        RefreshHex(hex);
+        var result = ViewModel.HandleHexSelection(hex) ?? hex;
+        RefreshHex(result);
     }
 }
