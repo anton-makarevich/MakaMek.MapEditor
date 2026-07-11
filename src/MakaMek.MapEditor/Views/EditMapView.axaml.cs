@@ -130,7 +130,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             if (neighborHex == null) continue;
 
             var newBitmask = ComputeWaterBitmask(neighborHex);
-            var existing = _hexRenderData[neighborCoords];
+            if (!_hexRenderData.TryGetValue(neighborCoords, out var existing)) continue;
             if (EqualityComparer<CanonicalBitmaskResult?>.Default.Equals(existing.WaterBitmask, newBitmask))
                 continue;
 
