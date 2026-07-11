@@ -73,6 +73,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         if (ViewModel?.Map == null 
             || ViewModel.Scheduler == null) return;
 
+        MapCanvas.Children.Clear();
         var config = ViewModel.HexConfiguration.ToConfiguration();
         MapCanvas.SetHexData(
             _hexRenderData.Values,
