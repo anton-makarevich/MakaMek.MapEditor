@@ -334,6 +334,15 @@ public class EditMapViewModel : BaseViewModel
         }
     }
 
+    public Func<Task<(byte[] PngBytes, int WidthPixels, int HeightPixels)>>? CaptureMap { get; set; }
+
+    public async Task ExportMapAsPdf()
+    {
+        if (CaptureMap == null) return;
+        var (pngBytes, width, height) = await CaptureMap();
+        await ExportMapAsPdf(pngBytes, width, height);
+    }
+
     public IAsyncCommand ExportMapCommand => field ??= new AsyncCommand(async () =>
     {
         if (Map == null) return;
