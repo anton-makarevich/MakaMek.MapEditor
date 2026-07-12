@@ -336,6 +336,90 @@ public class EditMapViewModelTests
             Arg.Any<Func<object, Exception?, string>>());
     }
 
+    // --- ExportMapAsPdf() parameterless overload tests ---
+    [Fact]
+    public async Task ExportMapAsPdf_WhenCaptureMapIsNull_ShouldNotCallPdfExportService()
+    {
+        _sut.CaptureMap = null;
+
+        await _sut.ExportMapAsPdf();
+
+        await _pdfExportService.DidNotReceive().GeneratePdfFromPngAsync(
+            Arg.Any<byte[]>(), Arg.Any<int>(), Arg.Any<int>());
+    }
+
+    [Fact]
+    public async Task ExportMapAsPdf_WhenCaptureMapIsNull_ShouldNotCallFileService()
+    {
+        _sut.CaptureMap = null;
+
+        await _sut.ExportMapAsPdf();
+
+        await _fileService.DidNotReceive().SaveBinaryFile(
+            Arg.Any<string>(), Arg.Any<string>(), Arg.Any<byte[]>(),
+            Arg.Any<string>(), Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task ExportMapAsPdf_WithCaptureMap_ShouldCallCaptureMap()
+    {
+        var pngBytes = new byte[] { 1, 2, 3 };
+        var pdfBytes = new byte[] { 4, 5, 6 };
+        _pdfExportService.GeneratePdfFromPngAsync(pngBytes, 800, 600).Returns(pdfBytes);
+        var captureMapCalled = false;
+        _sut.CaptureMap = () =>
+        {
+            captureMapCalled = true;
+            return Task.FromResult((pngBytes, 800, 600));
+        };
+
+        await _sut.ExportMapAsPdf();
+
+        captureMapCalled.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ExportMapAsPdf_WithCaptureMap_ShouldPassCorrectParametersToPdfExport()
+    {
+        var pngBytes = new byte[] { 1, 2, 3 };
+        var pdfBytes = new byte[] { 4, 5, 6 };
+        _pdfExportService.GeneratePdfFromPngAsync(pngBytes, 1024, 768).Returns(pdfBytes);
+        _sut.CaptureMap = () => Task.FromResult((pngBytes, 1024, 768));
+
+        await _sut.ExportMapAsPdf();
+
+        await _pdfExportService.Received(1).GeneratePdfFromPngAsync(pngBytes, 1024, 768);
+    }
+
+    [Fact]
+    public async Task ExportMapAsPdf_WithCaptureMap_ShouldSaveGeneratedPdf()
+    {
+        var pngBytes = new byte[] { 1, 2, 3 };
+        var pdfBytes = new byte[] { 4, 5, 6 };
+        _pdfExportService.GeneratePdfFromPngAsync(pngBytes, 800, 600).Returns(pdfBytes);
+        _sut.CaptureMap = () => Task.FromResult((pngBytes, 800, 600));
+
+        await _sut.ExportMapAsPdf();
+
+        await _fileService.Received(1).SaveBinaryFile(
+            _localizationService.GetString("EditMap_ExportPdfDialogTitle"),
+            "map.pdf",
+            pdfBytes,
+            "pdf",
+            _localizationService.GetString("EditMap_PdfFilesFilter"));
+    }
+
+    [Fact]
+    public async Task ExportMapAsPdf_WhenCaptureMapThrows_ShouldPropagateException()
+    {
+        var exception = new InvalidOperationException("Capture failed");
+        _sut.CaptureMap = () => throw exception;
+
+        var actual = await Assert.ThrowsAsync<InvalidOperationException>(() => _sut.ExportMapAsPdf());
+
+        actual.ShouldBe(exception);
+    }
+
     [Fact]
     public void AvailableTerrains_ShouldBeObservableCollection()
     {
@@ -1387,7 +1471,6 @@ public class EditMapViewModelTests
     public async Task CloseEditMapCommand_WhenConfirmed_ShouldNavigateToNewMap()
     {
         var yesAction = new UiAction { Title = "Dialog_Yes" };
-        var noAction = new UiAction { Title = "Dialog_No" };
         _navigationService.AskForActionAsync(
             Arg.Any<string>(),
             Arg.Any<string>(),
@@ -1403,7 +1486,6 @@ public class EditMapViewModelTests
     [Fact]
     public async Task CloseEditMapCommand_WhenDeclined_ShouldNotNavigateBack()
     {
-        var yesAction = new UiAction { Title = "Dialog_Yes" };
         var noAction = new UiAction { Title = "Dialog_No" };
         _navigationService.AskForActionAsync(
             Arg.Any<string>(),
