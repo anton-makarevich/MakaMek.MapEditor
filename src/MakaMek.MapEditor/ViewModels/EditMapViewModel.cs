@@ -334,6 +334,22 @@ public class EditMapViewModel : BaseViewModel
         }
     }
 
+    public Func<Task<(byte[] PngBytes, int WidthPixels, int HeightPixels)>>? CaptureMap { get; set; }
+
+    public async Task ExportMapAsPdf()
+    {
+        if (CaptureMap == null) return;
+        try
+        {
+            var (pngBytes, width, height) = await CaptureMap();
+            await ExportMapAsPdf(pngBytes, width, height);
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "Failed to capture and export map as PDF");
+        }
+    }
+
     public IAsyncCommand ExportMapCommand => field ??= new AsyncCommand(async () =>
     {
         if (Map == null) return;

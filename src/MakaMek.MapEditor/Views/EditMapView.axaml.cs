@@ -23,13 +23,12 @@ public partial class EditMapView : BaseView<EditMapViewModel>
     protected override void OnViewModelSet()
     {
         base.OnViewModelSet();
-        if (ViewModel != null)
-        {
-            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-            ViewModel.HexUpdated += OnHexUpdated;
-            SettingsPanelControl.ExportPdfClicked += OnExportPdfClicked;
-            RenderMap();
-        }
+        if (ViewModel == null) return;
+        ViewModel.CaptureMap = CaptureViewMap;
+        ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+        ViewModel.HexUpdated += OnHexUpdated;
+        SettingsPanelControl.ExportPdfClicked += OnExportPdfClicked;
+        RenderMap();
     }
 
     private void OnHexUpdated(Hex hex)
@@ -106,14 +105,17 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         PushHexData();
     }
 
+    private async Task<(byte[] PngBytes, int WidthPixels, int HeightPixels)> CaptureViewMap()
+    {
+        var pngBytes = await MapCanvas.ToPng();
+        return (pngBytes, (int)MapCanvas.Width, (int)MapCanvas.Height);
+    }
+
     private void OnExportPdfClicked(object? sender, RoutedEventArgs e)
     {
         if (double.IsNaN(MapCanvas.Width) || double.IsNaN(MapCanvas.Height))
             return;
-        var width = (int)MapCanvas.Width;
-        var height = (int)MapCanvas.Height;
-        var pngBytes = MapCanvas.ToPng();
-        ViewModel?.ExportMapAsPdf(pngBytes, width, height).SafeFireAndForget();
+        ViewModel?.ExportMapAsPdf().SafeFireAndForget();
     }
 
     private void RefreshHex(Hex hex)
@@ -121,7 +123,10 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         if (ViewModel?.Map == null) return;
         var coords = hex.Coordinates;
 
+        var changedCoords = new HashSet<HexCoordinates>();
+
         _hexRenderData[coords] = BuildHexRenderData(hex);
+        changedCoords.Add(coords);
 
         foreach (var neighborCoords in coords.GetAllNeighbours())
         {
@@ -135,15 +140,17 @@ public partial class EditMapView : BaseView<EditMapViewModel>
                 continue;
 
             _hexRenderData[neighborCoords] = BuildHexRenderData(neighborHex);
+            changedCoords.Add(neighborCoords);
         }
 
         foreach (var (neighborCoords, neighborEdges) in ViewModel.GetEdgeUpdatesForNeighbors(coords))
         {
             if (!_hexRenderData.TryGetValue(neighborCoords, out var neighborData)) continue;
             _hexRenderData[neighborCoords] = neighborData with { Edges = neighborEdges };
+            changedCoords.Add(neighborCoords);
         }
 
-        PushHexData();
+        MapCanvas.UpdateHexEntries(changedCoords.Select(c => _hexRenderData[c]));
     }
 
     private void MapCanvas_OnContentClicked(object? sender, Point clickedPosition)
