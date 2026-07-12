@@ -150,8 +150,6 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             changedCoords.Add(neighborCoords);
         }
 
-        if (changedCoords.Count == 0) return;
-
         MapCanvas.UpdateHexEntries(changedCoords.Select(c => _hexRenderData[c]));
     }
 

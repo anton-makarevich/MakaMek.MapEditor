@@ -410,14 +410,19 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public async Task ExportMapAsPdf_WhenCaptureMapThrows_ShouldPropagateException()
+    public async Task ExportMapAsPdf_WhenCaptureMapThrows_ShouldLogError()
     {
         var exception = new InvalidOperationException("Capture failed");
         _sut.CaptureMap = () => throw exception;
 
-        var actual = await Assert.ThrowsAsync<InvalidOperationException>(() => _sut.ExportMapAsPdf());
+        await _sut.ExportMapAsPdf();
 
-        actual.ShouldBe(exception);
+        _logger.Received(1).Log(
+            LogLevel.Error,
+            Arg.Any<EventId>(),
+            Arg.Is<object>(o => o.ToString()!.Contains("Failed to capture and export map as PDF")),
+            exception,
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
