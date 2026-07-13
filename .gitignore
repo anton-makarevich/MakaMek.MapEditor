@@ -68,6 +68,7 @@ publish/
 .serena/memories
 opencode.json
 .agents/skills
+.claude/skills
 agent/skills
 data/skills
 skills-lock.json
