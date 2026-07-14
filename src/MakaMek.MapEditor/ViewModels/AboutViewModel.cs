@@ -30,8 +30,8 @@ public class AboutViewModel : BaseViewModel
             var assembly = Assembly.GetExecutingAssembly();
             var infoVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
             if (!string.IsNullOrEmpty(infoVersion))
-                return infoVersion;
-            return assembly.GetName().Version?.ToString() ?? "0.0.0";
+                return $"v{infoVersion}";
+            return assembly.GetName().Version?.ToString() ?? "NA";
         }
     }
 
