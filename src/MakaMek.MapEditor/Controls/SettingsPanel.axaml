@@ -41,6 +41,7 @@
                     </StackPanel>
                     <Button Content="{extensions:Localize 'EditMap_ExportMap'}" Command="{Binding ExportMapCommand}" Classes="secondary" HorizontalAlignment="Stretch"/>
                     <Button x:Name="ExportPdfButton" Content="{extensions:Localize 'EditMap_ExportPdf'}" Classes="secondary" HorizontalAlignment="Stretch"/>
+                    <Button Content="{extensions:Localize 'EditMap_AboutButton'}" Command="{Binding OpenAboutCommand}" Classes="secondary" HorizontalAlignment="Stretch"/>
                     <Button Content="{extensions:Localize 'EditMap_CloseEditMap'}" Command="{Binding CloseEditMapCommand}" Classes="primary" HorizontalAlignment="Stretch"/>
                 </StackPanel>
             </Grid>

@@ -404,4 +404,9 @@ public class EditMapViewModel : BaseViewModel
         _currentHex = null;
         return Task.CompletedTask;
     });
+
+    public IAsyncCommand OpenAboutCommand => field ??= new AsyncCommand(async () =>
+    {
+        await NavigationService.NavigateToViewModelAsync<AboutViewModel>();
+    });
 }

@@ -96,4 +96,12 @@ public class NewMapViewModelTests
     {
         Should.NotThrow(() => _sut.DetachHandlers());
     }
+
+    [Fact]
+    public async Task OpenAboutCommand_ShouldNavigateToAboutViewModel()
+    {
+        await _sut.OpenAboutCommand.ExecuteAsync();
+
+        await _navigationService.Received(1).NavigateToViewModelAsync<Sanet.MakaMek.MapEditor.ViewModels.AboutViewModel>();
+    }
 }

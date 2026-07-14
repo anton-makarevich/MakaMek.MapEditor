@@ -75,5 +75,6 @@ public partial class App : Application
         navigationService.RegisterViews(typeof(MainMenuView), typeof(MainMenuViewModel));
         navigationService.RegisterViews(typeof(NewMapView), typeof(NewMapViewModel));
         navigationService.RegisterViews(typeof(EditMapView), typeof(EditMapViewModel));
+        navigationService.RegisterViews(typeof(AboutView), typeof(AboutViewModel));
     }
 }

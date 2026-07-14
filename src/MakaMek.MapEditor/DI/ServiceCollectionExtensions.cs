@@ -25,6 +25,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ILocalizationService, MapEditorFakeLocalizationService>();
         services.AddSingleton<IMapPreviewRenderer, SkiaMapPreviewRenderer>();
         services.AddSingleton<IDispatcherService, AvaloniaDispatcherService>();
+        services.AddSingleton<IExternalNavigationService, AvaloniaExternalNavigationService>();
 
         services.AddSingleton<IMapResourceProvider>(sp =>
             new EmbeddedMapResourceProvider(
@@ -53,5 +54,6 @@ public static class ServiceCollectionExtensions
         services.AddTransient<MainMenuViewModel>();
         services.AddTransient<NewMapViewModel>();
         services.AddTransient<EditMapViewModel>();
+        services.AddTransient<AboutViewModel>();
     }
 }
