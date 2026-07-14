@@ -11,26 +11,22 @@
              x:CompileBindings="True"
              x:DataType="viewModels:NewMapViewModel">
     <Grid RowDefinitions="*,Auto" Margin="20">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
         <ScrollViewer Grid.Row="0"
-                      ScrollViewer.HorizontalScrollBarVisibility="{ff:OnFormFactor Desktop='Disabled', Mobile='Auto'}"
-                      ScrollViewer.VerticalScrollBarVisibility="{ff:OnFormFactor Desktop='Auto', Mobile='Disabled'}">
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto">
             <fragments:MapConfigFragment DataContext="{Binding MapConfig}" />
         </ScrollViewer>
 
-        <Button Grid.Row="0" Grid.Column="1"
-                Content="{extensions:Localize 'NewMap_AboutButton'}"
-                Command="{Binding OpenAboutCommand}"
-                Classes="secondary"
-                VerticalAlignment="Top"
-                Margin="0,0,0,10"/>
-        
-        <Button Grid.Row="1" Grid.ColumnSpan="2" Classes="primary main-menu" Content="{extensions:Localize 'NewMap_CreateMap'}" 
-                Command="{Binding EditMapCommand}" 
-                HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
-                Margin="0,20,0,0"/>
+        <StackPanel Grid.Row="1" Classes="verticalSpaced">
+            <Button Classes="primary main-menu" Content="{extensions:Localize 'NewMap_CreateMap'}"
+                                HorizontalAlignment="Center"
+                                Command="{Binding EditMapCommand}"/>
+            <Button Content="{extensions:Localize 'NewMap_AboutButton'}"
+                    Command="{Binding OpenAboutCommand}"
+                    HorizontalAlignment="Center"
+                    IsVisible="False"
+                    Classes="secondary"/>
+            
+        </StackPanel>
     </Grid>
 </UserControl>
