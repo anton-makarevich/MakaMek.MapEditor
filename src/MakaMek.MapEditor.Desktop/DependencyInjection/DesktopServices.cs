@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Core.Services;
 using Sanet.MakaMek.Services;
+using Sanet.MVVM.ExternalNavigation.Desktop.Extensions;
 
 namespace Sanet.MakaMek.MapEditor.Desktop.DependencyInjection;
 
@@ -24,5 +25,6 @@ public static class DesktopServices
         });
         services.AddSingleton<IFileCachingService, FileSystemCachingService>();
         services.AddSingleton<IScheduler>(AvaloniaScheduler.Instance);
+        services.AddDesktopExternalNavigation();
     }
 }

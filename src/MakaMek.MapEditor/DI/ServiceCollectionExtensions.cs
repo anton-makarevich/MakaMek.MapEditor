@@ -25,8 +25,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ILocalizationService, MapEditorFakeLocalizationService>();
         services.AddSingleton<IMapPreviewRenderer, SkiaMapPreviewRenderer>();
         services.AddSingleton<IDispatcherService, AvaloniaDispatcherService>();
-        services.AddSingleton<IExternalNavigationService, AvaloniaExternalNavigationService>();
-
         services.AddSingleton<IMapResourceProvider>(sp =>
             new EmbeddedMapResourceProvider(
                 sp.GetRequiredService<ILogger<EmbeddedMapResourceProvider>>(),
