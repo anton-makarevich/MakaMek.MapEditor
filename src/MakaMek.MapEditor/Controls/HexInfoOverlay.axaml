@@ -71,6 +71,42 @@
                     ToolTip.Tip="{extensions:Localize 'EditMap_IncreaseWaterDepth'}"
                     Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
         </Grid>
+        <StackPanel IsVisible="{Binding HexViewModel.HasRoadBridge}" Spacing="4">
+            <Grid ColumnDefinitions="*,Auto,Auto"
+                  IsVisible="{Binding HexViewModel.IsBridge}">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <TextBlock Text="{extensions:Localize 'EditMap_BridgeHeight'}"
+                               Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
+                    <TextBlock Text="{Binding HexViewModel.BridgeHeight}"
+                               Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
+                </StackPanel>
+                <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
+                        Command="{Binding RaiseBridgeLevelCommand}"
+                        ToolTip.Tip="{extensions:Localize 'EditMap_RaiseBridge'}"
+                        Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
+                <Button Grid.Column="2" Content="▼" FontSize="10" Padding="4,0"
+                        Command="{Binding LowerBridgeLevelCommand}"
+                        ToolTip.Tip="{extensions:Localize 'EditMap_LowerBridge'}"
+                        Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto,Auto"
+                  IsVisible="{Binding HexViewModel.IsBridge}">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <TextBlock Text="{extensions:Localize 'EditMap_ConstructionFactor'}"
+                               Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
+                    <TextBlock Text="{Binding HexViewModel.ConstructionFactor}"
+                               Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
+                </StackPanel>
+                <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
+                        Command="{Binding IncreaseConstructionFactorCommand}"
+                        ToolTip.Tip="{extensions:Localize 'EditMap_IncreaseConstructionFactor'}"
+                        Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
+                <Button Grid.Column="2" Content="▼" FontSize="10" Padding="4,0"
+                        Command="{Binding DecreaseConstructionFactorCommand}"
+                        ToolTip.Tip="{extensions:Localize 'EditMap_DecreaseConstructionFactor'}"
+                        Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
+            </Grid>
+        </StackPanel>
     </StackPanel>
     </Grid>
 </UserControl>

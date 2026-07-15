@@ -186,6 +186,136 @@ public class EditMapViewModel : BaseViewModel
         return Task.CompletedTask;
     });
 
+    public IAsyncCommand RaiseBridgeLevelCommand => field ??= new AsyncCommand(() =>
+    {
+        if (_currentHex == null) return Task.CompletedTask;
+        if (Map == null) return Task.CompletedTask;
+
+        var bridge = _currentHex.GetTerrain(MakaMekTerrains.Bridge) as BridgeTerrain;
+        var road = _currentHex.GetTerrain(MakaMekTerrains.Road);
+
+        if (bridge == null && road == null) return Task.CompletedTask;
+
+        Hex updatedHex;
+        if (road != null)
+        {
+            updatedHex = new Hex(_currentHex.Coordinates, _currentHex.Level);
+            foreach (var terrain in _currentHex.GetTerrains())
+            {
+                if (terrain is RoadTerrain) continue;
+                updatedHex.AddTerrain(terrain);
+            }
+            updatedHex.AddTerrain(new BridgeTerrain(1, DefaultConstructionFactor));
+        }
+        else
+        {
+            updatedHex = new Hex(_currentHex.Coordinates, _currentHex.Level);
+            foreach (var terrain in _currentHex.GetTerrains())
+            {
+                if (terrain is BridgeTerrain)
+                    updatedHex.AddTerrain(new BridgeTerrain(bridge!.Height + 1, bridge.ConstructionFactor));
+                else
+                    updatedHex.AddTerrain(terrain);
+            }
+        }
+
+        Map.AddHex(updatedHex);
+        _currentHex = updatedHex;
+        HexViewModel?.UpdateFromHex(updatedHex);
+        HexUpdated?.Invoke(updatedHex);
+        return Task.CompletedTask;
+    });
+
+    public IAsyncCommand LowerBridgeLevelCommand => field ??= new AsyncCommand(() =>
+    {
+        if (_currentHex == null) return Task.CompletedTask;
+        if (Map == null) return Task.CompletedTask;
+
+        var bridge = _currentHex.GetTerrain(MakaMekTerrains.Bridge) as BridgeTerrain;
+        if (bridge == null) return Task.CompletedTask;
+
+        var newHeight = bridge.Height - 1;
+
+        Hex updatedHex;
+        if (newHeight <= 0 && !_currentHex.HasTerrain(MakaMekTerrains.Water))
+        {
+            updatedHex = new Hex(_currentHex.Coordinates, _currentHex.Level);
+            foreach (var terrain in _currentHex.GetTerrains())
+            {
+                if (terrain is BridgeTerrain) continue;
+                updatedHex.AddTerrain(terrain);
+            }
+            updatedHex.AddTerrain(new RoadTerrain());
+        }
+        else
+        {
+            updatedHex = new Hex(_currentHex.Coordinates, _currentHex.Level);
+            foreach (var terrain in _currentHex.GetTerrains())
+            {
+                if (terrain is BridgeTerrain)
+                    updatedHex.AddTerrain(new BridgeTerrain(Math.Max(DefaultBridgeHeight, newHeight), bridge.ConstructionFactor));
+                else
+                    updatedHex.AddTerrain(terrain);
+            }
+        }
+
+        Map.AddHex(updatedHex);
+        _currentHex = updatedHex;
+        HexViewModel?.UpdateFromHex(updatedHex);
+        HexUpdated?.Invoke(updatedHex);
+        return Task.CompletedTask;
+    });
+
+    public IAsyncCommand IncreaseConstructionFactorCommand => field ??= new AsyncCommand(() =>
+    {
+        if (_currentHex == null) return Task.CompletedTask;
+        if (Map == null) return Task.CompletedTask;
+
+        var bridge = _currentHex.GetTerrain(MakaMekTerrains.Bridge) as BridgeTerrain;
+        if (bridge == null) return Task.CompletedTask;
+
+        var newCf = Math.Min(MaxConstructionFactor, bridge.ConstructionFactor + ConstructionFactorStep);
+        var updatedHex = new Hex(_currentHex.Coordinates, _currentHex.Level);
+        foreach (var terrain in _currentHex.GetTerrains())
+        {
+            if (terrain is BridgeTerrain)
+                updatedHex.AddTerrain(new BridgeTerrain(bridge.Height, newCf));
+            else
+                updatedHex.AddTerrain(terrain);
+        }
+
+        Map.AddHex(updatedHex);
+        _currentHex = updatedHex;
+        HexViewModel?.UpdateFromHex(updatedHex);
+        HexUpdated?.Invoke(updatedHex);
+        return Task.CompletedTask;
+    });
+
+    public IAsyncCommand DecreaseConstructionFactorCommand => field ??= new AsyncCommand(() =>
+    {
+        if (_currentHex == null) return Task.CompletedTask;
+        if (Map == null) return Task.CompletedTask;
+
+        var bridge = _currentHex.GetTerrain(MakaMekTerrains.Bridge) as BridgeTerrain;
+        if (bridge == null) return Task.CompletedTask;
+
+        var newCf = Math.Max(MinConstructionFactor, bridge.ConstructionFactor - ConstructionFactorStep);
+        var updatedHex = new Hex(_currentHex.Coordinates, _currentHex.Level);
+        foreach (var terrain in _currentHex.GetTerrains())
+        {
+            if (terrain is BridgeTerrain)
+                updatedHex.AddTerrain(new BridgeTerrain(bridge.Height, newCf));
+            else
+                updatedHex.AddTerrain(terrain);
+        }
+
+        Map.AddHex(updatedHex);
+        _currentHex = updatedHex;
+        HexViewModel?.UpdateFromHex(updatedHex);
+        HexUpdated?.Invoke(updatedHex);
+        return Task.CompletedTask;
+    });
+
     public virtual void Initialize(IBattleMap map)
     {
         Map = map;
@@ -194,13 +324,21 @@ public class EditMapViewModel : BaseViewModel
 
     // IMPORTANT: When adding new Terrain subclasses, manually add them here.
     // This list replaces reflection-based discovery for WASM compatibility.
+    public const int DefaultBridgeHeight = 0;
+    public const int DefaultConstructionFactor = 60;
+    public const int MinConstructionFactor = 0;
+    public const int MaxConstructionFactor = 500;
+    public const int ConstructionFactorStep = 5;
+
     private static readonly IReadOnlyList<Terrain> KnownTerrains =
     [
         new ClearTerrain(),
         new LightWoodsTerrain(),
         new HeavyWoodsTerrain(),
         new RoughTerrain(),
-        new WaterTerrain()
+        new WaterTerrain(),
+        new RoadTerrain(),
+        new BridgeTerrain()
     ];
 
     private const string AssetBaseUri = "avares://Sanet.MakaMek.MapEditor/Assets";
@@ -224,6 +362,8 @@ public class EditMapViewModel : BaseViewModel
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_LowerLevel"), ToolType.LowerLevel));
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_IncreaseWaterDepth"), ToolType.IncreaseWaterDepth));
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_DecreaseWaterDepth"), ToolType.DecreaseWaterDepth));
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_RoadBridge"), ToolType.RoadBridge,
+            imagePath: $"{AssetBaseUri}/terrain/road.png"));
 
         SelectedTerrain = AvailableTerrains.FirstOrDefault();
         SelectedTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.Terrain && t.Terrain == SelectedTerrain);
@@ -263,6 +403,16 @@ public class EditMapViewModel : BaseViewModel
 
             case ToolType.DecreaseWaterDepth:
                 return UpdateHexWithNewWaterDepth(hex, 1);
+
+            case ToolType.RoadBridge:
+                if (Map == null) return null;
+                if (hex.HasTerrain(MakaMekTerrains.Bridge)) return hex;
+                if (hex.HasTerrain(MakaMekTerrains.Road)) return hex;
+                if (hex.HasTerrain(MakaMekTerrains.Water))
+                    hex.AddTerrain(new BridgeTerrain(DefaultBridgeHeight, DefaultConstructionFactor));
+                else
+                    hex.AddTerrain(new RoadTerrain());
+                return hex;
 
             default:
                 return null;
