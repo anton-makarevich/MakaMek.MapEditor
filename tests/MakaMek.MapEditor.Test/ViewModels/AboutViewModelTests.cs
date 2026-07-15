@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Sanet.MakaMek.Core.Services;
 using Sanet.MakaMek.Localization;
+using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MVVM.Core.Services;
 using Shouldly;
 using Xunit;
@@ -12,14 +12,14 @@ public class AboutViewModelTests
 {
     private readonly IExternalNavigationService _externalNavigationService = Substitute.For<IExternalNavigationService>();
     private readonly ILocalizationService _localizationService = Substitute.For<ILocalizationService>();
-    private readonly ILogger<Sanet.MakaMek.MapEditor.ViewModels.AboutViewModel> _logger = Substitute.For<ILogger<Sanet.MakaMek.MapEditor.ViewModels.AboutViewModel>>();
+    private readonly ILogger<AboutViewModel> _logger = Substitute.For<ILogger<AboutViewModel>>();
     private readonly INavigationService _navigationService = Substitute.For<INavigationService>();
-    private readonly Sanet.MakaMek.MapEditor.ViewModels.AboutViewModel _sut;
+    private readonly AboutViewModel _sut;
 
     public AboutViewModelTests()
     {
         _localizationService.GetString(Arg.Any<string>()).Returns(callInfo => callInfo.Arg<string>());
-        _sut = new Sanet.MakaMek.MapEditor.ViewModels.AboutViewModel(_externalNavigationService, _localizationService, _logger);
+        _sut = new AboutViewModel(_externalNavigationService, _localizationService, _logger);
         _sut.SetNavigationService(_navigationService);
     }
 
