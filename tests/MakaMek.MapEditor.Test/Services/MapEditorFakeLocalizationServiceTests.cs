@@ -92,6 +92,24 @@ public class MapEditorFakeLocalizationServiceTests
     }
 
     [Theory]
+    [InlineData("About_Title", "MakaMek Map Editor")]
+    [InlineData("About_Description", "A companion tool for the MakaMek tabletop wargame, providing hex map creation and editing capabilities.")]
+    [InlineData("About_Attribution", "Can be used to create generic hex-based maps for tabletops.")]
+    [InlineData("About_FossStatement", "This software is free and open source, licensed under the GPL-3.0.")]
+    [InlineData("About_TrademarkDisclaimer", "This project is not affiliated with the copyright or trademark holders of any existing wargames.")]
+    [InlineData("About_GitHubButton", "View on GitHub")]
+    [InlineData("About_ContactButton", "Contact")]
+    [InlineData("About_CloseButton", "Close")]
+    public void GetString_About_ReturnsExpectedString(string key, string expected)
+    {
+        var localizationService = new MapEditorFakeLocalizationService();
+
+        var result = localizationService.GetString(key);
+
+        result.ShouldBe(expected);
+    }
+
+    [Theory]
     [InlineData("NonExistentKey")]
     [InlineData("Some_Random_Key")]
     [InlineData("")]

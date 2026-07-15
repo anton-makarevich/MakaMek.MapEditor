@@ -45,4 +45,9 @@ public class NewMapViewModel : BaseViewModel
             await NavigationService.NavigateToViewModelAsync(editViewModel);
         }
     });
+
+    public IAsyncCommand OpenAboutCommand => field ??= new AsyncCommand(async () =>
+    {
+        await NavigationService.NavigateToViewModelAsync<AboutViewModel>();
+    });
 }

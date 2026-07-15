@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Services;
 using Sanet.MakaMek.Services.Avalonia.Browser.Services;
+using Sanet.MVVM.ExternalNavigation.Browser.Extensions;
 
 namespace Sanet.MakaMek.MapEditor.Browser.DependencyInjection;
 
@@ -26,5 +27,6 @@ public static class BrowserServices
         
         // Register CurrentThreadScheduler for WASM (single-threaded)
         services.AddSingleton<IScheduler>(CurrentThreadScheduler.Instance);
+        services.AddBrowserExternalNavigation();
     }
 }
