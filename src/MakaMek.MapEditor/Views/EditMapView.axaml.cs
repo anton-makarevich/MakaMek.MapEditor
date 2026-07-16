@@ -4,7 +4,6 @@ using Avalonia;
 using Avalonia.Interactivity;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Models;
-using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MakaMek.MapEditor.Models;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MVVM.Views.Avalonia;
@@ -52,19 +51,16 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         }
     }
 
-    private CanonicalBitmaskResult? ComputeWaterBitmask(Hex hex)
-    {
-        var bitmaskService = ViewModel?.TerrainBitmaskService;
-        if (bitmaskService == null || ViewModel?.Map == null || !hex.HasTerrain(MakaMekTerrains.Water))
-            return null;
-        return bitmaskService.ComputeCanonicalBitmask(ViewModel.Map, hex.Coordinates, MakaMekTerrains.Water);
-    }
+    
 
     private HexRenderData BuildHexRenderData(Hex hex)
     {
-        var edges = ViewModel?.Map?.GetHexEdges(hex.Coordinates) ?? [];
-        var waterBitmask = ComputeWaterBitmask(hex);
-        return new HexRenderData(hex, edges, waterBitmask, null);
+        if (ViewModel?.TerrainBitmaskService == null || ViewModel.Map == null)
+        {
+            var edges = ViewModel?.Map?.GetHexEdges(hex.Coordinates) ?? [];
+            return new HexRenderData(hex, edges, null, null);
+        }
+        return ViewModel.TerrainBitmaskService.CreateHexRenderData(ViewModel.Map, hex.Coordinates);
     }
 
     private void PushHexData()
@@ -134,12 +130,11 @@ public partial class EditMapView : BaseView<EditMapViewModel>
             var neighborHex = ViewModel.Map.GetHex(neighborCoords);
             if (neighborHex == null) continue;
 
-            var newBitmask = ComputeWaterBitmask(neighborHex);
             if (!_hexRenderData.TryGetValue(neighborCoords, out var existing)) continue;
-            if (EqualityComparer<CanonicalBitmaskResult?>.Default.Equals(existing.WaterBitmask, newBitmask))
-                continue;
+            var newData = BuildHexRenderData(neighborHex);
+            if (existing == newData) continue;
 
-            _hexRenderData[neighborCoords] = BuildHexRenderData(neighborHex);
+            _hexRenderData[neighborCoords] = newData;
             changedCoords.Add(neighborCoords);
         }
 

@@ -4,6 +4,7 @@ public enum ToolType
 {
     Terrain,
     Cursor,
+    RoadBridge,
     RaiseLevel,
     LowerLevel,
     IncreaseWaterDepth,

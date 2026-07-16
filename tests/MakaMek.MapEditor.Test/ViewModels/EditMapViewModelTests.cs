@@ -186,17 +186,18 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public void HandleHexSelection_WhenSelectedTerrainIsSet_ShouldReplaceHexTerrains()
+    public void HandleHexSelection_ClearTerrain_ShouldReplaceAllWithClear()
     {
         var hex = new Hex(new HexCoordinates(0, 0));
         var terrain = new ClearTerrain();
-        var initialTerrain = new LightWoodsTerrain();
-        hex.AddTerrain(initialTerrain);
+        hex.AddTerrain(new LightWoodsTerrain());
+        hex.AddTerrain(new WaterTerrain(-1));
         _sut.SelectedTerrain = terrain;
 
         _sut.HandleHexSelection(hex);
 
-        hex.GetTerrains().First().ShouldBe(terrain);
+        hex.GetTerrains().Count().ShouldBe(1);
+        hex.GetTerrains().First().ShouldBeOfType<ClearTerrain>();
     }
 
     [Fact]
@@ -445,8 +446,8 @@ public class EditMapViewModelTests
         _sut.HandleHexSelection(hex1);
         _sut.HandleHexSelection(hex2);
 
-        hex1.GetTerrains().First().ShouldBe(terrain);
-        hex2.GetTerrains().First().ShouldBe(terrain);
+        hex1.GetTerrains().First().ShouldBeOfType<ClearTerrain>();
+        hex2.GetTerrains().First().ShouldBeOfType<ClearTerrain>();
     }
 
     [Fact]
@@ -456,14 +457,15 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public void HandleHexSelection_InTerrainMode_ShouldReturnNull()
+    public void HandleHexSelection_InTerrainMode_ShouldReturnHex()
     {
         var hex = new Hex(new HexCoordinates(0, 0));
         _sut.SelectedTerrain = new ClearTerrain();
 
         var result = _sut.HandleHexSelection(hex);
 
-        result.ShouldBeNull();
+        result.ShouldNotBeNull();
+        result.ShouldBe(hex);
     }
 
     [Fact]
@@ -511,7 +513,7 @@ public class EditMapViewModelTests
         _sut.Initialize(map);
 
         _sut.AvailableTools.ShouldNotBeEmpty();
-        _sut.AvailableTools.Count.ShouldBe(_sut.AvailableTerrains.Count + 1 + 4);
+        _sut.AvailableTools.Count.ShouldBe(_sut.AvailableTerrains.Count + 1 + 5);
         _sut.AvailableTools.Count(t => t.Type == ToolType.Cursor).ShouldBe(1);
         _sut.AvailableTools.Count(t => t.Type == ToolType.RaiseLevel).ShouldBe(1);
         _sut.AvailableTools.Count(t => t.Type == ToolType.LowerLevel).ShouldBe(1);
@@ -1509,5 +1511,528 @@ public class EditMapViewModelTests
         await _sut.OpenAboutCommand.ExecuteAsync();
 
         await _navigationService.Received(1).NavigateToViewModelAsync<AboutViewModel>();
+    }
+
+    // --- RoadBridge Tool Tests ---
+    [Fact]
+    public void HandleHexSelection_RoadBridgeTool_OnNonWaterHex_ShouldAddRoad()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new ClearTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.RoadBridge);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Road).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.Clear).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void HandleHexSelection_RoadBridgeTool_OnWaterHex_ShouldAddBridge()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.RoadBridge);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Bridge).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.Water).ShouldBeTrue();
+        var bridge = result.GetTerrain(MakaMekTerrains.Bridge) as BridgeTerrain;
+        bridge.ShouldNotBeNull();
+        bridge.Height.ShouldBe(EditMapViewModel.DefaultBridgeHeight);
+        bridge.ConstructionFactor.ShouldBe(EditMapViewModel.DefaultConstructionFactor);
+    }
+
+    [Fact]
+    public void HandleHexSelection_RoadBridgeTool_WhenAlreadyRoad_ShouldReturnSameHex()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new RoadTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.RoadBridge);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldBe(hex);
+    }
+
+    [Fact]
+    public void HandleHexSelection_RoadBridgeTool_WhenAlreadyBridge_ShouldReturnSameHex()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        hex.AddTerrain(new BridgeTerrain(1, 60));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.RoadBridge);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldBe(hex);
+    }
+
+    [Fact]
+    public void HandleHexSelection_RoadBridgeTool_OnNonWaterHex_ShouldPreserveUnderlyingTerrain()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new LightWoodsTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.RoadBridge);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Road).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.LightWoods).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void HandleHexSelection_RoadBridgeTool_WhenMapIsNull_ShouldReturnNull()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        _sut.SelectedTool = new ToolItem("RoadBridge", ToolType.RoadBridge);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldBeNull();
+    }
+
+    // --- Terrain Layering Tests ---
+    [Fact]
+    public void HandleHexSelection_TerrainMode_RoadOnWater_ShouldAddBridgePreserveWater()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new WaterTerrain(-1));
+        _sut.SelectedTerrain = new RoadTerrain();
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Water).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.Bridge).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.Road).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HandleHexSelection_TerrainMode_RoadOnLightWoods_ShouldPreserveBoth()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new LightWoodsTerrain());
+        _sut.SelectedTerrain = new RoadTerrain();
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Road).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.LightWoods).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void HandleHexSelection_TerrainMode_WaterOnRoad_ShouldConvertRoadToBridge()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new RoadTerrain());
+        _sut.SelectedTerrain = new WaterTerrain(-1);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Water).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.Bridge).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.Road).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HandleHexSelection_TerrainMode_LightWoodsOnRoad_ShouldPreserveRoad()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new RoadTerrain());
+        _sut.SelectedTerrain = new LightWoodsTerrain();
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Road).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.LightWoods).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void HandleHexSelection_TerrainMode_LightWoodsOnHeavyWoods_ShouldReplaceGround()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new HeavyWoodsTerrain());
+        _sut.SelectedTerrain = new LightWoodsTerrain();
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.LightWoods).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.HeavyWoods).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HandleHexSelection_TerrainMode_RoadOnBridge_ShouldDoNothing()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new WaterTerrain(-1));
+        hex.AddTerrain(new BridgeTerrain(1, 60));
+        _sut.SelectedTerrain = new RoadTerrain();
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Bridge).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.Water).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.Road).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HandleHexSelection_TerrainMode_WaterOnBridge_ShouldPreserveBridge()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new WaterTerrain(-1));
+        hex.AddTerrain(new BridgeTerrain(1, 60));
+        _sut.SelectedTerrain = new WaterTerrain(-2);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Water).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.Bridge).ShouldBeTrue();
+    }
+
+    // --- Bridge Command Tests ---
+    [Fact]
+    public async Task RaiseBridgeLevelCommand_ConvertsRoadToBridge()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new ClearTerrain());
+        hex.AddTerrain(new RoadTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        SelectHexViaCursor(_sut, hex);
+
+        await _sut.RaiseBridgeLevelCommand.ExecuteAsync();
+
+        var mapHex = map.GetHex(new HexCoordinates(1, 1));
+        mapHex.ShouldNotBeNull();
+        mapHex.HasTerrain(MakaMekTerrains.Bridge).ShouldBeTrue();
+        mapHex.HasTerrain(MakaMekTerrains.Road).ShouldBeFalse();
+        var bridge = mapHex.GetTerrain(MakaMekTerrains.Bridge) as BridgeTerrain;
+        bridge.ShouldNotBeNull();
+        bridge.Height.ShouldBe(1);
+        bridge.ConstructionFactor.ShouldBe(EditMapViewModel.DefaultConstructionFactor);
+    }
+
+    [Fact]
+    public async Task RaiseBridgeLevelCommand_IncreasesExistingBridgeHeight()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        hex.AddTerrain(new BridgeTerrain(1, 60));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        SelectHexViaCursor(_sut, hex);
+
+        await _sut.RaiseBridgeLevelCommand.ExecuteAsync();
+
+        var mapHex = map.GetHex(new HexCoordinates(1, 1));
+        mapHex.ShouldNotBeNull();
+        var bridge = mapHex.GetTerrain(MakaMekTerrains.Bridge) as BridgeTerrain;
+        bridge.ShouldNotBeNull();
+        bridge.Height.ShouldBe(2);
+        bridge.ConstructionFactor.ShouldBe(60);
+    }
+
+    [Fact]
+    public async Task LowerBridgeLevelCommand_ConvertsBridgeToRoadOverNonWater()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new ClearTerrain());
+        hex.AddTerrain(new BridgeTerrain(1, 60));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        SelectHexViaCursor(_sut, hex);
+
+        await _sut.LowerBridgeLevelCommand.ExecuteAsync();
+
+        var mapHex = map.GetHex(new HexCoordinates(1, 1));
+        mapHex.ShouldNotBeNull();
+        mapHex.HasTerrain(MakaMekTerrains.Road).ShouldBeTrue();
+        mapHex.HasTerrain(MakaMekTerrains.Bridge).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task LowerBridgeLevelCommand_KeepsBridgeOverWater()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        hex.AddTerrain(new BridgeTerrain(1, 60));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        SelectHexViaCursor(_sut, hex);
+
+        await _sut.LowerBridgeLevelCommand.ExecuteAsync();
+
+        var mapHex = map.GetHex(new HexCoordinates(1, 1));
+        mapHex.ShouldNotBeNull();
+        mapHex.HasTerrain(MakaMekTerrains.Bridge).ShouldBeTrue();
+        var bridge = mapHex.GetTerrain(MakaMekTerrains.Bridge) as BridgeTerrain;
+        bridge.ShouldNotBeNull();
+        bridge.Height.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task LowerBridgeLevelCommand_WhenNoBridge_ShouldNotModifyHex()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new ClearTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        SelectHexViaCursor(_sut, hex);
+
+        await _sut.LowerBridgeLevelCommand.ExecuteAsync();
+
+        var mapHex = map.GetHex(new HexCoordinates(1, 1));
+        mapHex.ShouldNotBeNull();
+        mapHex.HasTerrain(MakaMekTerrains.Bridge).ShouldBeFalse();
+        mapHex.HasTerrain(MakaMekTerrains.Road).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task IncreaseConstructionFactorCommand_ShouldIncreaseByStep()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        hex.AddTerrain(new BridgeTerrain(1, 60));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        SelectHexViaCursor(_sut, hex);
+
+        await _sut.IncreaseConstructionFactorCommand.ExecuteAsync();
+
+        var mapHex = map.GetHex(new HexCoordinates(1, 1));
+        mapHex.ShouldNotBeNull();
+        var bridge = mapHex.GetTerrain(MakaMekTerrains.Bridge) as BridgeTerrain;
+        bridge.ShouldNotBeNull();
+        bridge.ConstructionFactor.ShouldBe(65);
+    }
+
+    [Fact]
+    public async Task DecreaseConstructionFactorCommand_ShouldDecreaseByStep()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        hex.AddTerrain(new BridgeTerrain(1, 60));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        SelectHexViaCursor(_sut, hex);
+
+        await _sut.DecreaseConstructionFactorCommand.ExecuteAsync();
+
+        var mapHex = map.GetHex(new HexCoordinates(1, 1));
+        mapHex.ShouldNotBeNull();
+        var bridge = mapHex.GetTerrain(MakaMekTerrains.Bridge) as BridgeTerrain;
+        bridge.ShouldNotBeNull();
+        bridge.ConstructionFactor.ShouldBe(55);
+    }
+
+    [Fact]
+    public async Task IncreaseConstructionFactorCommand_ShouldNotExceedMax()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        hex.AddTerrain(new BridgeTerrain(1, 500));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        SelectHexViaCursor(_sut, hex);
+
+        await _sut.IncreaseConstructionFactorCommand.ExecuteAsync();
+
+        var mapHex = map.GetHex(new HexCoordinates(1, 1));
+        mapHex.ShouldNotBeNull();
+        var bridge = mapHex.GetTerrain(MakaMekTerrains.Bridge) as BridgeTerrain;
+        bridge.ShouldNotBeNull();
+        bridge.ConstructionFactor.ShouldBe(500);
+    }
+
+    [Fact]
+    public async Task DecreaseConstructionFactorCommand_ShouldNotGoBelowMin()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        hex.AddTerrain(new BridgeTerrain(1, 0));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        SelectHexViaCursor(_sut, hex);
+
+        await _sut.DecreaseConstructionFactorCommand.ExecuteAsync();
+
+        var mapHex = map.GetHex(new HexCoordinates(1, 1));
+        mapHex.ShouldNotBeNull();
+        var bridge = mapHex.GetTerrain(MakaMekTerrains.Bridge) as BridgeTerrain;
+        bridge.ShouldNotBeNull();
+        bridge.ConstructionFactor.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task RaiseBridgeLevelCommand_ShouldFireHexUpdated()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new ClearTerrain());
+        hex.AddTerrain(new RoadTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        SelectHexViaCursor(_sut, hex);
+
+        Hex? updatedHex = null;
+        _sut.HexUpdated += h => updatedHex = h;
+
+        await _sut.RaiseBridgeLevelCommand.ExecuteAsync();
+
+        updatedHex.ShouldNotBeNull();
+        updatedHex.HasTerrain(MakaMekTerrains.Bridge).ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task LowerBridgeLevelCommand_ShouldFireHexUpdated()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new ClearTerrain());
+        hex.AddTerrain(new BridgeTerrain(1, 60));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        SelectHexViaCursor(_sut, hex);
+
+        Hex? updatedHex = null;
+        _sut.HexUpdated += h => updatedHex = h;
+
+        await _sut.LowerBridgeLevelCommand.ExecuteAsync();
+
+        updatedHex.ShouldNotBeNull();
+        updatedHex.HasTerrain(MakaMekTerrains.Road).ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task IncreaseConstructionFactorCommand_ShouldFireHexUpdated()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        hex.AddTerrain(new BridgeTerrain(1, 60));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        SelectHexViaCursor(_sut, hex);
+
+        Hex? updatedHex = null;
+        _sut.HexUpdated += h => updatedHex = h;
+
+        await _sut.IncreaseConstructionFactorCommand.ExecuteAsync();
+
+        updatedHex.ShouldNotBeNull();
+        var bridge = updatedHex.GetTerrain(MakaMekTerrains.Bridge) as BridgeTerrain;
+        bridge.ShouldNotBeNull();
+        bridge.ConstructionFactor.ShouldBe(65);
+    }
+
+    [Fact]
+    public async Task DecreaseConstructionFactorCommand_ShouldFireHexUpdated()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new WaterTerrain(0));
+        hex.AddTerrain(new BridgeTerrain(1, 60));
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        SelectHexViaCursor(_sut, hex);
+
+        Hex? updatedHex = null;
+        _sut.HexUpdated += h => updatedHex = h;
+
+        await _sut.DecreaseConstructionFactorCommand.ExecuteAsync();
+
+        updatedHex.ShouldNotBeNull();
+        var bridge = updatedHex.GetTerrain(MakaMekTerrains.Bridge) as BridgeTerrain;
+        bridge.ShouldNotBeNull();
+        bridge.ConstructionFactor.ShouldBe(55);
+    }
+
+    [Fact]
+    public async Task RaiseBridgeLevelCommand_WhenNoHexSelected_ShouldNotModifyMap()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new ClearTerrain());
+        hex.AddTerrain(new RoadTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+
+        await _sut.RaiseBridgeLevelCommand.ExecuteAsync();
+
+        var mapHex = map.GetHex(new HexCoordinates(1, 1));
+        mapHex.ShouldNotBeNull();
+        mapHex.HasTerrain(MakaMekTerrains.Road).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void HandleHexSelection_RoadBridgeTool_ShouldNotOpenHexInfo()
+    {
+        var map = new BattleMap(3, 3);
+        var hex = new Hex(new HexCoordinates(1, 1));
+        hex.AddTerrain(new ClearTerrain());
+        map.AddHex(hex);
+        _sut.Initialize(map);
+        _sut.SelectedTool = _sut.AvailableTools.First(t => t.Type == ToolType.RoadBridge);
+
+        _sut.HandleHexSelection(hex);
+
+        _sut.IsHexInfoVisible.ShouldBeFalse();
+        _sut.HexViewModel.ShouldBeNull();
+    }
+
+    [Fact]
+    public void Initialize_ShouldContainRoadBridgeTool()
+    {
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+
+        _sut.AvailableTools.Any(t => t.Type == ToolType.RoadBridge).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void SelectingRoadBridgeTool_ShouldSetActiveEditModeToRoadBridge()
+    {
+        var map = new BattleMap(1, 1);
+        _sut.Initialize(map);
+        var tool = _sut.AvailableTools.First(t => t.Type == ToolType.RoadBridge);
+
+        _sut.SelectedTool = tool;
+
+        _sut.ActiveEditMode.ShouldBe(ToolType.RoadBridge);
     }
 }

@@ -159,4 +159,122 @@ public class HexViewModelTests
         waterDepthChanged.ShouldBeTrue();
         isWaterChanged.ShouldBeTrue();
     }
+
+    // --- RoadBridge properties ---
+    [Fact]
+    public void Constructor_WhenHexHasRoad_ShouldReadHasRoadBridge()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new ClearTerrain());
+        hex.AddTerrain(new RoadTerrain());
+
+        var sut = new HexViewModel(hex);
+
+        sut.HasRoadBridge.ShouldBeTrue();
+        sut.IsBridge.ShouldBeFalse();
+        sut.BridgeHeight.ShouldBeNull();
+        sut.ConstructionFactor.ShouldBeNull();
+    }
+
+    [Fact]
+    public void Constructor_WhenHexHasBridge_ShouldReadBridgeProperties()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new WaterTerrain(0));
+        hex.AddTerrain(new BridgeTerrain(2, 60));
+
+        var sut = new HexViewModel(hex);
+
+        sut.HasRoadBridge.ShouldBeTrue();
+        sut.IsBridge.ShouldBeTrue();
+        sut.BridgeHeight.ShouldBe(2);
+        sut.ConstructionFactor.ShouldBe(60);
+    }
+
+    [Fact]
+    public void Constructor_WhenHexHasNoRoadOrBridge_ShouldHaveDefaultValues()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new ClearTerrain());
+
+        var sut = new HexViewModel(hex);
+
+        sut.HasRoadBridge.ShouldBeFalse();
+        sut.IsBridge.ShouldBeFalse();
+        sut.BridgeHeight.ShouldBeNull();
+        sut.ConstructionFactor.ShouldBeNull();
+    }
+
+    [Fact]
+    public void UpdateFromHex_ShouldUpdateRoadBridgeProperties()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new ClearTerrain());
+        var sut = new HexViewModel(hex);
+        sut.HasRoadBridge.ShouldBeFalse();
+
+        var bridgeHex = new Hex(new HexCoordinates(0, 0));
+        bridgeHex.AddTerrain(new WaterTerrain(0));
+        bridgeHex.AddTerrain(new BridgeTerrain(3, 120));
+
+        sut.UpdateFromHex(bridgeHex);
+
+        sut.HasRoadBridge.ShouldBeTrue();
+        sut.IsBridge.ShouldBeTrue();
+        sut.BridgeHeight.ShouldBe(3);
+        sut.ConstructionFactor.ShouldBe(120);
+    }
+
+    [Fact]
+    public void UpdateFromHex_ShouldClearRoadBridgeWhenRemoved()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new WaterTerrain(0));
+        hex.AddTerrain(new BridgeTerrain(1, 60));
+        var sut = new HexViewModel(hex);
+        sut.HasRoadBridge.ShouldBeTrue();
+
+        var clearHex = new Hex(new HexCoordinates(0, 0));
+        clearHex.AddTerrain(new ClearTerrain());
+
+        sut.UpdateFromHex(clearHex);
+
+        sut.HasRoadBridge.ShouldBeFalse();
+        sut.IsBridge.ShouldBeFalse();
+        sut.BridgeHeight.ShouldBeNull();
+        sut.ConstructionFactor.ShouldBeNull();
+    }
+
+    [Fact]
+    public void UpdateFromHex_ShouldRaisePropertyChangedForRoadBridge()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new ClearTerrain());
+        var sut = new HexViewModel(hex);
+
+        var hasRoadBridgeChanged = false;
+        var isBridgeChanged = false;
+        var bridgeHeightChanged = false;
+        var constructionFactorChanged = false;
+        sut.PropertyChanged += (_, args) =>
+        {
+            switch (args.PropertyName)
+            {
+                case nameof(HexViewModel.HasRoadBridge): hasRoadBridgeChanged = true; break;
+                case nameof(HexViewModel.IsBridge): isBridgeChanged = true; break;
+                case nameof(HexViewModel.BridgeHeight): bridgeHeightChanged = true; break;
+                case nameof(HexViewModel.ConstructionFactor): constructionFactorChanged = true; break;
+            }
+        };
+
+        var bridgeHex = new Hex(new HexCoordinates(0, 0));
+        bridgeHex.AddTerrain(new WaterTerrain(0));
+        bridgeHex.AddTerrain(new BridgeTerrain(1, 60));
+        sut.UpdateFromHex(bridgeHex);
+
+        hasRoadBridgeChanged.ShouldBeTrue();
+        isBridgeChanged.ShouldBeTrue();
+        bridgeHeightChanged.ShouldBeTrue();
+        constructionFactorChanged.ShouldBeTrue();
+    }
 }

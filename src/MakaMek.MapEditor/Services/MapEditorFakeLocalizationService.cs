@@ -42,6 +42,13 @@ public class MapEditorFakeLocalizationService : FakeLocalizationService
         Strings["EditMap_CloseConfirmTitle"] = "Close Map";
         Strings["EditMap_CloseConfirmMessage"] = "Are you sure you want to close this map? Any unsaved changes will be lost.";
         Strings["EditMap_CloseHexInfo"] = "Close";
+        Strings["EditMap_RoadBridge"] = "Road/Bridge";
+        Strings["EditMap_BridgeHeight"] = "Bridge Height:";
+        Strings["EditMap_ConstructionFactor"] = "Construction:";
+        Strings["EditMap_RaiseBridge"] = "▲ Raise Bridge";
+        Strings["EditMap_LowerBridge"] = "▼ Lower Bridge";
+        Strings["EditMap_IncreaseConstructionFactor"] = "▲ Increase CF";
+        Strings["EditMap_DecreaseConstructionFactor"] = "▼ Decrease CF";
 
         Strings["Window_Title"] = "MakaMek Map Editor";
 
