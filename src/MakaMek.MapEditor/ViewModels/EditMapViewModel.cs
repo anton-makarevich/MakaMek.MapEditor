@@ -423,7 +423,7 @@ public class EditMapViewModel : BaseViewModel
     }
 
     private static bool IsGroundTerrain(MakaMekTerrains id) =>
-        id is MakaMekTerrains.Clear or MakaMekTerrains.LightWoods
+        id is MakaMekTerrains.LightWoods
             or MakaMekTerrains.HeavyWoods or MakaMekTerrains.Rough
             or MakaMekTerrains.Pavement or MakaMekTerrains.Rubble;
 
@@ -437,13 +437,21 @@ public class EditMapViewModel : BaseViewModel
     {
         var newId = terrain.Id;
 
+        if (newId == MakaMekTerrains.Clear)
+        {
+            foreach (var t in hex.GetTerrains().ToList())
+                hex.RemoveTerrain(t.Id);
+            hex.AddTerrain(terrain);
+            return hex;
+        }
+
         if (IsGroundTerrain(newId))
         {
+            
             var existing = hex.GetTerrains().FirstOrDefault(t => IsGroundTerrain(t.Id));
             if (existing != null)
                 hex.RemoveTerrain(existing.Id);
-            if (newId != MakaMekTerrains.Clear)
-                hex.AddTerrain(terrain);
+            hex.AddTerrain(terrain);
             return hex;
         }
 

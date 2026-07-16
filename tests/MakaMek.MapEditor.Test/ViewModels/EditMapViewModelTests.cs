@@ -186,17 +186,18 @@ public class EditMapViewModelTests
     }
 
     [Fact]
-    public void HandleHexSelection_ClearTerrain_ShouldRemoveAllTerrains()
+    public void HandleHexSelection_ClearTerrain_ShouldReplaceAllWithClear()
     {
         var hex = new Hex(new HexCoordinates(0, 0));
         var terrain = new ClearTerrain();
-        var initialTerrain = new LightWoodsTerrain();
-        hex.AddTerrain(initialTerrain);
+        hex.AddTerrain(new LightWoodsTerrain());
+        hex.AddTerrain(new WaterTerrain(-1));
         _sut.SelectedTerrain = terrain;
 
         _sut.HandleHexSelection(hex);
 
-        hex.GetTerrains().ShouldBeEmpty();
+        hex.GetTerrains().Count().ShouldBe(1);
+        hex.GetTerrains().First().ShouldBeOfType<ClearTerrain>();
     }
 
     [Fact]
@@ -445,8 +446,8 @@ public class EditMapViewModelTests
         _sut.HandleHexSelection(hex1);
         _sut.HandleHexSelection(hex2);
 
-        hex1.GetTerrains().ShouldBeEmpty();
-        hex2.GetTerrains().ShouldBeEmpty();
+        hex1.GetTerrains().First().ShouldBeOfType<ClearTerrain>();
+        hex2.GetTerrains().First().ShouldBeOfType<ClearTerrain>();
     }
 
     [Fact]
