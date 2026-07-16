@@ -319,7 +319,7 @@ public class EditMapViewModel : BaseViewModel
     public virtual void Initialize(IBattleMap map)
     {
         Map = map;
-        LoadTerrains();
+        LoadTools();
     }
 
     // IMPORTANT: When adding new Terrain subclasses, manually add them here.
@@ -336,13 +336,12 @@ public class EditMapViewModel : BaseViewModel
         new LightWoodsTerrain(),
         new HeavyWoodsTerrain(),
         new RoughTerrain(),
-        new WaterTerrain(),
-        new RoadTerrain()
+        new WaterTerrain()
     ];
 
     private const string AssetBaseUri = "avares://Sanet.MakaMek.MapEditor/Assets";
 
-    private void LoadTerrains()
+    private void LoadTools()
     {
         AvailableTerrains.Clear();
         AvailableTools.Clear();
@@ -357,12 +356,13 @@ public class EditMapViewModel : BaseViewModel
                 imagePath: $"{AssetBaseUri}/terrain/{terrain.Id.ToString().ToLowerInvariant()}.png"));
         }
 
+        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_RoadBridge"), ToolType.RoadBridge,
+            imagePath: $"{AssetBaseUri}/terrain/road.png"));
+
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_RaiseLevel"), ToolType.RaiseLevel));
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_LowerLevel"), ToolType.LowerLevel));
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_IncreaseWaterDepth"), ToolType.IncreaseWaterDepth));
         AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_DecreaseWaterDepth"), ToolType.DecreaseWaterDepth));
-        AvailableTools.Add(new ToolItem(LocalizationService.GetString("EditMap_RoadBridge"), ToolType.RoadBridge,
-            imagePath: $"{AssetBaseUri}/terrain/road.png"));
 
         SelectedTerrain = AvailableTerrains.FirstOrDefault();
         SelectedTool = AvailableTools.FirstOrDefault(t => t.Type == ToolType.Terrain && t.Terrain == SelectedTerrain);
