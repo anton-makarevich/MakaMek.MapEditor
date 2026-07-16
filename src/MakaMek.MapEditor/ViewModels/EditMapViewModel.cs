@@ -422,14 +422,15 @@ public class EditMapViewModel : BaseViewModel
     }
 
     private static bool IsGroundTerrain(MakaMekTerrains id) =>
-        id is MakaMekTerrains.LightWoods
-            or MakaMekTerrains.HeavyWoods or MakaMekTerrains.Rough
-            or MakaMekTerrains.Pavement or MakaMekTerrains.Rubble;
+        id is MakaMekTerrains.Clear
+            or MakaMekTerrains.LightWoods or MakaMekTerrains.HeavyWoods
+            or MakaMekTerrains.Rough or MakaMekTerrains.Pavement
+            or MakaMekTerrains.Rubble;
 
     /// <summary>
     /// Applies a terrain to a hex with correct layering:
     /// - Ground terrains (Clear/Woods/Rough/Pavement/Rubble) are mutually exclusive with each other
-    /// - Water coexists with ground and road layers; adding Water over Road converts Road to Bridge
+    /// - Water replaces any ground terrain and coexists with road layers; adding Water over Road converts Road to Bridge
     /// - Road/Bridge sits on top and coexists with ground + water layers
     /// </summary>
     private static Hex ApplyTerrainToHex(Hex hex, Terrain terrain)
@@ -457,6 +458,8 @@ public class EditMapViewModel : BaseViewModel
         if (newId == MakaMekTerrains.Water)
         {
             hex.RemoveTerrain(MakaMekTerrains.Water);
+            foreach (var t in hex.GetTerrains().Where(t => IsGroundTerrain(t.Id)).ToList())
+                hex.RemoveTerrain(t.Id);
             if (hex.HasTerrain(MakaMekTerrains.Road))
             {
                 hex.RemoveTerrain(MakaMekTerrains.Road);

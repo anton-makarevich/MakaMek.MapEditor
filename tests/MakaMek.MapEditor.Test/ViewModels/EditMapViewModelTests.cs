@@ -1715,6 +1715,107 @@ public class EditMapViewModelTests
         result.HasTerrain(MakaMekTerrains.Bridge).ShouldBeTrue();
     }
 
+    [Fact]
+    public void HandleHexSelection_TerrainMode_WaterOnClear_ShouldRemoveClear()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new ClearTerrain());
+        _sut.SelectedTerrain = new WaterTerrain(-1);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Water).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.Clear).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HandleHexSelection_TerrainMode_WaterOnLightWoods_ShouldRemoveLightWoods()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new LightWoodsTerrain());
+        _sut.SelectedTerrain = new WaterTerrain(-1);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Water).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.LightWoods).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HandleHexSelection_TerrainMode_WaterOnHeavyWoods_ShouldRemoveHeavyWoods()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new HeavyWoodsTerrain());
+        _sut.SelectedTerrain = new WaterTerrain(-1);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Water).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.HeavyWoods).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HandleHexSelection_TerrainMode_WaterOnRough_ShouldRemoveRough()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new RoughTerrain());
+        _sut.SelectedTerrain = new WaterTerrain(-1);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Water).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.Rough).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HandleHexSelection_TerrainMode_WaterOnGroundWithRoad_ShouldRemoveGroundAndConvertRoadToBridge()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new LightWoodsTerrain());
+        hex.AddTerrain(new RoadTerrain());
+        _sut.SelectedTerrain = new WaterTerrain(-1);
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Water).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.LightWoods).ShouldBeFalse();
+        result.HasTerrain(MakaMekTerrains.Bridge).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.Road).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HandleHexSelection_TerrainMode_LightWoodsOnClear_ShouldRemoveClear()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new ClearTerrain());
+        _sut.SelectedTerrain = new LightWoodsTerrain();
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.LightWoods).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.Clear).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void HandleHexSelection_TerrainMode_RoughOnClear_ShouldRemoveClear()
+    {
+        var hex = new Hex(new HexCoordinates(0, 0));
+        hex.AddTerrain(new ClearTerrain());
+        _sut.SelectedTerrain = new RoughTerrain();
+
+        var result = _sut.HandleHexSelection(hex);
+
+        result.ShouldNotBeNull();
+        result.HasTerrain(MakaMekTerrains.Rough).ShouldBeTrue();
+        result.HasTerrain(MakaMekTerrains.Clear).ShouldBeFalse();
+    }
+
     // --- Bridge Command Tests ---
     [Fact]
     public async Task RaiseBridgeLevelCommand_ConvertsRoadToBridge()
