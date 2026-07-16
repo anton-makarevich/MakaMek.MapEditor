@@ -422,9 +422,10 @@ public class EditMapViewModel : BaseViewModel
     }
 
     private static bool IsGroundTerrain(MakaMekTerrains id) =>
-        id is MakaMekTerrains.LightWoods
-            or MakaMekTerrains.HeavyWoods or MakaMekTerrains.Rough
-            or MakaMekTerrains.Pavement or MakaMekTerrains.Rubble;
+        id is MakaMekTerrains.Clear
+            or MakaMekTerrains.LightWoods or MakaMekTerrains.HeavyWoods
+            or MakaMekTerrains.Rough or MakaMekTerrains.Pavement
+            or MakaMekTerrains.Rubble;
 
     /// <summary>
     /// Applies a terrain to a hex with correct layering:
