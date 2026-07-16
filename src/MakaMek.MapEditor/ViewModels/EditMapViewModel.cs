@@ -337,8 +337,7 @@ public class EditMapViewModel : BaseViewModel
         new HeavyWoodsTerrain(),
         new RoughTerrain(),
         new WaterTerrain(),
-        new RoadTerrain(),
-        new BridgeTerrain()
+        new RoadTerrain()
     ];
 
     private const string AssetBaseUri = "avares://Sanet.MakaMek.MapEditor/Assets";
