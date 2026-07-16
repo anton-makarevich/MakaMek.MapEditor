@@ -374,14 +374,18 @@ public class EditMapViewModel : BaseViewModel
     /// In Terrain mode, replaces the hex's terrains and returns null.
     /// In Cursor mode, populates the hex info popup and tracks the current hex.
     /// </summary>
+    /// <summary>
+    /// Handles hex selection based on the current edit mode.
+    /// In Terrain mode, applies the selected terrain with correct layering rules.
+    /// In Cursor mode, populates the hex info popup and tracks the current hex.
+    /// </summary>
     public Hex? HandleHexSelection(Hex hex)
     {
         switch (ActiveEditMode)
         {
             case ToolType.Terrain:
                 if (SelectedTerrain == null) return null;
-                hex.ReplaceTerrains([SelectedTerrain]);
-                return null;
+                return ApplyTerrainToHex(hex, SelectedTerrain);
 
             case ToolType.Cursor:
                 if (HexViewModel == null)
@@ -408,15 +412,81 @@ public class EditMapViewModel : BaseViewModel
                 if (Map == null) return null;
                 if (hex.HasTerrain(MakaMekTerrains.Bridge)) return hex;
                 if (hex.HasTerrain(MakaMekTerrains.Road)) return hex;
-                if (hex.HasTerrain(MakaMekTerrains.Water))
-                    hex.AddTerrain(new BridgeTerrain(DefaultBridgeHeight, DefaultConstructionFactor));
-                else
-                    hex.AddTerrain(new RoadTerrain());
-                return hex;
+                return ApplyTerrainToHex(hex,
+                    hex.HasTerrain(MakaMekTerrains.Water)
+                        ? new BridgeTerrain(DefaultBridgeHeight, DefaultConstructionFactor)
+                        : new RoadTerrain());
 
             default:
                 return null;
         }
+    }
+
+    private static bool IsGroundTerrain(MakaMekTerrains id) =>
+        id is MakaMekTerrains.Clear or MakaMekTerrains.LightWoods
+            or MakaMekTerrains.HeavyWoods or MakaMekTerrains.Rough
+            or MakaMekTerrains.Pavement or MakaMekTerrains.Rubble;
+
+    /// <summary>
+    /// Applies a terrain to a hex with correct layering:
+    /// - Ground terrains (Clear/Woods/Rough/Pavement/Rubble) are mutually exclusive with each other
+    /// - Water coexists with ground and road layers; adding Water over Road converts Road to Bridge
+    /// - Road/Bridge sits on top and coexists with ground + water layers
+    /// </summary>
+    private static Hex ApplyTerrainToHex(Hex hex, Terrain terrain)
+    {
+        var newId = terrain.Id;
+
+        if (IsGroundTerrain(newId))
+        {
+            var existing = hex.GetTerrains().FirstOrDefault(t => IsGroundTerrain(t.Id));
+            if (existing != null)
+                hex.RemoveTerrain(existing.Id);
+            if (newId != MakaMekTerrains.Clear)
+                hex.AddTerrain(terrain);
+            return hex;
+        }
+
+        if (newId == MakaMekTerrains.Water)
+        {
+            hex.RemoveTerrain(MakaMekTerrains.Water);
+            if (hex.HasTerrain(MakaMekTerrains.Road))
+            {
+                hex.RemoveTerrain(MakaMekTerrains.Road);
+                hex.AddTerrain(new BridgeTerrain(DefaultBridgeHeight, DefaultConstructionFactor));
+            }
+            hex.AddTerrain(terrain);
+            return hex;
+        }
+
+        if (newId == MakaMekTerrains.Road)
+        {
+            if (hex.HasTerrain(MakaMekTerrains.Bridge))
+                return hex;
+            hex.RemoveTerrain(MakaMekTerrains.Road);
+            if (hex.HasTerrain(MakaMekTerrains.Water))
+                hex.AddTerrain(new BridgeTerrain(DefaultBridgeHeight, DefaultConstructionFactor));
+            else
+                hex.AddTerrain(terrain);
+            return hex;
+        }
+
+        if (newId == MakaMekTerrains.Bridge)
+        {
+            hex.RemoveTerrain(MakaMekTerrains.Road);
+            hex.RemoveTerrain(MakaMekTerrains.Bridge);
+            if (hex.HasTerrain(MakaMekTerrains.Water) && terrain is BridgeTerrain bt)
+                hex.AddTerrain(new BridgeTerrain(bt.Height, bt.ConstructionFactor));
+            else
+                hex.AddTerrain(new RoadTerrain());
+            return hex;
+        }
+
+        var oldGround = hex.GetTerrains().FirstOrDefault(t => IsGroundTerrain(t.Id));
+        if (oldGround != null)
+            hex.RemoveTerrain(oldGround.Id);
+        hex.AddTerrain(terrain);
+        return hex;
     }
 
     private Hex? ReplaceHexWithNewLevel(Hex oldHex, int newLevel)
