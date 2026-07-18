@@ -58,7 +58,7 @@
                 </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Width="85" Margin="4" HorizontalAlignment="Center">
+                        <StackPanel Width="85" Margin="{ff:OnFormFactor Desktop=4, Mobile=2}" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Image Source="{Binding ImagePath, Converter={StaticResource StringToImageConverter}}" Width="64" Height="64" IsVisible="{Binding HasImagePath}" HorizontalAlignment="Center"/>
                             <TextBlock Text="{Binding DisplayName}" Foreground="{StaticResource TextLightBrush}" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MaxWidth="80"/>
                         </StackPanel>
