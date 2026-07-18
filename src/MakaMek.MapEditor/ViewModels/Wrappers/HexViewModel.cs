@@ -1,3 +1,4 @@
+using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MVVM.Core.ViewModels;
@@ -6,8 +7,11 @@ namespace Sanet.MakaMek.MapEditor.ViewModels.Wrappers;
 
 public class HexViewModel : BindableBase
 {
-    public HexViewModel(Hex hex)
+    private readonly ILocalizationService _localizationService;
+
+    public HexViewModel(Hex hex, ILocalizationService localizationService)
     {
+        _localizationService = localizationService;
         UpdateFromHex(hex);
     }
 
@@ -25,7 +29,7 @@ public class HexViewModel : BindableBase
     {
         Level = hex.Level;
         Coordinates = hex.Coordinates.ToString();
-        TerrainTypes = hex.GetTerrains().Select(t => t.Id.ToString()).ToList();
+        TerrainTypes = hex.GetTerrains().Select(t => _localizationService.GetString($"Terrain_{t.Id}")).ToList();
         WaterDepth = hex.GetWaterDepth();
 
         var roadTerrain = hex.GetTerrain(MakaMekTerrains.Road);

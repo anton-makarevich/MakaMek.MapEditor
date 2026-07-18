@@ -1,3 +1,4 @@
+using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MakaMek.MapEditor.ViewModels.Wrappers;
@@ -8,12 +9,13 @@ namespace MakaMek.MapEditor.Test.ViewModels.Wrappers;
 
 public class HexViewModelTests
 {
+    private readonly ILocalizationService _localizationService = new FakeLocalizationService();
     [Fact]
     public void Constructor_ShouldReadLevel()
     {
         var hex = new Hex(new HexCoordinates(0, 0), level: 5);
 
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
 
         sut.Level.ShouldBe(5);
     }
@@ -23,7 +25,7 @@ public class HexViewModelTests
     {
         var hex = new Hex(new HexCoordinates(3, 7));
 
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
 
         sut.Coordinates.ShouldBe(hex.Coordinates.ToString());
     }
@@ -34,9 +36,9 @@ public class HexViewModelTests
         var hex = new Hex(new HexCoordinates(0, 0));
         hex.AddTerrain(new LightWoodsTerrain());
 
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
 
-        sut.TerrainTypes.ShouldContain("LightWoods");
+        sut.TerrainTypes.ShouldContain("Light Woods");
     }
 
     [Fact]
@@ -46,7 +48,7 @@ public class HexViewModelTests
         hex.AddTerrain(new ClearTerrain());
         hex.AddTerrain(new WaterTerrain(-1));
 
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
 
         sut.TerrainTypes.Count.ShouldBe(2);
         sut.TerrainTypes.ShouldContain("Clear");
@@ -59,7 +61,7 @@ public class HexViewModelTests
         var hex = new Hex(new HexCoordinates(0, 0));
         hex.AddTerrain(new WaterTerrain(-2));
 
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
 
         sut.WaterDepth.ShouldBe(2);
         sut.IsWater.ShouldBeTrue();
@@ -71,7 +73,7 @@ public class HexViewModelTests
         var hex = new Hex(new HexCoordinates(0, 0));
         hex.AddTerrain(new ClearTerrain());
 
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
 
         sut.WaterDepth.ShouldBeNull();
         sut.IsWater.ShouldBeFalse();
@@ -83,7 +85,7 @@ public class HexViewModelTests
         var hex = new Hex(new HexCoordinates(0, 0));
         hex.AddTerrain(new WaterTerrain(0));
 
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
 
         sut.WaterDepth.ShouldBe(0);
         sut.IsWater.ShouldBeTrue();
@@ -94,7 +96,7 @@ public class HexViewModelTests
     {
         var hex = new Hex(new HexCoordinates(0, 0), level: 1);
         hex.AddTerrain(new ClearTerrain());
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
 
         var updatedHex = new Hex(new HexCoordinates(5, 9), level: 3);
         updatedHex.AddTerrain(new WaterTerrain(-1));
@@ -113,7 +115,7 @@ public class HexViewModelTests
     {
         var hex = new Hex(new HexCoordinates(0, 0));
         hex.AddTerrain(new WaterTerrain(-1));
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
         sut.IsWater.ShouldBeTrue();
 
         var dryHex = new Hex(new HexCoordinates(0, 0));
@@ -130,7 +132,7 @@ public class HexViewModelTests
     {
         var hex = new Hex(new HexCoordinates(0, 0));
         hex.AddTerrain(new ClearTerrain());
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
 
         var levelChanged = false;
         var coordinatesChanged = false;
@@ -168,7 +170,7 @@ public class HexViewModelTests
         hex.AddTerrain(new ClearTerrain());
         hex.AddTerrain(new RoadTerrain());
 
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
 
         sut.HasRoadBridge.ShouldBeTrue();
         sut.IsBridge.ShouldBeFalse();
@@ -183,7 +185,7 @@ public class HexViewModelTests
         hex.AddTerrain(new WaterTerrain(0));
         hex.AddTerrain(new BridgeTerrain(2, 60));
 
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
 
         sut.HasRoadBridge.ShouldBeTrue();
         sut.IsBridge.ShouldBeTrue();
@@ -197,7 +199,7 @@ public class HexViewModelTests
         var hex = new Hex(new HexCoordinates(0, 0));
         hex.AddTerrain(new ClearTerrain());
 
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
 
         sut.HasRoadBridge.ShouldBeFalse();
         sut.IsBridge.ShouldBeFalse();
@@ -210,7 +212,7 @@ public class HexViewModelTests
     {
         var hex = new Hex(new HexCoordinates(0, 0));
         hex.AddTerrain(new ClearTerrain());
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
         sut.HasRoadBridge.ShouldBeFalse();
 
         var bridgeHex = new Hex(new HexCoordinates(0, 0));
@@ -231,7 +233,7 @@ public class HexViewModelTests
         var hex = new Hex(new HexCoordinates(0, 0));
         hex.AddTerrain(new WaterTerrain(0));
         hex.AddTerrain(new BridgeTerrain(1, 60));
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
         sut.HasRoadBridge.ShouldBeTrue();
 
         var clearHex = new Hex(new HexCoordinates(0, 0));
@@ -250,7 +252,7 @@ public class HexViewModelTests
     {
         var hex = new Hex(new HexCoordinates(0, 0));
         hex.AddTerrain(new ClearTerrain());
-        var sut = new HexViewModel(hex);
+        var sut = new HexViewModel(hex, _localizationService);
 
         var hasRoadBridgeChanged = false;
         var isBridgeChanged = false;
