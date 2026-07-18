@@ -6,6 +6,7 @@ using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.MapEditor.Models;
 using Sanet.MakaMek.MapEditor.ViewModels;
+using Sanet.MakaMek.Presentation.ViewModels;
 using Sanet.MVVM.Views.Avalonia;
 
 namespace Sanet.MakaMek.MapEditor.Views;
@@ -13,6 +14,7 @@ namespace Sanet.MakaMek.MapEditor.Views;
 public partial class EditMapView : BaseView<EditMapViewModel>
 {
     private readonly Dictionary<HexCoordinates, HexRenderData> _hexRenderData = new();
+    private HexCoordinates? _selectedHexCoords;
 
     public EditMapView()
     {
@@ -48,6 +50,10 @@ public partial class EditMapView : BaseView<EditMapViewModel>
                 var config = ViewModel.HexConfiguration.ToConfiguration();
                 MapCanvas.UpdateHexConfiguration(config);
             }
+        }
+        else if (e.PropertyName == nameof(EditMapViewModel.ActiveEditMode))
+        {
+            ClearSelectionOutline();
         }
     }
 
@@ -159,12 +165,14 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         {
             if (ViewModel.ActiveEditMode == ToolType.Cursor)
                 ViewModel.IsHexInfoVisible = false;
+            ClearSelectionOutline();
             return;
         }
 
         if (ViewModel.ActiveEditMode == ToolType.Cursor)
         {
             ViewModel.HandleHexSelection(hex);
+            ShowSelectionOutline(coords);
             var pointInView = MapCanvas.TranslatePoint(clickedPosition, this);
             if (pointInView.HasValue)
                 HexInfoOverlay.Margin = new Thickness(pointInView.Value.X + 10, pointInView.Value.Y + 10, 0, 0);
@@ -173,5 +181,21 @@ public partial class EditMapView : BaseView<EditMapViewModel>
 
         var result = ViewModel.HandleHexSelection(hex) ?? hex;
         RefreshHex(result);
+    }
+
+    private void ShowSelectionOutline(HexCoordinates coords)
+    {
+        _selectedHexCoords = coords;
+        MapCanvas.SetBoundaryOutlines(new Dictionary<HexCoordinates, HighlightBoundaryOutline>
+        {
+            [coords] = new HighlightBoundaryOutline(0b00111111, "#FFFFFF", 3.0)
+        });
+    }
+
+    private void ClearSelectionOutline()
+    {
+        if (_selectedHexCoords == null) return;
+        _selectedHexCoords = null;
+        MapCanvas.SetBoundaryOutlines(null);
     }
 }
