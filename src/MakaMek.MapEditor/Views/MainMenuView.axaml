@@ -9,7 +9,7 @@
              x:Class="Sanet.MakaMek.MapEditor.Views.MainMenuView"
              x:DataType="viewModels:MainMenuViewModel">
     <Grid RowDefinitions="*,Auto,*" ColumnDefinitions="*,Auto,*">
-        <templatedControls:HexagonBackground/>
+        <templatedControls:HexagonBackground Grid.RowSpan="3" Grid.ColumnSpan="3"/>
         <TextBlock Grid.Row="0" Grid.Column="1" Text="{extensions:Localize 'MainMenu_Title'}" 
                    Classes="h1" HorizontalAlignment="Center"/>
         
