@@ -4,10 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:Sanet.MakaMek.MapEditor.ViewModels"
              xmlns:extensions="clr-namespace:Sanet.MakaMek.Avalonia.Controls.Extensions;assembly=Sanet.MakaMek.Avalonia.Controls"
+             xmlns:templatedControls="clr-namespace:Sanet.MakaMek.Avalonia.Controls.TemplatedControls;assembly=Sanet.MakaMek.Avalonia.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sanet.MakaMek.MapEditor.Views.MainMenuView"
              x:DataType="viewModels:MainMenuViewModel">
     <Grid RowDefinitions="*,Auto,*" ColumnDefinitions="*,Auto,*">
+        <templatedControls:HexagonBackground Grid.RowSpan="3" Grid.ColumnSpan="3"/>
         <TextBlock Grid.Row="0" Grid.Column="1" Text="{extensions:Localize 'MainMenu_Title'}" 
                    Classes="h1" HorizontalAlignment="Center"/>
         
