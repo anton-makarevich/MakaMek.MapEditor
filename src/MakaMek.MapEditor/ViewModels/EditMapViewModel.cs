@@ -352,7 +352,7 @@ public class EditMapViewModel : BaseViewModel
         foreach (var terrain in KnownTerrains)
         {
             AvailableTerrains.Add(terrain);
-            AvailableTools.Add(new ToolItem(terrain.Id.ToString(), ToolType.Terrain, terrain,
+            AvailableTools.Add(new ToolItem(LocalizationService.GetString($"Terrain_{terrain.Id}"), ToolType.Terrain, terrain,
                 imagePath: $"{AssetBaseUri}/terrain/{terrain.Id.ToString().ToLowerInvariant()}.png"));
         }
 
@@ -388,7 +388,7 @@ public class EditMapViewModel : BaseViewModel
 
             case ToolType.Cursor:
                 if (HexViewModel == null)
-                    HexViewModel = new HexViewModel(hex);
+                    HexViewModel = new HexViewModel(hex, LocalizationService);
                 else
                     HexViewModel.UpdateFromHex(hex);
                 _currentHex = hex;

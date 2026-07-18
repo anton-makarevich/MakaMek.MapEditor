@@ -1024,7 +1024,7 @@ public class EditMapViewModelTests
 
         _sut.HexViewModel.ShouldNotBeNull();
         _sut.HexViewModel.Level.ShouldBe(3);
-        _sut.HexViewModel.TerrainTypes.ShouldContain("LightWoods");
+        _sut.HexViewModel.TerrainTypes.ShouldContain("Terrain_LightWoods");
     }
 
     [Fact]
@@ -1401,8 +1401,8 @@ public class EditMapViewModelTests
 
         _sut.HexViewModel.ShouldNotBeNull();
         _sut.HexViewModel.TerrainTypes.Count.ShouldBe(2);
-        _sut.HexViewModel.TerrainTypes.ShouldContain("LightWoods");
-        _sut.HexViewModel.TerrainTypes.ShouldContain("Water");
+        _sut.HexViewModel.TerrainTypes.ShouldContain("Terrain_LightWoods");
+        _sut.HexViewModel.TerrainTypes.ShouldContain("Terrain_Water");
         _sut.HexViewModel.WaterDepth.ShouldBe(1);
     }
 
@@ -1447,8 +1447,8 @@ public class EditMapViewModelTests
 
         _sut.HexViewModel.ShouldBe(initialViewModel);
         initialViewModel.Level.ShouldBe(5);
-        initialViewModel.TerrainTypes.ShouldContain("Water");
-        initialViewModel.TerrainTypes.ShouldContain("HeavyWoods");
+        initialViewModel.TerrainTypes.ShouldContain("Terrain_Water");
+        initialViewModel.TerrainTypes.ShouldContain("Terrain_HeavyWoods");
         initialViewModel.WaterDepth.ShouldBe(3);
         _sut.IsHexInfoVisible.ShouldBeTrue();
     }
