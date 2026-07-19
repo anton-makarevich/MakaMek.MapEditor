@@ -178,9 +178,7 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         {
             ViewModel.HandleHexSelection(hex);
             ShowSelectionOutline(coords);
-            var pointInView = MapCanvas.TranslatePoint(clickedPosition, this);
-            if (pointInView.HasValue)
-                HexInfoOverlay.Margin = new Thickness(pointInView.Value.X + 10, pointInView.Value.Y + 10, 0, 0);
+            PositionHexInfoOverlay(clickedPosition);
             return;
         }
 
@@ -202,5 +200,39 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         if (_selectedHexCoords == null) return;
         _selectedHexCoords = null;
         MapCanvas.SetBoundaryOutlines(null);
+    }
+
+    private void PositionHexInfoOverlay(Point clickedPosition)
+    {
+        var pointInView = MapCanvas.TranslatePoint(clickedPosition, this);
+        if (!pointInView.HasValue) return;
+
+        var parentBounds = Bounds;
+        if (parentBounds.Width == 0 || parentBounds.Height == 0) return;
+
+        var overlay = HexInfoOverlay;
+        var overlaySize = overlay.Bounds;
+        const double defaultWidth = 200;
+        const double defaultHeight = 250;
+        var ow = overlaySize.Width > 0 ? overlaySize.Width : defaultWidth;
+        var oh = overlaySize.Height > 0 ? overlaySize.Height : defaultHeight;
+
+        const double gap = 10;
+        var px = pointInView.Value.X;
+        var py = pointInView.Value.Y;
+
+        double left;
+        if (px + gap + ow <= parentBounds.Width)
+            left = px + gap;
+        else
+            left = Math.Max(0, px - gap - ow);
+
+        double top;
+        if (py + gap + oh <= parentBounds.Height)
+            top = py + gap;
+        else
+            top = Math.Max(0, py - gap - oh);
+
+        overlay.Margin = new Thickness(left, top, 0, 0);
     }
 }
