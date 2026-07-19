@@ -55,6 +55,11 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         {
             ClearSelectionOutline();
         }
+        else if (e.PropertyName == nameof(EditMapViewModel.IsHexInfoVisible))
+        {
+            if (ViewModel?.IsHexInfoVisible == false)
+                ClearSelectionOutline();
+        }
     }
 
     
