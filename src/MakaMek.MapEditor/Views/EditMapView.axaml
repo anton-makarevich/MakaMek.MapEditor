@@ -21,7 +21,8 @@
             <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
         </Style>
     </UserControl.Styles>
-    <Grid ColumnDefinitions="{ff:OnFormFactor Desktop='*,95', Mobile='*'}"
+    <Grid x:Name="RootGrid"
+          ColumnDefinitions="{ff:OnFormFactor Desktop='*,95', Mobile='*'}"
           RowDefinitions="{ff:OnFormFactor Desktop='*', Mobile='*,Auto'}">
         <controls:HexMap
             ContentClicked="MapCanvas_OnContentClicked"
