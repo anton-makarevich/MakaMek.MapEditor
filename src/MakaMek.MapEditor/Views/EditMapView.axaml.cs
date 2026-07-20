@@ -207,8 +207,9 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         var pointInView = MapCanvas.TranslatePoint(clickedPosition, this);
         if (!pointInView.HasValue) return;
 
-        var parentBounds = Bounds;
-        if (parentBounds.Width == 0 || parentBounds.Height == 0) return;
+        var cellWidth = RootGrid.ColumnDefinitions[0].ActualWidth;
+        var cellHeight = RootGrid.RowDefinitions[0].ActualHeight;
+        if (cellWidth == 0 || cellHeight == 0) return;
 
         var overlay = HexInfoOverlay;
         var overlaySize = overlay.Bounds;
@@ -222,13 +223,13 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         var py = pointInView.Value.Y;
 
         double left;
-        if (px + gap + ow <= parentBounds.Width)
+        if (px + gap + ow <= cellWidth)
             left = px + gap;
         else
             left = Math.Max(0, px - gap - ow);
 
         double top;
-        if (py + gap + oh <= parentBounds.Height)
+        if (py + gap + oh <= cellHeight)
             top = py + gap;
         else
             top = Math.Max(0, py - gap - oh);
