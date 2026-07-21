@@ -16,5 +16,6 @@
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="avares://Sanet.MakaMek.Avalonia.Controls/Styles/Theme.axaml"/>
+        <StyleInclude Source="avares://Sanet.MakaMek.MapEditor/Styles/StepperButton.axaml"/>
     </Application.Styles>
 </Application>

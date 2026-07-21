@@ -1,9 +1,10 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:templatedControls="clr-namespace:Sanet.MakaMek.Avalonia.Controls.TemplatedControls;assembly=Sanet.MakaMek.Avalonia.Controls"
-             xmlns:extensions="clr-namespace:Sanet.MakaMek.Avalonia.Controls.Extensions;assembly=Sanet.MakaMek.Avalonia.Controls"
-             x:Class="Sanet.MakaMek.MapEditor.Controls.HexInfoOverlay"
-             x:CompileBindings="False"
+              xmlns:extensions="clr-namespace:Sanet.MakaMek.Avalonia.Controls.Extensions;assembly=Sanet.MakaMek.Avalonia.Controls"
+              xmlns:ctrl="clr-namespace:Sanet.MakaMek.MapEditor.Controls"
+              x:Class="Sanet.MakaMek.MapEditor.Controls.HexInfoOverlay"
+              x:CompileBindings="False"
              Background="{StaticResource SurfaceBrush}"
              HorizontalAlignment="Left"
              VerticalAlignment="Top"
@@ -30,20 +31,19 @@
     </Border>
     <StackPanel Grid.Row="1" Spacing="4" Margin="10">
         <Grid ColumnDefinitions="*,Auto,Auto">
-            <StackPanel Orientation="Horizontal" Spacing="5">
+            <StackPanel Orientation="Horizontal" Spacing="5"
+                        VerticalAlignment="Center">
                 <TextBlock Text="{extensions:Localize 'EditMap_Elevation'}"
                            Classes="bodyLarge" FontWeight="Bold" Foreground="{StaticResource TextLightBrush}"/>
                 <TextBlock Text="{Binding HexViewModel.Level}"
-                           Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
+                           Classes="bodyLarge" Foreground="{StaticResource TextLightBrush}"/>
             </StackPanel>
-            <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
-                    Command="{Binding RaiseLevelCommand}"
-                    ToolTip.Tip="{extensions:Localize 'EditMap_RaiseLevel'}"
-                    Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
-            <Button Grid.Column="2" Content="▼" FontSize="10" Padding="4,0"
-                    Command="{Binding LowerLevelCommand}"
-                    ToolTip.Tip="{extensions:Localize 'EditMap_LowerLevel'}"
-                    Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
+            <ctrl:StepperButton Grid.Column="1" Content="▲"
+                                Command="{Binding RaiseLevelCommand}"
+                                ToolTip.Tip="{extensions:Localize 'EditMap_RaiseLevel'}"/>
+            <ctrl:StepperButton Grid.Column="2" Content="▼"
+                                Command="{Binding LowerLevelCommand}"
+                                ToolTip.Tip="{extensions:Localize 'EditMap_LowerLevel'}"/>
         </Grid>
 
         <TextBlock Text="{extensions:Localize 'EditMap_Terrains'}" Foreground="{StaticResource TextLightBrush}" Classes="bodySmall"/>
@@ -56,55 +56,49 @@
         </ItemsControl>
         <Grid ColumnDefinitions="*,Auto,Auto"
               IsVisible="{Binding HexViewModel.IsWater}">
-            <StackPanel Orientation="Horizontal" Spacing="5">
+            <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
                 <TextBlock Text="{extensions:Localize 'EditMap_WaterDepth'}"
                            Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
                 <TextBlock Text="{Binding HexViewModel.WaterDepth}"
                            Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
             </StackPanel>
-            <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
-                    Command="{Binding DecreaseWaterDepthCommand}"
-                    ToolTip.Tip="{extensions:Localize 'EditMap_DecreaseWaterDepth'}"
-                    Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
-            <Button Grid.Column="2" Content="▼" FontSize="10" Padding="4,0"
-                    Command="{Binding IncreaseWaterDepthCommand}"
-                    ToolTip.Tip="{extensions:Localize 'EditMap_IncreaseWaterDepth'}"
-                    Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
+            <ctrl:StepperButton Grid.Column="1" Content="▲"
+                                Command="{Binding DecreaseWaterDepthCommand}"
+                                ToolTip.Tip="{extensions:Localize 'EditMap_DecreaseWaterDepth'}"/>
+            <ctrl:StepperButton Grid.Column="2" Content="▼"
+                                Command="{Binding IncreaseWaterDepthCommand}"
+                                ToolTip.Tip="{extensions:Localize 'EditMap_IncreaseWaterDepth'}"/>
         </Grid>
         <StackPanel IsVisible="{Binding HexViewModel.HasRoadBridge}" Spacing="4">
             <Grid ColumnDefinitions="*,Auto,Auto"
                   IsVisible="{Binding HexViewModel.IsBridge}">
-                <StackPanel Orientation="Horizontal" Spacing="5">
+                <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
                     <TextBlock Text="{extensions:Localize 'EditMap_BridgeHeight'}"
                                Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
                     <TextBlock Text="{Binding HexViewModel.BridgeHeight}"
                                Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
                 </StackPanel>
-                <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
-                        Command="{Binding RaiseBridgeLevelCommand}"
-                        ToolTip.Tip="{extensions:Localize 'EditMap_RaiseBridge'}"
-                        Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
-                <Button Grid.Column="2" Content="▼" FontSize="10" Padding="4,0"
-                        Command="{Binding LowerBridgeLevelCommand}"
-                        ToolTip.Tip="{extensions:Localize 'EditMap_LowerBridge'}"
-                        Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
+                <ctrl:StepperButton Grid.Column="1" Content="▲"
+                                    Command="{Binding RaiseBridgeLevelCommand}"
+                                    ToolTip.Tip="{extensions:Localize 'EditMap_RaiseBridge'}"/>
+                <ctrl:StepperButton Grid.Column="2" Content="▼"
+                                    Command="{Binding LowerBridgeLevelCommand}"
+                                    ToolTip.Tip="{extensions:Localize 'EditMap_LowerBridge'}"/>
             </Grid>
             <Grid ColumnDefinitions="*,Auto,Auto"
                   IsVisible="{Binding HexViewModel.IsBridge}">
-                <StackPanel Orientation="Horizontal" Spacing="5">
+                <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
                     <TextBlock Text="{extensions:Localize 'EditMap_ConstructionFactor'}"
                                Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
                     <TextBlock Text="{Binding HexViewModel.ConstructionFactor}"
                                Classes="bodySmall" Foreground="{StaticResource TextLightBrush}"/>
                 </StackPanel>
-                <Button Grid.Column="1" Content="▲" FontSize="10" Padding="4,0"
-                        Command="{Binding IncreaseConstructionFactorCommand}"
-                        ToolTip.Tip="{extensions:Localize 'EditMap_IncreaseConstructionFactor'}"
-                        Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
-                <Button Grid.Column="2" Content="▼" FontSize="10" Padding="4,0"
-                        Command="{Binding DecreaseConstructionFactorCommand}"
-                        ToolTip.Tip="{extensions:Localize 'EditMap_DecreaseConstructionFactor'}"
-                        Classes="cardAction" Foreground="{StaticResource TextLightBrush}"/>
+                <ctrl:StepperButton Grid.Column="1" Content="▲"
+                                    Command="{Binding IncreaseConstructionFactorCommand}"
+                                    ToolTip.Tip="{extensions:Localize 'EditMap_IncreaseConstructionFactor'}"/>
+                <ctrl:StepperButton Grid.Column="2" Content="▼"
+                                    Command="{Binding DecreaseConstructionFactorCommand}"
+                                    ToolTip.Tip="{extensions:Localize 'EditMap_DecreaseConstructionFactor'}"/>
             </Grid>
         </StackPanel>
     </StackPanel>
