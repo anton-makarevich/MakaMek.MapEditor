@@ -64,6 +64,8 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: v${{ inputs.version }}
 
       # The build pipeline uploads artifacts as MakaMek-MapEditor-Android. Find
       # the successful build run for the tag of the selected version.
@@ -92,9 +94,20 @@ jobs:
           run-id: ${{ steps.resolve_run.outputs.run_id }}
           path: ./android-artifact
 
-      # Push the signed AAB to the internal track of Google Play
+      # Fail fast when a Google Play deployment is requested but the service
+      # account credential is missing, instead of silently skipping the upload.
+      - name: Check PLAY_STORE_SERVICE_ACCOUNT_JSON is set
+        if: ${{ inputs.store == 'Google Play - internal track' }}
+        run: |
+          if [ -z "${PLAY_STORE_SERVICE_ACCOUNT_JSON}" ]; then
+            echo "::error::PLAY_STORE_SERVICE_ACCOUNT_JSON is empty; required for a Google Play deployment."
+            exit 1
+          fi
+
+      # Push the signed AAB to the internal track of Google Play. The preflight
+      # step above guarantees the credential, so only the store input is needed.
       - name: Upload AAB to Google Play (internal track)
-        if: ${{ inputs.store == 'Google Play - internal track' && env.PLAY_STORE_SERVICE_ACCOUNT_JSON != '' }}
+        if: ${{ inputs.store == 'Google Play - internal track' }}
         uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
