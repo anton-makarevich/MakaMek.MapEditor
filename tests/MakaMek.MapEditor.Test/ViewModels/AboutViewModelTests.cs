@@ -91,7 +91,7 @@ public class AboutViewModelTests
         await _sut.OpenContactCommand.ExecuteAsync();
 
         await _externalNavigationService.Received(1).OpenEmailAsync(
-            "makarevich.software@gmail.com", "MakaMek Map Editor");
+            "anton.makarevich@gmail.com", "MakaMek Map Editor");
     }
 
     [Fact]
