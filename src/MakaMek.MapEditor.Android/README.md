@@ -20,7 +20,7 @@ with the debug keystore, so plain builds keep working without secrets.
 
 ## Play Console prerequisites
 
-1. Create the app entry in the [Play Console](https://play.google.com/console) with package name `nl.sanetby.makamek.mapeditor` (matches the project's `ApplicationId`).
+1. Create the app entry in the [Play Console](https://play.google.com/console) with package name `nl.sanet.makamek.mapeditor` (matches the project's `ApplicationId`).
 2. Set up Play App Signing, then upload the release keystore (`ANDROID_KEYSTORE_BASE64`) as the **upload key** used to sign builds.
 3. Enable the Google Play Developer API for the app's Google Cloud project.
 4. Create a service account (Google Cloud → IAM & Admin → Service accounts), add a JSON key, and save the downloaded JSON file contents as the `PLAY_STORE_SERVICE_ACCOUNT_JSON` secret.
