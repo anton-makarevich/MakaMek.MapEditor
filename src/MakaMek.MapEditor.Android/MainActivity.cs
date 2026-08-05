@@ -6,7 +6,7 @@ using Avalonia.Android;
 namespace Sanet.MakaMek.MapEditor.Android;
 
 [Activity(
-    Label = "MakaMek.MapEditor.Android",
+    Label = "MakaMap",
     Theme = "@style/MyTheme.SplashScreen",
     Icon = "@mipmap/ic_launcher",
     RoundIcon = "@mipmap/ic_launcher_round",
