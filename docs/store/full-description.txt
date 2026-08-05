@@ -1,0 +1,15 @@
+MakaMek.MapEditor is a standalone, free and open-source companion tool for
+MakaMek, a turn-based mech combat board game. Use it to design custom
+battlefields that you can import into MakaMek and play on.
+
+Features
+
+- Visual map design: an intuitive graphical interface for creating hex-based maps
+- Terrain types: support for various terrain types (clear, woods, rough, water, etc.)
+- Map validation: built-in validation to ensure maps are compatible with MakaMek
+- Import/export: save and load maps in MakaMek-compatible formats
+- No account, no ads, no tracking: the app is fully offline and collects no data
+
+MakaMek.MapEditor is a companion tool for the MakaMek fan-made project and is
+not affiliated with or endorsed by any commercial mech combat game properties.
+All trademarks belong to their respective owners.
