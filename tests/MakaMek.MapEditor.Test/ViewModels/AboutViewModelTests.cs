@@ -65,6 +65,12 @@ public class AboutViewModelTests
     }
 
     [Fact]
+    public void OpenPrivacyPolicyCommand_ShouldNotBeNull()
+    {
+        _sut.OpenPrivacyPolicyCommand.ShouldNotBeNull();
+    }
+
+    [Fact]
     public void CloseCommand_ShouldNotBeNull()
     {
         _sut.CloseCommand.ShouldNotBeNull();
@@ -85,7 +91,16 @@ public class AboutViewModelTests
         await _sut.OpenContactCommand.ExecuteAsync();
 
         await _externalNavigationService.Received(1).OpenEmailAsync(
-            "makarevich.software@gmail.com", "MakaMek Map Editor");
+            "anton.makarevich@gmail.com", "MakaMek Map Editor");
+    }
+
+    [Fact]
+    public async Task OpenPrivacyPolicyCommand_ShouldOpenUrl()
+    {
+        await _sut.OpenPrivacyPolicyCommand.ExecuteAsync();
+
+        await _externalNavigationService.Received(1).OpenUrlAsync(
+            "https://raw.githubusercontent.com/anton-makarevich/MakaMek.MapEditor/main/PRIVACY.md");
     }
 
     [Fact]
@@ -112,5 +127,14 @@ public class AboutViewModelTests
             .Do(_ => throw new Exception("network error"));
 
         await Should.NotThrowAsync(() => _sut.OpenContactCommand.ExecuteAsync());
+    }
+
+    [Fact]
+    public async Task OpenPrivacyPolicyCommand_WhenServiceThrows_ShouldNotThrow()
+    {
+        _externalNavigationService.When(x => x.OpenUrlAsync(Arg.Any<string>()))
+            .Do(_ => throw new Exception("network error"));
+
+        await Should.NotThrowAsync(() => _sut.OpenPrivacyPolicyCommand.ExecuteAsync());
     }
 }

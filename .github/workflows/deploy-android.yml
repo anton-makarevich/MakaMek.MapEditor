@@ -1,0 +1,118 @@
+name: Deploy Android to Stores
+
+# Manual-only deployment pipeline.
+#
+# Only the repository owner is allowed to run it: workflow_dispatch can be
+# triggered by anyone with write access, so the deploy job verifies the actor
+# against github.repository_owner and fails otherwise. The
+# play-store-production environment provides an extra approval gate.
+#
+# Available versions are not hardcoded here. They are read from the git tags
+# (the build pipeline creates a `v<version>` tag on each release), so the list
+# is always in sync. The run prints the available versions and fails if the
+# requested one is not among them.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy, e.g. 0.7.8 (must be an available version tag)'
+        required: true
+        type: string
+        default: '0.7.8'
+      store:
+        description: 'Store to deploy to'
+        required: true
+        type: choice
+        default: 'Google Play - internal track'
+        options:
+          - 'Google Play - internal track'
+          # Add more stores here as they become available, e.g.
+          # 'Google Play - beta track', 'Amazon Appstore'.
+
+permissions:
+  contents: read
+  actions: read # Allow resolving the build run and downloading its artifacts
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: play-store-production
+    env:
+      PLAY_STORE_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
+    steps:
+      - name: Check actor is repository owner
+        run: |
+          if [ "${{ github.actor }}" != "${{ github.repository_owner }}" ]; then
+            echo "::error::Only the repository owner (${{ github.repository_owner }}) may run this deployment."
+            exit 1
+          fi
+
+      # Available versions come from the git tags of this repository. Print the
+      # list for reference and fail if the requested version is not on it.
+      - name: Check available versions
+        run: |
+          tags="$(gh api "repos/${{ github.repository }}/git/matching-refs/tags/v" \
+            --jq '.[] | .ref | sub("refs/tags/"; "")' | sort -V)"
+          echo "Available versions:"
+          echo "$tags"
+          if [ -z "$(echo "$tags" | grep -Fx "v${{ inputs.version }}")" ]; then
+            echo "::error::Version v${{ inputs.version }} is not in the available versions list."
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: v${{ inputs.version }}
+
+      # The build pipeline uploads artifacts as MakaMek-MapEditor-Android. Find
+      # the successful build run for the tag of the selected version.
+      - name: Resolve build run for version
+        id: resolve_run
+        run: |
+          run_id="$(gh run list \
+            --workflow=build-android.yml \
+            --branch "v${{ inputs.version }}" \
+            --event push \
+            --status success \
+            --json databaseId \
+            --jq '.[0].databaseId // empty')"
+          if [ -z "$run_id" ]; then
+            echo "::error::No successful Android build found for tag v${{ inputs.version }}."
+            exit 1
+          fi
+          echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Download Android AAB
+        uses: actions/download-artifact@v4
+        with:
+          name: MakaMek-MapEditor-Android
+          run-id: ${{ steps.resolve_run.outputs.run_id }}
+          path: ./android-artifact
+
+      # Fail fast when a Google Play deployment is requested but the service
+      # account credential is missing, instead of silently skipping the upload.
+      - name: Check PLAY_STORE_SERVICE_ACCOUNT_JSON is set
+        if: ${{ inputs.store == 'Google Play - internal track' }}
+        run: |
+          if [ -z "${PLAY_STORE_SERVICE_ACCOUNT_JSON}" ]; then
+            echo "::error::PLAY_STORE_SERVICE_ACCOUNT_JSON is empty; required for a Google Play deployment."
+            exit 1
+          fi
+
+      # Push the signed AAB to the internal track of Google Play. The preflight
+      # step above guarantees the credential, so only the store input is needed.
+      - name: Upload AAB to Google Play (internal track)
+        if: ${{ inputs.store == 'Google Play - internal track' }}
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
+          packageName: nl.sanet.makamek.mapeditor
+          releaseFiles: ./android-artifact/*-Signed.aab
+          track: internal
+          status: completed
+          whatsNewDirectory: ./distribution/whatsnew

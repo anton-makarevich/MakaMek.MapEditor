@@ -56,9 +56,11 @@ public class MapEditorFakeLocalizationService : FakeLocalizationService
         Strings["About_Description"] = "A companion tool for the MakaMek tabletop wargame, providing hex map creation and editing capabilities.";
         Strings["About_Attribution"] = "Can be used to create generic hex-based maps for tabletops.";
         Strings["About_FossStatement"] = "This software is free and open source, licensed under the GPL-3.0.";
+        Strings["About_TerrainAttribution"] = "Terrain artwork is taken from the MegaMek Data repository (github.com/MegaMek/mm-data). MegaMek Data (C) by The MegaMek Team is licensed under CC BY-NC-SA 4.0 (creativecommons.org/licenses/by-nc-sa/4.0).";
         Strings["About_TrademarkDisclaimer"] = "This project is not affiliated with the copyright or trademark holders of any existing wargames.";
         Strings["About_GitHubButton"] = "View on GitHub";
         Strings["About_ContactButton"] = "Contact";
+        Strings["About_PrivacyPolicyButton"] = "Privacy Policy";
         Strings["About_CloseButton"] = "Close";
         Strings["NewMap_AboutButton"] = "About";
         Strings["EditMap_AboutButton"] = "About";

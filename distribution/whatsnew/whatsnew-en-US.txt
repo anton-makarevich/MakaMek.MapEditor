@@ -1,0 +1,8 @@
+Design hex maps for the MakaMek tabletop wargame with an intuitive graphical interface:
+
+- Edit terrain types: clear, woods, rough, water and more
+- Raise and lower terrain levels, water depth and bridge heights
+- Built-in validation to keep maps compatible with MakaMek
+- Save and load maps in MakaMek-compatible formats
+- Export maps as PDF
+- Free and open source, no ads, no tracking

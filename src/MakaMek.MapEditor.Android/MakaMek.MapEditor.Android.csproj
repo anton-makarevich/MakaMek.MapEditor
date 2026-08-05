@@ -1,25 +1,59 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+    <!--
+        Production signing (release):
+
+        CI signs with a real keystore by setting these environment variables
+        (or passing the same MSBuild properties, which take precedence):
+
+          ANDROID_KEYSTORE_PATH       -> AndroidSigningKeyStore
+          ANDROID_KEYSTORE_ALIAS      -> AndroidSigningKeyAlias
+          ANDROID_KEYSTORE_STORE_PASS -> AndroidSigningStorePass
+          ANDROID_KEYSTORE_KEY_PASS   -> AndroidSigningKeyPass
+
+        When no keystore is provided (local/dev builds, or CI without secrets)
+        AndroidKeyStore stays unset and .NET for Android falls back to
+        auto-signing with the debug keystore.
+
+        Package format: defaults to APK for F-Droid / alternative stores.
+        Pass -p:AndroidPackageFormat=aab for a Play Console AAB; run the build
+        once per format to produce both. Signed APKs are emitted as *-Signed.apk.
+
+        Reproducibility: the .NET SDK is pinned in /global.json. Verified against
+        .NET Android workload 36.1.69, Android SDK build-tools 36.1.0 and
+        platforms;android-36.
+    -->
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net10.0-android</TargetFramework>
         <SupportedOSPlatformVersion>24</SupportedOSPlatformVersion>
+        <AndroidTargetSdkVersion>36</AndroidTargetSdkVersion>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <ApplicationId>nl.sanetby.makamek.mapeditor</ApplicationId>
+        <ApplicationId>nl.sanet.makamek.mapeditor</ApplicationId>
         <!-- Use version from Directory.Build.props -->
         <ApplicationVersion>$([MSBuild]::ValueOrDefault($([System.Text.RegularExpressions.Regex]::Match($(Version), ^\d+\.\d+\.\d+).Value.Replace('.', '')), 0))</ApplicationVersion>
         <ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
-        <AndroidPackageFormat>apk</AndroidPackageFormat>
+        <AndroidPackageFormat Condition="'$(AndroidPackageFormat)' == ''">apk</AndroidPackageFormat>
         <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
         <AssemblyName>Sanet.MakaMek.MapEditor.Android</AssemblyName>
         <RootNamespace>Sanet.MakaMek.MapEditor.Android</RootNamespace>
     </PropertyGroup>
 
-    <ItemGroup>
-        <AndroidResource Include="Icon.png">
-            <Link>Resources\drawable\Icon.png</Link>
-        </AndroidResource>
-    </ItemGroup>
+    <PropertyGroup Condition="'$(AndroidSigningKeyStore)' == '' and '$(ANDROID_KEYSTORE_PATH)' != ''">
+        <AndroidSigningKeyStore>$(ANDROID_KEYSTORE_PATH)</AndroidSigningKeyStore>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(AndroidSigningKeyAlias)' == '' and '$(ANDROID_KEYSTORE_ALIAS)' != ''">
+        <AndroidSigningKeyAlias>$(ANDROID_KEYSTORE_ALIAS)</AndroidSigningKeyAlias>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(AndroidSigningStorePass)' == '' and '$(ANDROID_KEYSTORE_STORE_PASS)' != ''">
+        <AndroidSigningStorePass>$(ANDROID_KEYSTORE_STORE_PASS)</AndroidSigningStorePass>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(AndroidSigningKeyPass)' == '' and '$(ANDROID_KEYSTORE_KEY_PASS)' != ''">
+        <AndroidSigningKeyPass>$(ANDROID_KEYSTORE_KEY_PASS)</AndroidSigningKeyPass>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(AndroidSigningKeyStore)' != ''">
+        <AndroidKeyStore>true</AndroidKeyStore>
+    </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Avalonia.Android" Version="12.1.0" />

@@ -31,6 +31,9 @@
                         <TextBlock Text="{extensions:Localize 'About_FossStatement'}"
                                    Classes="body" TextWrapping="Wrap"
                                    TextAlignment="Center"/>
+                        <TextBlock Text="{extensions:Localize 'About_TerrainAttribution'}"
+                                   Classes="bodySmall" TextWrapping="Wrap"
+                                   TextAlignment="Center"/>
                     </StackPanel>
                 </Border>
                 <Border Classes="card">
@@ -45,6 +48,10 @@
                             HorizontalAlignment="Stretch"/>
                     <Button Content="{extensions:Localize 'About_ContactButton'}"
                             Command="{Binding OpenContactCommand}"
+                            Classes="secondary"
+                            HorizontalAlignment="Stretch"/>
+                    <Button Content="{extensions:Localize 'About_PrivacyPolicyButton'}"
+                            Command="{Binding OpenPrivacyPolicyCommand}"
                             Classes="secondary"
                             HorizontalAlignment="Stretch"/>
                 </StackPanel>
