@@ -57,13 +57,26 @@ public class AboutViewModel : BaseViewModel
     {
         try
         {
-            await _externalNavigationService.OpenEmailAsync("makarevich.software@gmail.com", "MakaMek Map Editor");
+            await _externalNavigationService.OpenEmailAsync("anton.makarevich@gmail.com", "MakaMek Map Editor");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to open contact email");
         }
     }, onException: ex => _logger.LogError(ex, "Failed to open contact email"));
+
+    public IAsyncCommand OpenPrivacyPolicyCommand => field ??= new AsyncCommand(async () =>
+    {
+        try
+        {
+            await _externalNavigationService.OpenUrlAsync(
+                "https://raw.githubusercontent.com/anton-makarevich/MakaMek.MapEditor/main/PRIVACY.md");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to open privacy policy");
+        }
+    }, onException: ex => _logger.LogError(ex, "Failed to open privacy policy"));
 
     public IAsyncCommand CloseCommand => field ??= new AsyncCommand(async () =>
     {

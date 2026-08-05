@@ -96,9 +96,11 @@ public class MapEditorFakeLocalizationServiceTests
     [InlineData("About_Description", "A companion tool for the MakaMek tabletop wargame, providing hex map creation and editing capabilities.")]
     [InlineData("About_Attribution", "Can be used to create generic hex-based maps for tabletops.")]
     [InlineData("About_FossStatement", "This software is free and open source, licensed under the GPL-3.0.")]
+    [InlineData("About_TerrainAttribution", "Terrain artwork is taken from the MegaMek Data repository (github.com/MegaMek/mm-data). MegaMek Data (C) by The MegaMek Team is licensed under CC BY-NC-SA 4.0 (creativecommons.org/licenses/by-nc-sa/4.0).")]
     [InlineData("About_TrademarkDisclaimer", "This project is not affiliated with the copyright or trademark holders of any existing wargames.")]
     [InlineData("About_GitHubButton", "View on GitHub")]
     [InlineData("About_ContactButton", "Contact")]
+    [InlineData("About_PrivacyPolicyButton", "Privacy Policy")]
     [InlineData("About_CloseButton", "Close")]
     public void GetString_About_ReturnsExpectedString(string key, string expected)
     {
