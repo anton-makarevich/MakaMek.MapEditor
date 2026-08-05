@@ -6,17 +6,19 @@ name: Deploy Android to Stores
 # triggered by anyone with write access, so the deploy job verifies the actor
 # against github.repository_owner and fails otherwise. The
 # play-store-production environment provides an extra approval gate.
+#
+# Available versions are not hardcoded here. They are read from the git tags
+# (the build pipeline creates a `v<version>` tag on each release), so the list
+# is always in sync. The run prints the available versions and fails if the
+# requested one is not among them.
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to deploy (git tag v<version>)'
+        description: 'Version to deploy, e.g. 0.7.8 (must be an available version tag)'
         required: true
-        type: choice
-        # Keep in sync with <Version> in Directory.Build.props. Add the new
-        # version here on every release.
-        options:
-          - '0.7.8'
+        type: string
+        default: '0.7.8'
       store:
         description: 'Store to deploy to'
         required: true
@@ -44,6 +46,21 @@ jobs:
             echo "::error::Only the repository owner (${{ github.repository_owner }}) may run this deployment."
             exit 1
           fi
+
+      # Available versions come from the git tags of this repository. Print the
+      # list for reference and fail if the requested version is not on it.
+      - name: Check available versions
+        run: |
+          tags="$(gh api "repos/${{ github.repository }}/git/matching-refs/tags/v" \
+            --jq '.[] | .ref | sub("refs/tags/"; "")' | sort -V)"
+          echo "Available versions:"
+          echo "$tags"
+          if [ -z "$(echo "$tags" | grep -Fx "v${{ inputs.version }}")" ]; then
+            echo "::error::Version v${{ inputs.version }} is not in the available versions list."
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Checkout code
         uses: actions/checkout@v4
