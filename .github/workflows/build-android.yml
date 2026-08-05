@@ -23,7 +23,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.x
+          global-json-file: global.json
 
       - name: Install Android workload
         run: dotnet workload install android
@@ -79,6 +79,8 @@ jobs:
           files: |
             src/MakaMek.MapEditor.Android/bin/Release/net10.0-android/*-Signed.apk
             src/MakaMek.MapEditor.Android/bin/Release/net10.0-android/*-Signed.aab
+            src/MakaMek.MapEditor.Android/bin/Release/net10.0-android/publish/*-Signed.apk
+            src/MakaMek.MapEditor.Android/bin/Release/net10.0-android/publish/*-Signed.aab
           draft: false
           prerelease: false
           generate_release_notes: false # Only one pipeline generates release notes
@@ -91,6 +93,8 @@ jobs:
           path: |
             src/MakaMek.MapEditor.Android/bin/Release/net10.0-android/*-Signed.apk
             src/MakaMek.MapEditor.Android/bin/Release/net10.0-android/*-Signed.aab
+            src/MakaMek.MapEditor.Android/bin/Release/net10.0-android/publish/*-Signed.apk
+            src/MakaMek.MapEditor.Android/bin/Release/net10.0-android/publish/*-Signed.aab
           retention-days: 90  # Keep artifacts for 90 days
 
   deploy:

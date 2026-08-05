@@ -1,4 +1,4 @@
- # MakaMek.MapEditor.Android
+# MakaMek.MapEditor.Android
 
 The Android head of MakaMek.MapEditor. The production build produces a signed
 `.apk` (GitHub Release / F-Droid) and a signed `.aab` (Google Play), then

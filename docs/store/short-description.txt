@@ -1,1 +1,1 @@
-Design hex maps for MakaMek, the mech combat board game (or any other hex-based game).
+Design hex maps for MakaMek or other hex-based board games
