@@ -17,8 +17,10 @@ identifying data. It contains no analytics and no advertising SDKs.
 On first launch, the App downloads terrain/biome data from the GitHub
 repository `anton-makarevich/MakaMek` through the GitHub API
 (`api.github.com`). As with any request to a web server, GitHub's servers see
-the user's IP address when this download happens. No other information — no
-identifiers, no device data, no personal or sensitive data — is sent. After this
+the user's IP address when this download happens; this processing is ephemeral
+and the IP address is not retained or stored by the App or the Developer. No
+other information — no identifiers, no device data, no personal or sensitive
+data — is sent. After this
 one-time download the App works fully offline; later launches use the locally
 cached data.
 
