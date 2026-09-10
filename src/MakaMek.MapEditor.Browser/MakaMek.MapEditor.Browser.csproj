@@ -23,8 +23,8 @@
     <TrimmerRootDescriptor Include="TrimmerRoots.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Browser" Version="12.1.0" />
-    <PackageReference Include="Sanet.MakaMek.Services.Avalonia.Browser" Version="0.62.2-preview" />
+    <PackageReference Include="Avalonia.Browser" Version="12.1.2" />
+    <PackageReference Include="Sanet.MakaMek.Services.Avalonia.Browser" Version="0.63.0" />
     <PackageReference Include="Sanet.MVVM.ExternalNavigation.Browser" Version="1.6.0" />
   </ItemGroup>
   <ItemGroup>
