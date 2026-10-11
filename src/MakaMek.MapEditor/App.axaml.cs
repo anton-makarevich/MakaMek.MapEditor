@@ -33,7 +33,7 @@ public partial class App : Application
         var serviceProvider = services.BuildServiceProvider();
 
         var localizationService = serviceProvider.GetRequiredService<ILocalizationService>();
-        LocalizeExtension.Initialize(localizationService);
+        Resources[LocalizeExtension.LocalizationServiceResourceKey] = localizationService;
         
         INavigationService navigationService;
         MainMenuViewModel? viewModel;
