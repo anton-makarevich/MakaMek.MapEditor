@@ -1,5 +1,4 @@
 using System.Reactive.Concurrency;
-using ReactiveUI.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Core.Services;
@@ -24,7 +23,7 @@ public static class AndroidServices
             );
         });
         services.AddSingleton<IFileCachingService, FileSystemCachingService>();
-        services.AddSingleton<IScheduler>(AvaloniaScheduler.Instance);
+        services.AddSingleton<IScheduler>(TaskPoolScheduler.Default);
         services.AddAndroidExternalNavigation();
     }
 }

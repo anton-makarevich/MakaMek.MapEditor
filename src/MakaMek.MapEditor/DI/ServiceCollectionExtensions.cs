@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Sanet.MakaMek.Assets.ResourceProviders;
 using Sanet.MakaMek.Assets.Services;
 using Sanet.MakaMek.Avalonia.Controls.Services;
 using Sanet.MakaMek.Core.Services;
@@ -9,7 +10,6 @@ using Sanet.MakaMek.MapEditor.Services;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Services;
 using Sanet.MakaMek.Services.Avalonia;
-using Sanet.MakaMek.Services.ResourceProviders;
 
 namespace Sanet.MakaMek.MapEditor.DI;
 
@@ -37,8 +37,10 @@ public static class ServiceCollectionExtensions
             var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
             var streamProviders = new List<IResourceStreamProvider>
             {
-                new GitHubResourceStreamProvider("mmtx",
-                    "https://api.github.com/repos/anton-makarevich/MakaMek/contents/data/hexes/biomes",
+                new GitHubResourceStreamProvider(
+                    "mmtx",
+                    "https://api.github.com/repos/anton-makarevich/MakaMek/contents/data",
+                    "hexes/biomes",
                     cachingService,
                     loggerFactory.CreateLogger<GitHubResourceStreamProvider>()
                 )
