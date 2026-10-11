@@ -25,10 +25,10 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.12" />
     <PackageReference Include="ReactiveUI.Avalonia" Version="12.1.2" />
-    <PackageReference Include="Sanet.MakaMek.Map" Version="0.63.0" />
-    <PackageReference Include="Sanet.MakaMek.Services" Version="0.63.0" />
-    <PackageReference Include="Sanet.MakaMek.Services.Avalonia" Version="0.63.0" />
-    <PackageReference Include="Sanet.MakaMek.Avalonia.Controls" Version="0.63.0" />
+    <PackageReference Include="Sanet.MakaMek.Map" Version="0.64.0" />
+    <PackageReference Include="Sanet.MakaMek.Services" Version="0.64.0" />
+    <PackageReference Include="Sanet.MakaMek.Services.Avalonia" Version="0.64.0" />
+    <PackageReference Include="Sanet.MakaMek.Avalonia.Controls" Version="0.64.0" />
     <PackageReference Include="Sanet.MVVM.Core" Version="1.7.0" />
     <PackageReference Include="Sanet.MVVM.DI.Avalonia" Version="1.7.1211" />
     <PackageReference Include="Sanet.MVVM.Navigation.Avalonia" Version="1.7.1211" />
