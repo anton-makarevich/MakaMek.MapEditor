@@ -1,3 +1,5 @@
+using Sanet.Localization;
+using Sanet.Localization.Providers;
 using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
@@ -9,7 +11,10 @@ namespace MakaMek.MapEditor.Test.ViewModels.Wrappers;
 
 public class HexViewModelTests
 {
-    private readonly ILocalizationService _localizationService = new FakeLocalizationService();
+    private readonly ILocalizationService _localizationService = new LocalizationService(
+        new EmbeddedResourcesProvider(
+            typeof(LocalizationResourcesAnchor).Assembly,
+            LocalizationResourcesAnchor.ResourceBaseName));
     [Fact]
     public void Constructor_ShouldReadLevel()
     {

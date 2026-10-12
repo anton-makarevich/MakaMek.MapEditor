@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Sanet.Localization;
+using Sanet.Localization.Providers;
 using Sanet.MakaMek.Assets.ResourceProviders;
 using Sanet.MakaMek.Assets.Services;
 using Sanet.MakaMek.Avalonia.Controls.Services;
@@ -22,7 +24,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IImageService>(_ => new AvaloniaAssetImageService("avares://Sanet.MakaMek.MapEditor/Assets"));
         services.AddSingleton<IFileService, AvaloniaFileService>();
         services.AddSingleton<IPdfExportService, PdfExportService>();
-        services.AddSingleton<ILocalizationService, MapEditorFakeLocalizationService>();
+        services.AddLocalization(CreateLocalizationResourcesProvider());
         services.AddSingleton<IMapPreviewRenderer, SkiaMapPreviewRenderer>();
         services.AddSingleton<IDispatcherService, AvaloniaDispatcherService>();
         services.AddSingleton<IMapResourceProvider>(sp =>
@@ -47,6 +49,18 @@ public static class ServiceCollectionExtensions
             };
             return new TerrainCachingService(streamProviders, loggerFactory);
         });
+    }
+
+    public static ILocalizationResourcesProvider CreateLocalizationResourcesProvider()
+    {
+        // Later providers take precedence over shared MakaMek resources.
+        return new CompositeResourcesProvider(
+            new EmbeddedResourcesProvider(
+                typeof(LocalizationResourcesAnchor).Assembly,
+                LocalizationResourcesAnchor.ResourceBaseName),
+            new EmbeddedResourcesProvider(
+                typeof(EditorLocalizationResources).Assembly,
+                EditorLocalizationResources.ResourceBaseName));
     }
 
     public static void RegisterViewModels(this IServiceCollection services)

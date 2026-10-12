@@ -4,7 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Sanet.MakaMek.Avalonia.Controls.Extensions;
-using Sanet.MakaMek.Localization;
+using Sanet.Localization;
 using Sanet.MakaMek.MapEditor.DI;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.MapEditor.Views;

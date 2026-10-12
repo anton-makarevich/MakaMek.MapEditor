@@ -2,8 +2,10 @@ using System.ComponentModel;
 using AsyncAwaitBestPractices;
 using Avalonia;
 using Avalonia.Interactivity;
+using Sanet.Localization;
 using Sanet.MakaMek.Map.Data;
 using Sanet.MakaMek.Map.Models;
+using Sanet.MakaMek.Map.Models.Highlights;
 using Sanet.MakaMek.MapEditor.Models;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Presentation.ViewModels;
@@ -186,12 +188,20 @@ public partial class EditMapView : BaseView<EditMapViewModel>
         RefreshHex(result);
     }
 
+    // Custom highlights use the renderer's white fallback, preserving the selection outline.
+    private sealed record SelectionHighlight : IHexHighlightType
+    {
+        public int RenderOrder => 0;
+        public string Name => nameof(SelectionHighlight);
+        public string Render(ILocalizationService localizationService) => string.Empty;
+    }
+
     private void ShowSelectionOutline(HexCoordinates coords)
     {
         _selectedHexCoords = coords;
         MapCanvas.SetBoundaryOutlines(new Dictionary<HexCoordinates, HighlightBoundaryOutline>
         {
-            [coords] = new HighlightBoundaryOutline(0b00111111, "#FFFFFF", 3.0)
+            [coords] = new HighlightBoundaryOutline(0b00111111, new SelectionHighlight(), 3.0)
         });
     }
 

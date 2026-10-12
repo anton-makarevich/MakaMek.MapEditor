@@ -5,7 +5,7 @@ using System.Text.Json;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.Extensions.Logging;
 using Sanet.MakaMek.Assets.Services;
-using Sanet.MakaMek.Localization;
+using Sanet.Localization;
 using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Models.Terrains;
 using Sanet.MakaMek.Map.Services;
