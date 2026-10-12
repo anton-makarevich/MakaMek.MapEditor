@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+
+  <data name="language_name" xml:space="preserve"><value>English</value></data>
+
+  <data name="MainMenu_Title" xml:space="preserve"><value>MakaMek Map Editor</value></data>
+  <data name="MainMenu_CreateNewMap" xml:space="preserve"><value>Create New Map</value></data>
+  <data name="MainMenu_LoadMap" xml:space="preserve"><value>Load Map</value></data>
+  <data name="MainMenu_LoadingTerrain" xml:space="preserve"><value>Loading terrain data...</value></data>
+  <data name="MainMenu_ErrorLoadingTerrain" xml:space="preserve"><value>Error loading terrain data</value></data>
+  <data name="MainMenu_Retry" xml:space="preserve"><value>Retry</value></data>
+
+  <data name="Status_BiomesLoaded" xml:space="preserve"><value>{0} biomes loaded</value></data>
+  <data name="Status_NoBiomesFound" xml:space="preserve"><value>No biomes found</value></data>
+  <data name="Status_ErrorLoadingBiomes" xml:space="preserve"><value>Error loading biomes: {0}</value></data>
+
+  <data name="NewMap_Title" xml:space="preserve"><value>New Map Configuration</value></data>
+  <data name="NewMap_Width" xml:space="preserve"><value>Width:</value></data>
+  <data name="NewMap_Height" xml:space="preserve"><value>Height:</value></data>
+  <data name="NewMap_PreGenerateTerrain" xml:space="preserve"><value>Pre-generate Terrain</value></data>
+  <data name="NewMap_ForestCoverage" xml:space="preserve"><value>Forest Coverage %</value></data>
+  <data name="NewMap_LightWoods" xml:space="preserve"><value>Light Woods %</value></data>
+  <data name="NewMap_CreateMap" xml:space="preserve"><value>Edit map</value></data>
+  <data name="NewMap_AboutButton" xml:space="preserve"><value>About</value></data>
+
+  <data name="EditMap_ExportMap" xml:space="preserve"><value>Save Map</value></data>
+  <data name="EditMap_RaiseLevel" xml:space="preserve"><value>▲ Raise Level</value></data>
+  <data name="EditMap_LowerLevel" xml:space="preserve"><value>▼ Lower Level</value></data>
+  <data name="EditMap_IncreaseWaterDepth" xml:space="preserve"><value>▼ Increase Depth</value></data>
+  <data name="EditMap_DecreaseWaterDepth" xml:space="preserve"><value>▲ Decrease Depth</value></data>
+  <!-- Deliberately overrides MakaMek's "Export Map File" to preserve the editor's save dialog title. -->
+  <data name="EditMap_ExportMapDialogTitle" xml:space="preserve"><value>Save Map</value></data>
+  <data name="EditMap_ExportPdf" xml:space="preserve"><value>Export PDF</value></data>
+  <data name="EditMap_ExportPdfDialogTitle" xml:space="preserve"><value>Export Map as PDF</value></data>
+  <data name="EditMap_PdfFilesFilter" xml:space="preserve"><value>PDF Files</value></data>
+  <data name="EditMap_Cursor" xml:space="preserve"><value>Select</value></data>
+  <data name="EditMap_Elevation" xml:space="preserve"><value>Elevation:</value></data>
+  <data name="EditMap_Terrains" xml:space="preserve"><value>Terrains:</value></data>
+  <data name="EditMap_WaterDepth" xml:space="preserve"><value>Water Depth:</value></data>
+  <data name="EditMap_Settings" xml:space="preserve"><value>☰ Settings</value></data>
+  <data name="EditMap_CloseEditMap" xml:space="preserve"><value>Exit Editor</value></data>
+  <data name="EditMap_CloseConfirmTitle" xml:space="preserve"><value>Close Map</value></data>
+  <data name="EditMap_CloseConfirmMessage" xml:space="preserve"><value>Are you sure you want to close this map? Any unsaved changes will be lost.</value></data>
+  <data name="EditMap_CloseHexInfo" xml:space="preserve"><value>Close</value></data>
+  <data name="EditMap_RoadBridge" xml:space="preserve"><value>Road/Bridge</value></data>
+  <data name="EditMap_BridgeHeight" xml:space="preserve"><value>Bridge Height:</value></data>
+  <data name="EditMap_ConstructionFactor" xml:space="preserve"><value>Construction:</value></data>
+  <data name="EditMap_RaiseBridge" xml:space="preserve"><value>▲ Raise Bridge</value></data>
+  <data name="EditMap_LowerBridge" xml:space="preserve"><value>▼ Lower Bridge</value></data>
+  <data name="EditMap_IncreaseConstructionFactor" xml:space="preserve"><value>▲ Increase CF</value></data>
+  <data name="EditMap_DecreaseConstructionFactor" xml:space="preserve"><value>▼ Decrease CF</value></data>
+  <data name="EditMap_AboutButton" xml:space="preserve"><value>About</value></data>
+
+  <!-- Deliberately overrides MakaMek's application title with the editor's title. -->
+  <data name="Window_Title" xml:space="preserve"><value>MakaMek Map Editor</value></data>
+
+  <data name="About_Title" xml:space="preserve"><value>MakaMek Map Editor</value></data>
+  <data name="About_Description" xml:space="preserve"><value>A companion tool for the MakaMek tabletop wargame, providing hex map creation and editing capabilities.</value></data>
+  <data name="About_Attribution" xml:space="preserve"><value>Can be used to create generic hex-based maps for tabletops.</value></data>
+  <data name="About_FossStatement" xml:space="preserve"><value>This software is free and open source, licensed under the GPL-3.0.</value></data>
+  <data name="About_TerrainAttribution" xml:space="preserve"><value>Terrain artwork is taken from the MegaMek Data repository (github.com/MegaMek/mm-data). MegaMek Data (C) by The MegaMek Team is licensed under CC BY-NC-SA 4.0 (creativecommons.org/licenses/by-nc-sa/4.0).</value></data>
+  <data name="About_TrademarkDisclaimer" xml:space="preserve"><value>This project is not affiliated with the copyright or trademark holders of any existing wargames.</value></data>
+  <data name="About_GitHubButton" xml:space="preserve"><value>View on GitHub</value></data>
+  <data name="About_ContactButton" xml:space="preserve"><value>Contact</value></data>
+  <data name="About_PrivacyPolicyButton" xml:space="preserve"><value>Privacy Policy</value></data>
+  <data name="About_CloseButton" xml:space="preserve"><value>Close</value></data>
+</root>

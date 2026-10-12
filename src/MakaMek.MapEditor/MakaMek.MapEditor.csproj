@@ -25,6 +25,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.12" />
     <PackageReference Include="ReactiveUI.Avalonia" Version="12.1.6" />
+    <PackageReference Include="Sanet.Localization" Version="0.3.0" />
     <PackageReference Include="Sanet.MakaMek.Localization" Version="0.64.20-preview" />
     <PackageReference Include="Sanet.MakaMek.Map" Version="0.64.20-preview" />
     <PackageReference Include="Sanet.MakaMek.Services" Version="0.64.20-preview" />
@@ -45,6 +46,11 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\Maps\clear.json" />
+    <EmbeddedResource Update="Resources\Localization\EditorStrings.resx">
+      <LogicalName>Sanet.MakaMek.MapEditor.Resources.Localization.EditorStrings.resources</LogicalName>
+      <Generator />
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

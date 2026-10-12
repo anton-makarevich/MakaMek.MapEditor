@@ -2,7 +2,7 @@ using System.Reflection;
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.Extensions.Logging;
 using Sanet.MVVM.Core.Services;
-using Sanet.MakaMek.Localization;
+using Sanet.Localization;
 using Sanet.MVVM.Core.ViewModels;
 
 namespace Sanet.MakaMek.MapEditor.ViewModels;
