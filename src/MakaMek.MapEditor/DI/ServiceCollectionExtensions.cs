@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITerrainBitmaskService, TerrainBitmaskService>();
         services.AddSingleton<IImageService>(_ => new AvaloniaAssetImageService("avares://Sanet.MakaMek.MapEditor/Assets"));
         services.AddSingleton<IFileService, AvaloniaFileService>();
-        services.AddSingleton<IPdfExportService, PdfExportService>();
+        services.AddSingleton<IPdfExportService, SkiaPdfExportService>();
         services.AddLocalization(CreateLocalizationResourcesProvider());
         services.AddSingleton<IMapPreviewRenderer, SkiaMapPreviewRenderer>();
         services.AddSingleton<IDispatcherService, AvaloniaDispatcherService>();
