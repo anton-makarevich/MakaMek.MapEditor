@@ -1,11 +1,8 @@
 using AsyncAwaitBestPractices.MVVM;
 using Microsoft.Extensions.Logging;
-using Sanet.MakaMek.Core.Services;
 using Sanet.Localization;
-using Sanet.MakaMek.Map.Factories;
-using Sanet.MakaMek.Map.Services;
 using Sanet.MakaMek.Presentation.ViewModels;
-using Sanet.MakaMek.Services;
+using Sanet.MakaMek.Presentation.ViewModels.Maps;
 using Sanet.MVVM.Core.ViewModels;
 
 namespace Sanet.MakaMek.MapEditor.ViewModels;
@@ -13,21 +10,15 @@ namespace Sanet.MakaMek.MapEditor.ViewModels;
 public class NewMapViewModel : BaseViewModel
 {
     public NewMapViewModel(
-        IMapPreviewRenderer previewRenderer,
-        IBattleMapFactory mapFactory,
-        IMapResourceProvider mapResourceProvider,
-        IFileService fileService,
-        ILogger<NewMapViewModel> logger,
-        IDispatcherService dispatcherService,
+        MapGenerationService mapGenerationService,
+        AvailableMapsService availableMapsService,
+        ILogger<MapConfigViewModel> mapConfigLogger,
         ILocalizationService localizationService)
     {
         MapConfig = new MapConfigViewModel(
-            previewRenderer,
-            mapFactory,
-            mapResourceProvider,
-            fileService,
-            logger,
-            dispatcherService,
+            mapGenerationService,
+            availableMapsService,
+            mapConfigLogger,
             localizationService);
     }
 
