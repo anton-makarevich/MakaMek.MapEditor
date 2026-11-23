@@ -8,6 +8,7 @@ using Sanet.MakaMek.Map.Models;
 using Sanet.MakaMek.Map.Services;
 using Sanet.MakaMek.MapEditor.ViewModels;
 using Sanet.MakaMek.Presentation.ViewModels;
+using Sanet.MakaMek.Presentation.ViewModels.Maps;
 using Sanet.MakaMek.Services;
 using Sanet.MVVM.Core.Services;
 using Shouldly;
@@ -24,18 +25,20 @@ public class NewMapViewModelTests
     private readonly IMapPreviewRenderer _previewRenderer = Substitute.For<IMapPreviewRenderer>();
     private readonly IMapResourceProvider _mapResourceProvider = Substitute.For<IMapResourceProvider>();
     private readonly IFileService _fileService = Substitute.For<IFileService>();
-    private readonly ILogger<NewMapViewModel> _logger = Substitute.For<ILogger<NewMapViewModel>>();
     private readonly IDispatcherService _dispatcherService = Substitute.For<IDispatcherService>();
 
     public NewMapViewModelTests()
     {
         _sut = new NewMapViewModel(
-            _previewRenderer,
-            _mapFactory,
-            _mapResourceProvider,
-            _fileService,
-            _logger,
-            _dispatcherService,
+            new MapGenerationService(_mapFactory, _previewRenderer),
+            new AvailableMapsService(
+                _mapResourceProvider,
+                _mapFactory,
+                _previewRenderer,
+                _fileService,
+                _dispatcherService,
+                Substitute.For<ILogger<AvailableMapsService>>()),
+            Substitute.For<ILogger<MapConfigViewModel>>(),
             _localizationService);
         _sut.SetNavigationService(_navigationService);
     }

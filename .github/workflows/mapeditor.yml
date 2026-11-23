@@ -45,6 +45,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      id-token: write # OIDC token exchange for NuGet Trusted Publishing
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -58,8 +61,26 @@ jobs:
         run: |
           dotnet pack src/MakaMek.MapEditor/MakaMek.MapEditor.csproj --configuration Release --output ${{ env.NuGetDirectory }}
 
+      # NuGet Trusted Publishing: exchange the GitHub OIDC token for a
+      # short-lived API key instead of using a long-lived NUGET_APIKEY secret.
+      # The nuget.org policy is bound to this workflow filename, so renaming
+      # the file (or moving the push to another workflow) breaks publishing.
+      # `vars.NUGET_USER` is the nuget.org account that owns the policy.
+      # Deliberately last: the exchanged key is only valid for one hour, so it
+      # is requested immediately before the push rather than up front.
+      - name: NuGet login (OIDC to temporary API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ vars.NUGET_USER }}
+
       - name: Publish NuGet package
+        shell: bash
         run: |
+          if ! compgen -G "${{ env.NuGetDirectory }}/*.nupkg" > /dev/null; then
+            echo "::error::No .nupkg found in ${{ env.NuGetDirectory }}"
+            exit 1
+          fi
           for file in "${{ env.NuGetDirectory }}"/*.nupkg; do
-            dotnet nuget push "$file" --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+            dotnet nuget push "$file" --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
           done

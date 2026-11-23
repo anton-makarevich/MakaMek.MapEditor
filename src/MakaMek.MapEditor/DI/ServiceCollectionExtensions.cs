@@ -4,12 +4,14 @@ using Sanet.Localization;
 using Sanet.Localization.Providers;
 using Sanet.MakaMek.Assets.ResourceProviders;
 using Sanet.MakaMek.Assets.Services;
+using Sanet.MakaMek.Assets.Services.PackageReaders;
 using Sanet.MakaMek.Avalonia.Controls.Services;
 using Sanet.MakaMek.Core.Services;
 using Sanet.MakaMek.Localization;
 using Sanet.MakaMek.Map.Services;
 using Sanet.MakaMek.MapEditor.Services;
 using Sanet.MakaMek.MapEditor.ViewModels;
+using Sanet.MakaMek.Presentation.ViewModels.Maps;
 using Sanet.MakaMek.Services;
 using Sanet.MakaMek.Services.Avalonia;
 
@@ -32,6 +34,11 @@ public static class ServiceCollectionExtensions
                 sp.GetRequiredService<ILogger<EmbeddedMapResourceProvider>>(),
                 new AssemblyResourceStreamProvider("json", typeof(App).Assembly)));
 
+        // Terrain cache collaborators: stateless helpers plus the reader/loader singletons.
+        services.AddSingleton<ITerrainImageResolver, TerrainImageResolver>();
+        services.AddSingleton<MmtxTerrainPackageReader>();
+        services.AddSingleton<TerrainPackageLoader>();
+
         // Register terrain caching service with stream providers
         services.AddSingleton<ITerrainAssetService>(sp =>
         {
@@ -47,7 +54,12 @@ public static class ServiceCollectionExtensions
                     loggerFactory.CreateLogger<GitHubResourceStreamProvider>()
                 )
             };
-            return new TerrainCachingService(streamProviders, loggerFactory);
+            return new TerrainCachingService(
+                streamProviders,
+                loggerFactory,
+                lazyProviders: null,
+                sp.GetRequiredService<ITerrainImageResolver>(),
+                sp.GetRequiredService<TerrainPackageLoader>());
         });
     }
 
@@ -65,6 +77,10 @@ public static class ServiceCollectionExtensions
 
     public static void RegisterViewModels(this IServiceCollection services)
     {
+        // Map config collaborators, wired here so neither screen builds them itself.
+        services.AddTransient<MapGenerationService>();
+        services.AddTransient<AvailableMapsService>();
+
         services.AddTransient<MainMenuViewModel>();
         services.AddTransient<NewMapViewModel>();
         services.AddTransient<EditMapViewModel>();
